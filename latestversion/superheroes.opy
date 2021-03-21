@@ -223,9 +223,11 @@ rule ("Reset Player Parameters") {
     actions {
         If(Entity Exists((Event Player).Passive_Mod_FX));
             Destroy Effect((Event Player).Passive_Mod_FX);
+            Destroy In-World Text((Event Player).Passive_Mod_FX);
         End;
         If(Entity Exists((Event Player).Active_Mod_FX));
             Destroy Effect((Event Player).Active_Mod_FX);
+            Destroy In-World Text((Event Player).Active_Mod_FX);
         End;
         If(Entity Exists((Event Player).Passive_Mod_FX_Array));
             Destroy Effect((Event Player).Passive_Mod_FX_Array);
@@ -537,6 +539,8 @@ rule ("Passive Mods 11 - Level Up") {
         Set Max Health(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Create In-World Text(All Players(All Teams), Custom String("{0} {1}", Custom String("Level: ", Null, Null, Null), Divide((Event Player).Player_ATK_SPD_HP, 2.5), Null), Event Player, 1, Clip Against Surfaces, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
+        Wait Until(Compare((Event Player).Passive_Mod, !=, 12), 99999);
+        Destroy In-World Text((Event Player).Passive_Mod_FX);
     }
 }
 
@@ -734,10 +738,8 @@ rule ("Passive Mods 32 - Forcefield") {
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 8, To World, Cancel Contrary Motion);
-            End;
-            For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
-                Wait(1, Ignore Condition);
+                Wait(0.116, Ignore Condition);
             End;
             Wait(0.116, Ignore Condition);
         End;
@@ -753,7 +755,7 @@ rule ("Passive Mods 32 - Forcefield FX") {
         Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 4.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 17.5, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Lécio Sound Barrier Protected Sound, Color(Team 1), Event Player, 17.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
@@ -784,7 +786,7 @@ rule ("Passive Mods 33 - Get Behind Me (Initialize)") {
             Wait(0.116, Ignore Condition);
             Start Forcing Player Outlines((Event Player).Reinhardt, All Players(All Teams), False, Color(White), Default);
             Wait(0.116, Ignore Condition);
-            Set Max Health((Event Player).Reinhardt, 62.5);
+            Set Max Health((Event Player).Reinhardt, 56.25);
             Set Player Health((Event Player).Reinhardt, Max Health((Event Player).Reinhardt));
             Wait(0.25, Ignore Condition);
             Wait Until(Is Dead(Event Player), 99999);
@@ -973,7 +975,7 @@ rule ("Choose/Check Passive Mod") {
             //__label_switch_2_default__:
             End;
         End;
-        Wait(0.116, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Loop If Condition Is True;
         Loop;
         "pass"
@@ -1021,14 +1023,14 @@ rule ("Active Mods 1 - Blink") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Null, Position Of(Event Player), 3);
+        Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Position Of(Event Player), 3);
         Wait(0.25, Ignore Condition);
         Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(Team 1), Position Of(Event Player), 500);
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Position Of(Event Player), 500);
         If(Not(Is Moving(Event Player)));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Null, Position Of(Event Player), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Else If(Is Moving(Event Player));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Null, Add(Position Of(Event Player), Multiply(Facing Direction Of(Event Player), 1.2)), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Add(Position Of(Event Player), Multiply(Facing Direction Of(Event Player), 1.2)), 1);
         End;
         Wait(2.25, Ignore Condition);
     }
@@ -1167,7 +1169,7 @@ rule ("Active Mods 7 - Entangling Roots") {
         (Event Player).CastMelee_Mod_Conditions == 1;
     }
     actions {
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Color(White), (Event Player).Mod_Effect_Target, 50);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Opposite Team Of(Team Of(Event Player)), (Event Player).Mod_Effect_Target, 200);
         Play Effect(All Players(All Teams), Good Explosion, Color(Green), World Vector Of(Vector(0, 0.75, 1), Event Player, Rotation And Translation), 1);
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Set Status(Player Closest To Reticle(Event Player, All Teams), Event Player, Rooted, 1.5);
@@ -1742,7 +1744,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 1000hp Reinhardt shield.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
     }
 }
 
@@ -1955,6 +1957,7 @@ rule ("Mechanics - Open Mod Menu") {
         All;
     }
     conditions {
+        Match Time > 7;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Standing(Event Player) == True;
@@ -1962,6 +1965,12 @@ rule ("Mechanics - Open Mod Menu") {
     }
     actions {
         Wait(0.25, Abort When False);
+        Play Effect(All Players(All Teams), Sombra Translocator Disappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
+        Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
+        Teleport(Event Player, Spawn Points(Team Of(Event Player)));
+        Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
+        Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
+        Wait(0.116, Ignore Condition);
         Call Subroutine(PlayerReset);
         Set Player Variable(Event Player, Passive_Mod_Index, (Event Player).Passive_Mod);
         Set Player Variable(Event Player, Passive_Mod, 0);
@@ -2272,16 +2281,17 @@ rule ("Passive Mods - Corpse Explosion (Active)") {
         CorpseExplosion;
     }
     actions {
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 100);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Event Player, 2);
         Wait(0.4, Ignore Condition);
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 150);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Event Player, 1);
         Wait(0.2, Ignore Condition);
         Set Status(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 2);
-        Damage(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply(Max Health(Event Player), 0.6));
-        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 6);
-        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 8);
+        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 1);
+        Wait(0.116, Ignore Condition);
+        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 1);
+        Wait(0.116, Ignore Condition);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), Event Player, 200);
-        Play Effect(All Players(All Teams), Junkrat RIP Tire Explosion Sound, Color(Team 2), Event Player, 200);
+        Damage(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply(Max Health(Event Player), 0.6));
     }
 }
 
