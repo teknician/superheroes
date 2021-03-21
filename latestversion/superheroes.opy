@@ -1534,7 +1534,7 @@ rule ("Active Mods 21 - Lightning Bolt") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 21;
+        (Event Player).Active_Mod == 22;
         (Event Player).CastMelee_Mod_Conditions == 1;
         Ultimate Charge Percent(Event Player) >= 20;
     }
@@ -2021,7 +2021,7 @@ rule ("Mechanics - Jump to Middle of Passive Mods (Ability 1)") {
         Is Button Held(Event Player, Button(Primary Fire)) == False;
     }
     actions {
-        Set Player Variable(Event Player, Passive_Mod_Index, Round To Integer(Divide(Add(Count Of(Global.Passive_Mod_Strings), 2), 2), Down));
+        Set Player Variable(Event Player, Passive_Mod_Index, Round To Integer(Divide(Add(Count Of(Global.Passive_Mod_Strings), 1), 2), Down));
         Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
     }
 }
@@ -2039,7 +2039,7 @@ rule ("Mechanics - Jump to Middle of Active Mods (Ability 1)") {
         Is Button Held(Event Player, Button(Primary Fire)) == False;
     }
     actions {
-        Set Player Variable(Event Player, Active_Mod_Index, Round To Integer(Divide(Add(Count Of(Global.Active_Mod_Strings), 2), 2), Down));
+        Set Player Variable(Event Player, Active_Mod_Index, Round To Integer(Divide(Add(Count Of(Global.Active_Mod_Strings), 1), 2), Down));
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
     }
 }
@@ -2056,7 +2056,7 @@ rule ("Mechanics - Scroll Through Passive Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        If(Compare((Event Player).Passive_Mod_Index, >=, Count Of(Global.Passive_Mod_Strings)));
+        If(Compare((Event Player).Passive_Mod_Index, ==, Subtract(Count Of(Global.Passive_Mod_Strings), 1)));
             Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, Subtract(Count Of(Global.Passive_Mod_Strings), 1)));
             Abort;
         End;
@@ -2102,10 +2102,7 @@ rule ("Mechanics - Scroll Through Active Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        If(Compare((Event Player).Active_Mod_Index, >=, Count Of(Global.Active_Mod_Strings)));
-            Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, Subtract(Count Of(Global.Active_Mod_Strings), 1)));
-            Abort;
-        End;
+        Abort If(Compare((Event Player).Active_Mod_Index, ==, Subtract(Count Of(Global.Active_Mod_Strings), 1)));
         Modify Player Variable(Event Player, Active_Mod_Index, Add, 1);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
         Wait(0.33, Ignore Condition);
