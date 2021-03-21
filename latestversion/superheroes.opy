@@ -173,32 +173,33 @@ subroutines {
     54: Colossus_Reset
     55: Colossus
     56: ColossusFX
-    57: Ambush
-    58: Knockout
-    59: BoxerDealtDmg
-    60: Devour
-    61: Infection
-    62: BoxerBrig
-    63: BoxerRein
-    64: SneakDealtDmg
-    65: Disruption
-    66: ManaShieldDamaged
-    67: ThornsDamaged
-    68: FrostArmorDamaged
-    69: BootsOfMobilityDamaged
-    70: InfectionDamaged
-    71: SneakDamaged
-    72: ColossusHookDamaged
-    73: RemoveFXOnDeath
-    74: SmolModeDeath
-    75: CorpseExplosion
-    76: Revenge
-    77: GetBehindMeDeath
-    78: ZeroGDeath
-    79: ColossusDeath
-    80: LevelUpDing
-    81: VictoryRush
-    82: PlayerReset
+    57: Immolation
+    58: Ambush
+    59: Knockout
+    60: BoxerDealtDmg
+    61: Devour
+    62: Infection
+    63: BoxerBrig
+    64: BoxerRein
+    65: SneakDealtDmg
+    66: Disruption
+    67: ManaShieldDamaged
+    68: ThornsDamaged
+    69: FrostArmorDamaged
+    70: BootsOfMobilityDamaged
+    71: InfectionDamaged
+    72: SneakDamaged
+    73: ColossusHookDamaged
+    74: RemoveFXOnDeath
+    75: SmolModeDeath
+    76: CorpseExplosion
+    77: Revenge
+    78: GetBehindMeDeath
+    79: ZeroGDeath
+    80: ColossusDeath
+    81: LevelUpDing
+    82: VictoryRush
+    83: PlayerReset
 }
 rule ("Initialize Mod Menu") {
     event {
@@ -224,16 +225,22 @@ rule ("Reset Player Parameters") {
         If(Entity Exists((Event Player).Passive_Mod_FX));
             Destroy Effect((Event Player).Passive_Mod_FX);
             Destroy In-World Text((Event Player).Passive_Mod_FX);
+            Destroy Icon((Event Player).Passive_Mod_FX);
         End;
         If(Entity Exists((Event Player).Active_Mod_FX));
             Destroy Effect((Event Player).Active_Mod_FX);
             Destroy In-World Text((Event Player).Active_Mod_FX);
+            Destroy Icon((Event Player).Active_Mod_FX);
         End;
         If(Entity Exists((Event Player).Passive_Mod_FX_Array));
             Destroy Effect((Event Player).Passive_Mod_FX_Array);
+            Destroy In-World Text((Event Player).Active_Mod_FX_Array);
+            Destroy Icon((Event Player).Passive_Mod_FX_Array);
         End;
         If(Entity Exists((Event Player).Active_Mod_FX_Array));
             Destroy Effect((Event Player).Active_Mod_FX_Array);
+            Destroy In-World Text((Event Player).Active_Mod_FX_Array);
+            Destroy Icon((Event Player).Active_Mod_FX_Array);
         End;
         Set Move Speed(Event Player, 100);
         Set Damage Dealt(Event Player, 100);
@@ -257,8 +264,9 @@ rule ("Reset Player Parameters") {
         Stop Camera(Event Player);
         Stop All Heal Over Time(Event Player);
         Stop All Damage Over Time(Event Player);
-        Set Player Variable(Event Player, Player_ATK_SPD_HP, 0);
+        Set Player Variable(Event Player, Affected_Players, 0);
         Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
+        Set Player Variable(Event Player, Player_ATK_SPD_HP, 0);
         Clear Status(Event Player, Frozen);
         Clear Status(Event Player, Burning);
         Clear Status(Event Player, Hacked);
@@ -2371,6 +2379,18 @@ rule ("Mods PlayerDied Events") {
     }
 }
 
+rule ("Passive Mods - Immolation Aura (Did Damage)") {
+    event {
+        Subroutine;
+        Immolation;
+    }
+    actions {
+        Set Ability 1 Enabled(Event Player, False);
+        Wait(2, Ignore Condition);
+        Set Ability 1 Enabled(Event Player, True);
+    }
+}
+
 rule ("Passive Mods - Ambush (Active)") {
     event {
         Subroutine;
@@ -2522,6 +2542,9 @@ rule ("Mods PlayerDealtDamage Events") {
         End;
         If(Compare((Event Player).Passive_Mod, ==, 28));
             Start Rule(Disruption, Do Nothing);
+        End;
+        If(And(Compare((Event Player).Passive_Mod, ==, 7), Compare(Hero Of(Event Player), ==, Hero(Sombra))));
+            Start Rule(Immolation, Do Nothing);
     }
 }
 
@@ -2673,3 +2696,4 @@ rule ("Mods PlayerEarnedElimination Events") {
     }
 }
 
+Ŀ
