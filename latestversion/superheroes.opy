@@ -2696,4 +2696,3 @@ rule ("Mods PlayerEarnedElimination Events") {
     }
 }
 
-Ŀ
