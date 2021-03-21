@@ -729,7 +729,7 @@ rule ("Passive Mods 32 - Forcefield") {
         Forcefield;
     }
     actions {
-        While(Compare(Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), >, 0));
+        While(Compare((Event Player).Passive_Mod, ==, 32));
             Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
@@ -856,7 +856,7 @@ rule ("Choose/Check Passive Mod") {
         All;
     }
     conditions {
-        Or(Or(Or(Or(Or(Or(Or(Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Melee))), Is Button Held(Event Player, Button(Secondary Fire))), Is Button Held(Event Player, Button(Interact))), Is Crouching(Event Player)), Is Moving(Event Player)), Compare((Event Player).Mod_Menu_Select, ==, 3)), Entity Exists((Event Player).Passive_Mod_FX)), Entity Exists((Event Player).Passive_Mod_FX_Array)) == True;
+        Or(Or(Or(Or(Or(Or(Or(Or(Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Melee))), Is Button Held(Event Player, Button(Secondary Fire))), Is Button Held(Event Player, Button(Interact))), Is Crouching(Event Player)), Is Moving(Event Player)), Compare((Event Player).Mod_Menu_Select, ==, 3)), Entity Exists((Event Player).Passive_Mod_FX)), Entity Exists((Event Player).Passive_Mod_FX_Array)), Compare(Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), >, 0)) == True;
     }
     actions {
         Abort If(Compare((Event Player).Mod_Menu_Select, ==, 0));
@@ -1017,15 +1017,15 @@ rule ("Active Mods 1 - Blink") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(White), Eye Position(Event Player), 3);
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(Team 1), Eye Position(Event Player), 3);
         Wait(0.2, Ignore Condition);
         Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(White), Position Of(Event Player), 500);
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(Team 1), Position Of(Event Player), 500);
         Wait(0.2, Ignore Condition);
         If(Not(Is Moving(Event Player)));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Position Of(Event Player), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Position Of(Event Player), 1);
         Else If(Is Moving(Event Player));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Multiply(Add(Position Of(Event Player), Facing Direction Of(Event Player)), 1.5), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Multiply(Add(Position Of(Event Player), Facing Direction Of(Event Player)), 1.5), 1);
         End;
         Wait(2, Ignore Condition);
     }
