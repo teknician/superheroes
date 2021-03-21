@@ -1065,7 +1065,7 @@ rule ("Active Mods 4 - Zero Gravity") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 5;
-        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0) != False;
+        (Event Player).Active_Mod_Skill_Toggle == 0;
         Is Button Held(Event Player, Button(Crouch)) == True;
         Is In Air(Event Player) == True;
     }
