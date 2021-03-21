@@ -2056,7 +2056,7 @@ rule ("Mechanics - Scroll Through Passive Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        Abort If(Compare((Event Player).Passive_Mod_Index, >=, Count Of(Global.Passive_Mod_Strings)));
+        Abort If(Compare((Event Player).Passive_Mod_Index, ==, Count Of(Global.Passive_Mod_Strings)));
         Modify Player Variable(Event Player, Passive_Mod_Index, Add, 1);
         Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
         Wait(0.33, Ignore Condition);
@@ -2099,7 +2099,7 @@ rule ("Mechanics - Scroll Through Active Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        Abort If(Compare((Event Player).Active_Mod_Index, >=, Count Of(Global.Passive_Mod_Strings)));
+        Abort If(Compare((Event Player).Active_Mod_Index, ==, Count Of(Global.Active_Mod_Strings)));
         Modify Player Variable(Event Player, Active_Mod_Index, Add, 1);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
         Wait(0.33, Ignore Condition);
