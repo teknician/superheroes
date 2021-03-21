@@ -758,28 +758,34 @@ rule ("Passive Mods 33 - Get Behind Me (Initialize)") {
         GetBehindMe;
     }
     actions {
-        Wait(0.116, Ignore Condition);
-        Set Global Variable(Shield_Vertical_Position, -1);
-        Set Global Variable(Shield_Distance, 1);
-        Set Secondary Fire Enabled(Event Player, False);
-        Disallow Button(Event Player, Button(Secondary Fire));
-        Create Dummy Bot(Hero(Reinhardt), Team Of(Event Player), -1, Vector(0, 10000, 0), Vector(0, 0, 0));
-        Set Player Variable(Event Player, Reinhardt, Last Created Entity);
-        Start Scaling Player((Event Player).Reinhardt, 0, True);
-        Disable Movement Collision With Environment((Event Player).Reinhardt, True);
-        Start Modifying Hero Voice Lines((Event Player).Reinhardt, 1.5, True);
-        Set Invisible((Event Player).Reinhardt, All);
-        Wait(0.25, Ignore Condition);
-        Start Forcing Player Position((Event Player).Reinhardt, Update Every Frame(Ray Cast Hit Position(Add(Eye Position(Event Player), Vector(0, Global.Shield_Vertical_Position, 0)), Add(Add(Eye Position(Event Player), Vector(0, Global.Shield_Vertical_Position, 0)), Multiply(Facing Direction Of(Event Player), Global.Shield_Distance)), Null, Event Player, False)), True);
-        Start Facing((Event Player).Reinhardt, Facing Direction Of(Event Player), 10000, To World, Direction and Turn Rate);
-        Start Scaling Barriers((Event Player).Reinhardt, 8, True);
-        Disable Nameplates((Event Player).Reinhardt, All Players(All Teams));
-        Wait(0.116, Ignore Condition);
-        Start Forcing Player Outlines((Event Player).Reinhardt, All Players(All Teams), False, Color(White), Default);
-        Wait(0.116, Ignore Condition);
-        Set Max Health((Event Player).Reinhardt, 62.5);
-        Set Player Health((Event Player).Reinhardt, Max Health((Event Player).Reinhardt));
-        Wait(0.75, Ignore Condition);
+        If(Compare((Event Player).Reinhardt, ==, 0));
+            Wait(0.116, Ignore Condition);
+            Set Global Variable(Shield_Vertical_Position, -1);
+            Set Global Variable(Shield_Distance, 1);
+            Set Secondary Fire Enabled(Event Player, False);
+            Disallow Button(Event Player, Button(Secondary Fire));
+            Create Dummy Bot(Hero(Reinhardt), Team Of(Event Player), -1, Vector(0, 10000, 0), Vector(0, 0, 0));
+            Set Player Variable(Event Player, Reinhardt, Last Created Entity);
+            Start Scaling Player((Event Player).Reinhardt, 0, True);
+            Disable Movement Collision With Environment((Event Player).Reinhardt, True);
+            Start Modifying Hero Voice Lines((Event Player).Reinhardt, 1.5, True);
+            Set Invisible((Event Player).Reinhardt, All);
+            Wait(0.25, Ignore Condition);
+            Start Forcing Player Position((Event Player).Reinhardt, Update Every Frame(Ray Cast Hit Position(Add(Eye Position(Event Player), Vector(0, Global.Shield_Vertical_Position, 0)), Add(Add(Eye Position(Event Player), Vector(0, Global.Shield_Vertical_Position, 0)), Multiply(Facing Direction Of(Event Player), Global.Shield_Distance)), Null, Event Player, False)), True);
+            Start Facing((Event Player).Reinhardt, Facing Direction Of(Event Player), 10000, To World, Direction and Turn Rate);
+            Start Scaling Barriers((Event Player).Reinhardt, 8, True);
+            Disable Nameplates((Event Player).Reinhardt, All Players(All Teams));
+            Wait(0.116, Ignore Condition);
+            Start Forcing Player Outlines((Event Player).Reinhardt, All Players(All Teams), False, Color(White), Default);
+            Wait(0.116, Ignore Condition);
+            Set Max Health((Event Player).Reinhardt, 62.5);
+            Set Player Health((Event Player).Reinhardt, Max Health((Event Player).Reinhardt));
+            Wait(0.25, Ignore Condition);
+            Wait Until(Is Dead(Event Player), 99999);
+            Destroy Dummy Bot(Team Of((Event Player).Reinhardt), Slot Of((Event Player).Reinhardt));
+            Set Player Variable(Event Player, Reinhardt, 0);
+        Else;
+            Abort;
     }
 }
 
@@ -794,17 +800,16 @@ rule ("Passive Mods - Get Behind Me (Shielding)") {
             Set Player Variable(Event Player, Facing_Direction, Facing Direction Of(Event Player));
             Set Invisible((Event Player).Reinhardt, None);
             Start Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
-            Disallow Button(Event Player, Button(Secondary Fire));
-            Wait(0.25, Ignore Condition);
-            Allow Button(Event Player, Button(Secondary Fire));
-            Wait Until(Not(Is Button Held(Event Player, Button(Secondary Fire))), 99999);
-            Set Player Variable(Event Player, Facing_Direction, 0);
-            Stop Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
-            Wait(0.25, Ignore Condition);
-            Set Invisible((Event Player).Reinhardt, All);
-            Disallow Button(Event Player, Button(Secondary Fire));
-            Wait(0.25, Ignore Condition);
-            Allow Button(Event Player, Button(Secondary Fire));
+        End;
+        Wait(0.4, Ignore Condition);
+        Wait Until(Not(Is Button Held(Event Player, Button(Secondary Fire))), 99999);
+        Set Player Variable(Event Player, Facing_Direction, 0);
+        Stop Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
+        Wait(0.25, Ignore Condition);
+        Set Invisible((Event Player).Reinhardt, All);
+        Disallow Button(Event Player, Button(Secondary Fire));
+        Wait(0.4, Ignore Condition);
+        Allow Button(Event Player, Button(Secondary Fire));
     }
 }
 
@@ -853,7 +858,7 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(76, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 65), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 33), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(73, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 65), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 33), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
@@ -949,12 +954,9 @@ rule ("Choose/Check Passive Mod") {
             If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
                 Abort;
             Else;
-                If(Compare((Event Player).Reinhardt, ==, 0));
-                    Start Rule(GetBehindMe, Do Nothing);
-                Else;
-                    Start Rule(GetBehindMeShield, Do Nothing);
-                    Start Rule(GetBehindMeOff, Do Nothing);
-                End;
+                Start Rule(GetBehindMe, Do Nothing);
+                Start Rule(GetBehindMeShield, Do Nothing);
+                Start Rule(GetBehindMeOff, Do Nothing);
             End;
             Else;
             //__label_switch_2_default__:
@@ -1598,7 +1600,7 @@ rule ("Active Mods 24 - Colossus") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 25;
+        (Event Player).Active_Mod == 24;
         Ultimate Charge Percent(Event Player) == 100;
         Is Button Held(Event Player, Button(Melee)) == True;
         Is Button Held(Event Player, Button(Interact)) == True;
@@ -1616,10 +1618,11 @@ rule ("Active Mods 24 - Colossus") {
             Abort If(Is Dead(Event Player));
             Wait(0.116, Ignore Condition);
         End;
-        Set Player Variable(Event Player, Player_Position, Position Of(Event Player));
         Add Health Pool To Player(Event Player, Armor, 5000, False, True);
         Set Player Variable(Event Player, Is_Colossus, True);
         Start Scaling Player(Event Player, 3, True);
+        Wait(0.25, Ignore Condition);
+        Set Player Variable(Event Player, Player_Position, Position Of(Event Player));
         Start Forcing Player Position(Event Player, (Event Player).Player_Position, True);
         Set Ultimate Charge(Event Player, 0);
         Set Ability 1 Enabled(Event Player, False);
@@ -1654,20 +1657,20 @@ rule ("Active Mods 24 - Colossus (FX)") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 25;
+        (Event Player).Active_Mod == 24;
         (Event Player).Is_Colossus == True;
     }
     actions {
-        For Player Variable(Event Player, Active_Index, 0, 10, 1);
+        Set Player Variable(Event Player, Active_Index, 0);
+        While(Compare((Event Player).Active_Index, <, 10));
             Play Effect(All Players(All Teams), Brigitte Repair Pack Impact Sound, Color(Team 1), Event Player, 1000);
+            Modify Player Variable(Event Player, Active_Index, Add, 1);
             Wait(0.5, Ignore Condition);
         End;
         Create Effect(All Players(All Teams), Winston Primal Rage Effect, Null, Event Player, 1000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Smoke Sound, Null, Event Player, 1000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Create Effect(All Players(All Teams), Torbjörn Overloading Effect, Color(Gray), Event Player, 5, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
         Wait Until(Or(Or(Compare((Event Player).Is_Colossus, ==, False), Is In Setup), Not(Is Game In Progress)), 99999);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
     }
@@ -1949,6 +1952,7 @@ rule ("Mechanics - Open Mod Menu") {
         Set Player Variable(Event Player, Active_Mod_Index, (Event Player).Active_Mod);
         Set Player Variable(Event Player, Active_Mod, 0);
         Set Player Variable(Event Player, Mod_Menu_Select, 1);
+        Wait(0.116, Ignore Condition);
         Disallow Button(Event Player, Button(Primary Fire));
         Disallow Button(Event Player, Button(Secondary Fire));
         Set Status(Event Player, Null, Rooted, 9999);
