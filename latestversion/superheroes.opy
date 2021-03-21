@@ -801,14 +801,14 @@ rule ("Passive Mods - Get Behind Me (Shielding)") {
             Set Invisible((Event Player).Reinhardt, None);
             Start Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
         End;
-        Wait(0.4, Ignore Condition);
+        Wait(0.3, Ignore Condition);
         Wait Until(Not(Is Button Held(Event Player, Button(Secondary Fire))), 99999);
         Set Player Variable(Event Player, Facing_Direction, 0);
         Stop Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
-        Wait(0.25, Ignore Condition);
+        Wait(0.3, Ignore Condition);
         Set Invisible((Event Player).Reinhardt, All);
         Disallow Button(Event Player, Button(Secondary Fire));
-        Wait(0.4, Ignore Condition);
+        Wait(0.2, Ignore Condition);
         Allow Button(Event Player, Button(Secondary Fire));
     }
 }
@@ -819,18 +819,22 @@ rule ("Passive Mods 33 - Get Behind Me (Deactivation)") {
         GetBehindMeOff;
     }
     actions {
-        If(And(And(Compare((Event Player).Reinhardt, !=, 0), Is In Spawn Room(Event Player)), Compare(Evaluate Once(Hero Of(Event Player)), !=, Hero Of(Event Player))));
+        If(And(Compare((Event Player).Reinhardt, !=, 0), Is In Spawn Room(Event Player)));
+            Set Player Variable(Event Player, Current_Hero, Hero Of(Event Player));
+            Wait(0.116, Ignore Condition);
+            Wait Until(False, 99999);
+            Wait(0.116, Ignore Condition);
             Set Player Variable(Event Player, Current_Hero, Hero Of(Event Player));
             Destroy Dummy Bot(Team Of((Event Player).Reinhardt), Slot Of((Event Player).Reinhardt));
-            Set Player Variable(Event Player, Reinhardt, 0);
-            If(Compare((Event Player).Current_Hero, ==, Hero(Reinhardt)));
-                Wait(1, Ignore Condition);
+            If(Or(Compare((Event Player).Current_Hero, ==, Hero(Reinhardt)), Compare((Event Player).Current_Hero, ==, Hero(Brigitte))));
+                Wait(0.5, Ignore Condition);
                 Set Secondary Fire Enabled(Event Player, True);
                 Allow Button(Event Player, Button(Secondary Fire));
                 Abort;
+            Else;
+                Wait(0.5, Ignore Condition);
+                Call Subroutine(GetBehindMe);
             End;
-            Wait(2, Ignore Condition);
-            Call Subroutine(GetBehindMe);
         End;
         Wait Until(Or(And(Compare((Event Player).Reinhardt, !=, 0), Compare((Event Player).Passive_Mod, !=, 33)), Is Match Complete), 99999);
         Destroy Dummy Bot(Team Of((Event Player).Reinhardt), Slot Of((Event Player).Reinhardt));
@@ -858,7 +862,7 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(73, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 65), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 33), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(72, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 65), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 33), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
@@ -951,8 +955,7 @@ rule ("Choose/Check Passive Mod") {
             Call Subroutine(ForcefieldFX);
             Else;
             //__label_switch_2_26__:
-            If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
-                Abort;
+            If(Or(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)), Compare(Hero Of(Event Player), ==, Hero(Brigitte))));
             Else;
                 Start Rule(GetBehindMe, Do Nothing);
                 Start Rule(GetBehindMeShield, Do Nothing);
@@ -1011,9 +1014,15 @@ rule ("Active Mods 1 - Blink") {
     }
     actions {
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(Team 1), Position Of(Event Player), 1);
+        Wait(0.2, Ignore Condition);
         Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 6)));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(Team 1), Position Of(Event Player), 500);
-        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Position Of(Event Player), 0.75);
+        Wait(0.2, Ignore Condition);
+        If(Not(Is Moving(Event Player)));
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Position Of(Event Player), 1);
+        Else If(Is Moving(Event Player));
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Add(Position Of(Event Player), Multiply(Facing Direction Of(Event Player), 0.75)), 1);
+        End;
         Wait(2, Ignore Condition);
     }
 }
@@ -1639,9 +1648,9 @@ rule ("Active Mods 24 - Colossus") {
         Wait Until(Is Dead(Event Player), 90);
         Kill(Event Player, Null);
         Play Effect(All Players(All Teams), DVa Self Destruct Explosion Effect, Color(Team 2), Event Player, 4);
-        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Color(Team 2), Event Player, 1000);
+        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Color(Team 2), Event Player, 100000);
         Set Status(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 1.75);
-        Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Null, 300);
+        Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, 300);
         Start Rule(Colossus_Reset, Do Nothing);
         Wait(20, Ignore Condition);
         If(Not(Is Game In Progress));
@@ -1669,7 +1678,7 @@ rule ("Active Mods 24 - Colossus (FX)") {
         End;
         Create Effect(All Players(All Teams), Winston Primal Rage Effect, Null, Event Player, 1000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Smoke Sound, Null, Event Player, 1000, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Smoke Sound, Null, Event Player, 100000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait Until(Or(Or(Compare((Event Player).Is_Colossus, ==, False), Is In Setup), Not(Is Game In Progress)), 99999);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
@@ -1759,7 +1768,7 @@ rule ("Initialization - Active Mod Strings") {
         Set Global Variable At Index(Active_Mod_Strings, 21, Custom String("Life Tap: Press the Ultimate button to trade 30% HP for 30% ultimate charge", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 22, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (25m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Melee+Interact to use 100% Ult and become a statue with +5000 Armor. (20 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Melee+Interact to use 100% Ult and become a statue with +5000 Armor. Explode when you die. (20 sec. CD)", Null, Null, Null));
     }
 }
 
@@ -2256,7 +2265,7 @@ rule ("Passive Mods - Corpse Explosion (Active)") {
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Null, Event Player, 1000);
         Wait(0.3, Ignore Condition);
         Set Status(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 1.75);
-        Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Null, Multiply(Max Health(Event Player), 0.5));
+        Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply(Max Health(Event Player), 0.5));
         Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 3);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 10);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, 5);
