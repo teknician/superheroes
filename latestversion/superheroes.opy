@@ -730,10 +730,10 @@ rule ("Passive Mods 32 - Forcefield") {
     }
     actions {
         While(Compare((Event Player).Mod_Menu_Select, ==, 3));
-            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
+            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.5, 0), 5, To Player, Cancel Contrary Motion);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 5, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 5, To Player, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 7.5, To World, Cancel Contrary Motion);
             End;
             Wait(0.3, Ignore Condition);
         End;
@@ -1013,15 +1013,15 @@ rule ("Active Mods 1 - Blink") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(Team 1), Position Of(Event Player), 1);
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(White), Eye Position(Event Player), 3);
         Wait(0.2, Ignore Condition);
-        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 6)));
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(Team 1), Position Of(Event Player), 500);
+        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(White), Position Of(Event Player), 500);
         Wait(0.2, Ignore Condition);
         If(Not(Is Moving(Event Player)));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Position Of(Event Player), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Position Of(Event Player), 1);
         Else If(Is Moving(Event Player));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Add(Position Of(Event Player), Multiply(Facing Direction Of(Event Player), 0.75)), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Multiply(Add(Position Of(Event Player), Facing Direction Of(Event Player)), 1.5), 1);
         End;
         Wait(2, Ignore Condition);
     }
@@ -1647,8 +1647,8 @@ rule ("Active Mods 24 - Colossus") {
         "Reset player status upon death"
         Wait Until(Is Dead(Event Player), 90);
         Kill(Event Player, Null);
-        Play Effect(All Players(All Teams), DVa Self Destruct Explosion Effect, Color(Team 2), Event Player, 4);
-        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Color(Team 2), Event Player, 100000);
+        Play Effect(All Players(All Teams), DVa Self Destruct Explosion Effect, Color(White), Event Player, 4);
+        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Color(White), Event Player, 200);
         Set Status(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 1.75);
         Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, 300);
         Start Rule(Colossus_Reset, Do Nothing);
@@ -1672,13 +1672,13 @@ rule ("Active Mods 24 - Colossus (FX)") {
     actions {
         Set Player Variable(Event Player, Active_Index, 0);
         While(Compare((Event Player).Active_Index, <, 10));
-            Play Effect(All Players(All Teams), Brigitte Repair Pack Impact Sound, Color(Team 1), Event Player, 1000);
+            Play Effect(All Players(All Teams), Brigitte Repair Pack Impact Sound, Color(Team 2), Event Player, 100);
             Modify Player Variable(Event Player, Active_Index, Add, 1);
             Wait(0.5, Ignore Condition);
         End;
-        Create Effect(All Players(All Teams), Winston Primal Rage Effect, Null, Event Player, 1000, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), Event Player, 1000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Smoke Sound, Null, Event Player, 100000, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Smoke Sound, Color(Team 2), Event Player, 100000, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait Until(Or(Or(Compare((Event Player).Is_Colossus, ==, False), Is In Setup), Not(Is Game In Progress)), 99999);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
@@ -1746,7 +1746,7 @@ rule ("Initialization - Active Mod Strings") {
     actions {
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("Click to scroll through Active Mods. Press Melee to select one", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("None (Click to scroll through mods, press Melee to select one)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (2.5 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 5, Custom String("Zero Gravity (crouch in midair to toggle)", Null, Null, Null));
@@ -2056,7 +2056,10 @@ rule ("Mechanics - Scroll Through Passive Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        Abort If(Compare((Event Player).Passive_Mod_Index, ==, Count Of(Global.Passive_Mod_Strings)));
+        If(Compare((Event Player).Passive_Mod_Index, >=, Count Of(Global.Passive_Mod_Strings)));
+            Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, Subtract(Count Of(Global.Passive_Mod_Strings), 1)));
+            Abort;
+        End;
         Modify Player Variable(Event Player, Passive_Mod_Index, Add, 1);
         Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
         Wait(0.33, Ignore Condition);
@@ -2099,7 +2102,10 @@ rule ("Mechanics - Scroll Through Active Mods (Left Click)") {
         Is Button Held(Event Player, Button(Secondary Fire)) == False;
     }
     actions {
-        Abort If(Compare((Event Player).Active_Mod_Index, ==, Count Of(Global.Active_Mod_Strings)));
+        If(Compare((Event Player).Active_Mod_Index, >=, Count Of(Global.Active_Mod_Strings)));
+            Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, Subtract(Count Of(Global.Active_Mod_Strings), 1)));
+            Abort;
+        End;
         Modify Player Variable(Event Player, Active_Mod_Index, Add, 1);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
         Wait(0.33, Ignore Condition);
@@ -2260,17 +2266,18 @@ rule ("Passive Mods - Corpse Explosion (Active)") {
         CorpseExplosion;
     }
     actions {
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Null, Event Player, 500);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 100);
+        Wait(0.6, Ignore Condition);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 150);
         Wait(0.4, Ignore Condition);
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Null, Event Player, 1000);
-        Wait(0.3, Ignore Condition);
-        Set Status(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 1.75);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 200);
+        Wait(0.2, Ignore Condition);
+        Set Status(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 2);
         Damage(Players Within Radius(Event Player, 8, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply(Max Health(Event Player), 0.5));
-        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 3);
-        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 10);
-        Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, 5);
-        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Null, Event Player, 2000);
-        Play Effect(All Players(All Teams), Junkrat RIP Tire Explosion Sound, Null, Event Player, 2000);
+        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 6);
+        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 8);
+        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), Event Player, 200);
+        Play Effect(All Players(All Teams), Junkrat RIP Tire Explosion Sound, Color(Team 2), Event Player, 200);
     }
 }
 
