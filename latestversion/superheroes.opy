@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- LUCKYNUMBER"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER"
 	}
 	lobby
 	{
@@ -734,7 +734,10 @@ rule ("Passive Mods 32 - Forcefield") {
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 8, To World, Cancel Contrary Motion);
-                Play Effect(All Players(All Teams), Pharah Concussive Blast Effect, Color(Team 1), Event Player, 0.5);
+            End;
+            For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
+                Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Color(Team 1), Event Player, 1);
+                Wait(1, Ignore Condition);
             End;
             Wait(0.116, Ignore Condition);
         End;
@@ -1016,7 +1019,7 @@ rule ("Active Mods 1 - Blink") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Effect, Color(Team 1), Eye Position(Event Player), 3);
+        Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), Position Of(Event Player), 3);
         Wait(0.2, Ignore Condition);
         Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Color(Team 1), Position Of(Event Player), 500);
