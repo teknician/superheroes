@@ -729,13 +729,13 @@ rule ("Passive Mods 32 - Forcefield") {
         Forcefield;
     }
     actions {
-        While(Compare((Event Player).Mod_Menu_Select, ==, 3));
+        While(Compare(Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), >, 0));
             Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 5, To Player, Cancel Contrary Motion);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 7.5, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 8, To World, Cancel Contrary Motion);
             End;
-            Wait(0.3, Ignore Condition);
+            Wait(0.116, Ignore Condition);
         End;
     }
 }
@@ -749,6 +749,10 @@ rule ("Passive Mods 32 - Forcefield FX") {
         Abort If(Entity Exists((Event Player).Passive_Mod_FX));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 5, Visible To Position and Radius);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+        While(Compare((Event Player).Affected_Players, >, 0));
+            Play Effect(All Players(All Teams), Pharah Concussive Blast Effect, Color(Team 1), Event Player, 1);
+            Wait(0.2, Ignore Condition);
+        End;
     }
 }
 
@@ -1734,7 +1738,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 29, Custom String("Maximum Might: Raises damage, speed, and HP to 140% while at 100% ultimate", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 4 metre radius.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 1000hp Reinhardt shield.", Null, Null, Null));
     }
 }
