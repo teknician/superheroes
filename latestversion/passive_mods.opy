@@ -94,23 +94,25 @@ def SmolMode(): # 5
     @Name "Passive Mods 4 - Smol Mode"
     if  eventPlayer.Active_Mod not in [5,24] \
     and eventPlayer.isHoldingButton(Button.CROUCH) == true:
-        wait(0.3)    
+        wait(0.25)    
         eventPlayer.startScalingSize(0.4, true)
         eventPlayer.setDamageDealt(50)
         eventPlayer.setMoveSpeed(150)
         eventPlayer.startModifyingVoicelinePitch(1.5, true)
         eventPlayer.setMaxHealth(50)
         eventPlayer.Passive_Mod_Skill_Toggle = 1
-        waitUntil(eventPlayer.Active_Mod not in [5,24] \
-        and eventPlayer.isHoldingButton(Button.CROUCH) == true, 99999)
-        wait(0.5)
+        eventPlayer.setCrouchEnabled(false)
+        wait(1.5)
+        eventPlayer.setCrouchEnabled(true)
+        waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == true, 99999)
+        wait(0.25)
         eventPlayer.startScalingSize(1, true)
         eventPlayer.setDamageDealt(100)
         eventPlayer.setMoveSpeed(100)
         eventPlayer.startModifyingVoicelinePitch(1, true)
         eventPlayer.setMaxHealth(100)
         eventPlayer.Passive_Mod_Skill_Toggle = 0
-        wait(3)
+        wait(1.5)
 
 
 def SmolModeFX(): # 5
@@ -435,16 +437,13 @@ def GetBehindMe():
     eventPlayer.disallowButton(Button.SECONDARY_FIRE)
     createDummy(Hero.REINHARDT, eventPlayer.getTeam(), -1, vect(0, 10000, 0), vect(0, 0, 0))
     eventPlayer.Reinhardt = getLastCreatedEntity()
-    wait(0.5)
     eventPlayer.Reinhardt.startScalingSize(0, true)
     eventPlayer.Reinhardt.disableEnvironmentCollision(true)
     eventPlayer.Reinhardt.startModifyingVoicelinePitch(1.5, true)
     eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
     wait(0.25)
     eventPlayer.Reinhardt.startForcingPosition(updateEveryTick(raycast(eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0), eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0) + eventPlayer.getFacingDirection() * Shield_Distance, null, eventPlayer, false).getHitPosition()), true)
-    wait(0.3)
     eventPlayer.Reinhardt.startFacing(eventPlayer.getFacingDirection(), 10000, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
-    wait(0.2)
     eventPlayer.Reinhardt.startScalingBarriers(8, true)
     eventPlayer.Reinhardt.disableNameplatesFor(getAllPlayers())
     wait(0.116)
@@ -462,6 +461,9 @@ def GetBehindMeShield():
         eventPlayer.Facing_Direction = eventPlayer.getFacingDirection()
         eventPlayer.Reinhardt.setInvisibility(Invis.NONE)
         eventPlayer.Reinhardt.startForcingButton(Button.SECONDARY_FIRE)
+        eventPlayer.disallowButton(Button.SECONDARY_FIRE)
+        wait(0.25)
+        eventPlayer.allowButton(Button.SECONDARY_FIRE)
         waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false, 99999)
         eventPlayer.Facing_Direction = 0
         eventPlayer.Reinhardt.stopForcingButton(Button.SECONDARY_FIRE)
@@ -618,9 +620,11 @@ rule "Choose/Check Passive Mod":
                 if eventPlayer.getCurrentHero() == Hero.REINHARDT:
                     return
                 else:
-                    async(GetBehindMe(), AsyncBehavior.NOOP)
-                    async(GetBehindMeShield(), AsyncBehavior.NOOP)
-                    async(GetBehindMeOff(), AsyncBehavior.NOOP)
+                    if eventPlayer.Reinhardt == 0:
+                        async(GetBehindMe(), AsyncBehavior.NOOP)
+                    else:
+                        async(GetBehindMeShield(), AsyncBehavior.NOOP)
+                        async(GetBehindMeOff(), AsyncBehavior.NOOP)
                 break
 
     wait(0.116)

@@ -425,30 +425,42 @@ rule "Mechanics - Open Mod Menu":
     createInWorldText(eventPlayer, eventPlayer.Passive_Menu_String_Text, eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.LIME_GREEN, SpecVisibility.DEFAULT)
     eventPlayer.Mod_Menu_Text = getLastCreatedText()
     wait(0.2)
+
     waitUntil(eventPlayer.isHoldingButton(Button.MELEE) == true, 9999)
     destroyInWorldText(eventPlayer.Mod_Menu_Text)
-    eventPlayer.Mod_Menu_Select = 2
+
     wait(0.5)
     eventPlayer.Active_Menu_String_Text = Active_Mod_Strings[eventPlayer.Active_Mod_Index]
+    eventPlayer.Mod_Menu_Select = 2
     createInWorldText(eventPlayer, eventPlayer.Active_Menu_String_Text, eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.ORANGE, SpecVisibility.DEFAULT)
     eventPlayer.Mod_Menu_Text = getLastCreatedText()
     eventPlayer.Active_Mod_Skill_Toggle = 0
+
     eventPlayer.disallowButton(Button.MELEE)
     wait(0.2)
     eventPlayer.allowButton(Button.MELEE)
+
     waitUntil(eventPlayer.isHoldingButton(Button.MELEE) == true, 9999)
     eventPlayer.Mod_Menu_Select = 3
-    eventPlayer.Passive_Mod = eventPlayer.Passive_Mod_Index
-    eventPlayer.Active_Mod = eventPlayer.Active_Mod_Index
-    eventPlayer.allowButton(Button.PRIMARY_FIRE)
-    eventPlayer.allowButton(Button.SECONDARY_FIRE)
-    eventPlayer.setAimSpeed(100)
     destroyInWorldText(eventPlayer.Mod_Menu_Text)
-    wait(1)
-    eventPlayer.clearStatusEffect(Status.HACKED)
-    eventPlayer.clearStatusEffect(Status.ROOTED)
-    eventPlayer.clearStatusEffect(Status.PHASED_OUT)
-    wait(1)
+    wait(0.5)
+    if eventPlayer.Passive_Mod_Index == 5 and (eventPlayer.Active_Mod_Index in [5, 24]):
+        createInWorldText(eventPlayer, "Incompatible mods! Choose again.", eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED, SpecVisibility.DEFAULT)
+        eventPlayer.Mod_Menu_Text = getLastCreatedText()
+        wait(1.5)
+        destroyInWorldText(eventPlayer.Mod_Menu_Text)
+        goto RULE_START
+    else:
+        eventPlayer.setAimSpeed(100)
+        eventPlayer.clearStatusEffect(Status.HACKED)
+        eventPlayer.clearStatusEffect(Status.ROOTED)
+        eventPlayer.clearStatusEffect(Status.PHASED_OUT)
+        eventPlayer.Passive_Mod = eventPlayer.Passive_Mod_Index
+        eventPlayer.Active_Mod = eventPlayer.Active_Mod_Index
+        wait(0.5)
+        eventPlayer.allowButton(Button.PRIMARY_FIRE)
+        eventPlayer.allowButton(Button.SECONDARY_FIRE)
+        wait(0.5)
 
 
 rule "Mechanics - Jump to Middle of Passive Mods (Ability 1)":

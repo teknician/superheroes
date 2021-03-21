@@ -22,11 +22,10 @@ rule "Active Mods 1 - Blink": #2
     @Condition eventPlayer.Active_Mod == 2
     @Condition eventPlayer.isHoldingButton(Button.MELEE) == true
 
-    playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.WHITE, eventPlayer.getPosition(), 100)
     playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR, Color.TEAM_1, eventPlayer.getPosition(), 1)
     eventPlayer.teleport(eventPlayer + eventPlayer.getFacingDirection() * 6)
-    wait(0.2)
-    playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, Color.WHITE, eventPlayer.getPosition(), 0.75)
+    playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 500)
+    playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 0.75)
     wait(2)    
 
 
@@ -68,7 +67,7 @@ rule "Active Mods 4 - Zero Gravity": #5
     @Hero all
     @Condition eventPlayer.Mod_Menu_Select == 3
     @Condition eventPlayer.Active_Mod == 5
-    @Condition eventPlayer.Active_Mod_Skill_Toggle = 0
+    @Condition eventPlayer.Active_Mod_Skill_Toggle == 0
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
     @Condition eventPlayer.isInAir() == true
 
@@ -130,7 +129,7 @@ rule "Active Mods 7 - Entangling Roots": #8
     
     playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION_SOUND, Color.WHITE, eventPlayer.Mod_Effect_Target, 50)
     playEffect(getAllPlayers(), DynamicEffect.GOOD_EXPLOSION, Color.GREEN, worldVector(vect(0, 0.75, 1), eventPlayer, Transform.ROTATION_AND_TRANSLATION), 1)
-    eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(Team.ALL)
+    eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
     eventPlayer.getPlayerClosestToReticle(Team.ALL).setStatusEffect(eventPlayer, Status.ROOTED, 1.5)
     bigMessage(eventPlayer.Mod_Effect_Target, "\n\nROOTED")
     createEffect(getAllPlayers(), Effect.LIGHT_SHAFT, Color.GREEN, eventPlayer.Mod_Effect_Target + Vector.DOWN, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
@@ -479,7 +478,6 @@ rule "Active Mods 24 - Colossus": #25
     @Condition eventPlayer.isHoldingButton(Button.INTERACT)
     @Condition eventPlayer.isMoving() == false
     @Condition isInSetup() == false
-    @Condition isGameInProgress() == true
 
     wait(1.5, Wait.ABORT_WHEN_FALSE)
     eventPlayer.setGravity(500)
