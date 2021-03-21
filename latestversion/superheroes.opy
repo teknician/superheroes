@@ -734,6 +734,7 @@ rule ("Passive Mods 32 - Forcefield") {
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 8, To World, Cancel Contrary Motion);
+                Play Effect(All Players(All Teams), Pharah Concussive Blast Effect, Color(Team 1), Event Player, 0.5);
             End;
             Wait(0.116, Ignore Condition);
         End;
@@ -746,13 +747,11 @@ rule ("Passive Mods 32 - Forcefield FX") {
         ForcefieldFX;
     }
     actions {
-        Abort If(Entity Exists((Event Player).Passive_Mod_FX));
+        Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 5, Visible To Position and Radius);
-        Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
-        While(Compare((Event Player).Affected_Players, >, 0));
-            Play Effect(All Players(All Teams), Pharah Concussive Blast Effect, Color(Team 1), Event Player, 1);
-            Wait(0.2, Ignore Condition);
-        End;
+        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
+        Create Effect(All Players(All Teams), L√∫cio Sound Barrier Protected Sound, Color(Team 1), Event Player, 25, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
 
@@ -1025,7 +1024,7 @@ rule ("Active Mods 1 - Blink") {
         If(Not(Is Moving(Event Player)));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Position Of(Event Player), 1);
         Else If(Is Moving(Event Player));
-            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Multiply(Add(Position Of(Event Player), Facing Direction Of(Event Player)), 1.5), 1);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Add(Position Of(Event Player), Multiply(Facing Direction Of(Event Player), 1.2)), 1);
         End;
         Wait(2, Ignore Condition);
     }
@@ -2243,6 +2242,8 @@ rule ("Passive Mods - Remove FX on Death") {
     actions {
         Destroy Effect((Event Player).Passive_Mod_FX);
         Destroy Icon((Event Player).Passive_Mod_FX);
+        Destroy Effect((Event Player).Passive_Mod_FX_Array);
+        Destroy Icon((Event Player).Passive_Mod_FX_Array);
     }
 }
 
