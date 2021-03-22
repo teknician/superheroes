@@ -131,7 +131,7 @@ rule "Active Mods 7 - Entangling Roots": #8
     @Condition eventPlayer.Active_Mod == 8
     @Condition eventPlayer.CastMelee_Mod_Conditions == 1
     
-    playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION_SOUND, getOppositeTeam(eventPlayer.getTeam()), eventPlayer.Mod_Effect_Target, 200)
+    playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, eventPlayer.getTeam(), eventPlayer.Mod_Effect_Target, 1)
     playEffect(getAllPlayers(), DynamicEffect.GOOD_EXPLOSION, Color.GREEN, worldVector(vect(0, 0.75, 1), eventPlayer, Transform.ROTATION_AND_TRANSLATION), 1)
     eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
     eventPlayer.getPlayerClosestToReticle(Team.ALL).setStatusEffect(eventPlayer, Status.ROOTED, 1.5)
@@ -191,7 +191,9 @@ rule "Active Mods 8 - Blind": #9
     eventPlayer.Mod_Effect_Target.enableHeroHud()
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR_SOUND, null, eventPlayer.Mod_Effect_Target.getPosition(), 200)
     destroyEffect(eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array)
-    wait(8)
+    wait(4)
+    destroyEffect(eventPlayer.Mod_Effect_Target.Active_Mod_FX) #if player dies before beam disconnects
+    wait(7)
 
 
 rule "Active Mods 9 - Fear": #10

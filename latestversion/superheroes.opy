@@ -1,6 +1,6 @@
 settings {
     "main": {
-        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER"
+        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.3. CODE: VHAV8"
     },
     "lobby": {
         "allowPlayersInQueue": true,
@@ -83,6 +83,7 @@ playervar Mod_Effect_Caster
 playervar Mod_Effect_Target 
 playervar CastMelee_Mod_Conditions 
 playervar CastMelee_Mod_Conditions_Ally 
+playervar Melee_Mod_Conditions_Ally
 playervar Third_Person_Camera_Toggle 
 playervar Player_ATK_SPD_HP 
 playervar Player_Position 
@@ -90,7 +91,8 @@ playervar Affected_Players
 playervar Current_Hero 
 playervar Current_Hero_2
 playervar Index
-playervar Active_Index 
+playervar Active_Index
+playervar Temp_Index
 playervar Facing_Direction 
 playervar Is_Colossus 
 playervar Is_Blind 
@@ -118,12 +120,11 @@ subroutine Archmage3
 subroutine Archmage4 
 subroutine LevelUp 
 subroutine Aimbot 
-subroutine CheatDeath 
-subroutine CheatDeathOff
+subroutine CheatDeath
 subroutine RaidBoss 
 subroutine DarkRitual 
 subroutine ManaShield
-subroutine UltimatePerSec5 
+subroutine UltimatePerSec2
 subroutine ThornsFX 
 subroutine FrostArmorFX 
 subroutine BootsOfMobility 
@@ -241,10 +242,10 @@ rule "Initialization - Passive Mod Strings":
     Passive_Mod_Strings[17] = "Knockout: Melee attacks cause enemies to fall asleep (8 sec. CD)"
     Passive_Mod_Strings[18] = "Cheat Death: Damage that would normally kill you instead renders you unkillable for 3 sec. (10 sec. CD)"
     Passive_Mod_Strings[19] = "Raid Boss: Gain 300% HP and 150% damage, but lose 15% speed and reveal your location to enemes"
-    Passive_Mod_Strings[20] = "Dark Ritual: Sacrifice 50% of your Max HP to gain 50% ultimate charge every 2 sec."
+    Passive_Mod_Strings[20] = "Dark Ritual: Sacrifice 25% of your Max HP to gain 25% ultimate charge every 4 sec."
     Passive_Mod_Strings[21] = "Ambush: Melee attacking an enemy from behind insta-kills them"
     Passive_Mod_Strings[22] = "Mana Shield: While above 15% ultimate charge, heal for any damage taken, but drain charge"
-    Passive_Mod_Strings[23] = "Gain 10% ultimate charge every 2 sec."
+    Passive_Mod_Strings[23] = "Gain 2.5% ultimate charge every second."
     Passive_Mod_Strings[24] = "Revenge: Respawn instantly at your killer's location"
     Passive_Mod_Strings[25] = "Thorns: Attackers take 15% of their Max HP in damage (up to 2 times per sec.)"
     Passive_Mod_Strings[26] = "Frost Armor: Attackers within 6 meters freeze when they damage you"
@@ -267,7 +268,7 @@ rule "Initialization - Active Mod Strings":
     Active_Mod_Strings[6] = "Corruption: Melee deals 40% of an enemy's max HP over 4 sec. (25m range)"
     Active_Mod_Strings[7] = "Translocate: Melee to swap positions with an enemy (25m range, 8 sec. CD)"
     Active_Mod_Strings[8] = "Entangling Roots: Melee roots an enemy for 1.5 sec. (25m range, 8 sec. CD)"
-    Active_Mod_Strings[9] = "Blind: Target an enemy and press melee to blind them (8 sec. CD)"
+    Active_Mod_Strings[9] = "Blind: Target an enemy and press melee to blind them (11 sec. CD)"
     Active_Mod_Strings[10] = "Fear: Melee forces a target enemy to run away from you (25m range, 8 sec. CD)"
     Active_Mod_Strings[11] = "Shadowstep: Melee teleports you behind your target  enemy (25m range, 7 sec. CD)"
     Active_Mod_Strings[12] = "Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage"
@@ -286,7 +287,7 @@ rule "Initialization - Active Mod Strings":
 
 
 rule "Initialization - HUD Text Instructions":
-    hudSubtext(getAllPlayers(), "Mod Menu...............Reload + Interact", HudPosition.LEFT, 2, Color.LIME_GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudSubtext(getAllPlayers(), "Mod Menu...............Hold Reload + Interact", HudPosition.LEFT, 2, Color.LIME_GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
     hudSubheader(getAllPlayers(), "Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact\nJump To Start of List......Ultimate\nTo Middle of List..............Ability 1\nJump To End of List.........Ability 2\nChoose Mod.....................Left/Right Click\nConfirm Mod...................Melee", HudPosition.LEFT, 3, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 rule "Initialization - Current Mods HUD Text (Passive)":
@@ -310,9 +311,9 @@ rule "Player Welcome Message - Joined":
     @Condition isGameInProgress() == true
     
     #wait.
-    wait(18)
+    wait(16)
     playEffect(eventPlayer, DynamicEffect.HANZO_SONIC_ARROW_INITIAL_PULSE_SOUND, null, eventPlayer.getPosition(), 4000)
-    bigMessage(eventPlayer, "Welcome to SUPERPOWERS! Hold R + F to get started and build your hero!")
+    bigMessage(eventPlayer, "Welcome to SUPERPOWERS! Hold {} + {} to get started and build your hero!".format(buttonString(Button.RELOAD), buttonString(Button.INTERACT)))
     #wait..
     wait(8)
     playEffect(eventPlayer, DynamicEffect.HANZO_SONIC_ARROW_INITIAL_PULSE_SOUND, null, eventPlayer.getPosition(), 4000)
@@ -329,10 +330,8 @@ rule "Player Welcome Message - Start":
     @Condition isInSetup() == true
     @Condition isMatchBetweenRounds() == false
     
-    setMatchTime(5)
-    #setMatchTime(75)
     #wait.
-    wait(11)
+    wait(10)
     playEffect(eventPlayer, DynamicEffect.HANZO_SONIC_ARROW_INITIAL_PULSE_SOUND, null, eventPlayer.getPosition(), 4000)
     bigMessage(eventPlayer, "Welcome to SUPERPOWERS! Hold R + F to get started and build your hero!")
     #wait..
@@ -344,10 +343,10 @@ rule "Player Welcome Message - Start":
     playEffect(eventPlayer, DynamicEffect.HANZO_SONIC_ARROW_INITIAL_PULSE_SOUND, null, eventPlayer.getPosition(), 4000)
     bigMessage(eventPlayer, "More commands in top left!")
 
-rule "Optional - Display Diagnostics":
+/* rule "Optional - Display Diagnostics":
     hudHeader(getAllPlayers(), "Average Load: {0}".format(getAverageServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudHeader(getAllPlayers(), "Peak: {0}".format(getPeakServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudHeader(getAllPlayers(), "Server Load: {0}".format(getServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+    hudHeader(getAllPlayers(), "Server Load: {0}".format(getServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT) */
 
 rule "Camera - 3rd Person Toggle":
     @Event eachPlayer
@@ -359,12 +358,12 @@ rule "Camera - 3rd Person Toggle":
     @Condition eventPlayer.Is_Blind == false
     
     if eventPlayer.Third_Person_Camera_Toggle == 0:
-        wait(0.2, Wait.ABORT_WHEN_FALSE)
+        wait(0.116)
         eventPlayer.startCamera(raycast(eventPlayer, eventPlayer + worldVector(vect(-0.5, 0.06, 0.5), eventPlayer, Transform.ROTATION) + Vector.UP * 1.5 + eventPlayer.getFacingDirection() * -3, null, eventPlayer, false).getHitPosition(), eventPlayer + eventPlayer.getFacingDirection() * 1000, 40)
         eventPlayer.Third_Person_Camera_Toggle = 1
         return
     elif eventPlayer.Third_Person_Camera_Toggle == 1:
-        wait(0.2, Wait.ABORT_WHEN_FALSE)
+        wait(0.116)
         eventPlayer.stopCamera()
         eventPlayer.Third_Person_Camera_Toggle = 0
 
@@ -399,29 +398,44 @@ rule "Mechanics - Conditions to use Friendly Melee Cast Mods":
     eventPlayer.CastMelee_Mod_Conditions_Ally = 0
 
 
+rule "Mechanics - Conditions to use Friendly Melee Mods":
+    @Event eachPlayer
+    @Hero all
+    @Condition distance(eventPlayer, eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam())) <= 2.5
+    @Condition eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam()).isAlive() == true
+    @Condition isInLoS(eventPlayer, eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam()), BarrierLos.BLOCKED_BY_ENEMY_BARRIERS) == true
+    @Condition eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam()).hasStatusEffect(Status.PHASED_OUT) == false
+    @Condition eventPlayer.isInViewAngle(eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam()), 20) == true
+    @Condition eventPlayer.isMeleeing() == true
+    
+    eventPlayer.Melee_Mod_Conditions_Ally = 1
+    wait(0.66)
+    eventPlayer.Melee_Mod_Conditions_Ally = 0
+
+
 rule "Mechanics - Open Mod Menu":
     @Event eachPlayer
     @Hero all
-    @Condition getMatchTime() > 7
+    @Condition getMatchTime() > 5
+    @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.isStanding() == true
     @Condition eventPlayer.Is_Colossus == false
 
-    wait(0.25, Wait.ABORT_WHEN_FALSE)
+    wait(0.116, Wait.ABORT_WHEN_FALSE)
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_DISAPPEAR_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 75)
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_DISAPPEAR, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
     eventPlayer.teleport(getSpawnPoints(eventPlayer.getTeam()))
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 75)
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATOR_REAPPEAR, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
-    wait(0.116)
     PlayerReset()
     eventPlayer.Passive_Mod_Index = eventPlayer.Passive_Mod
     eventPlayer.Passive_Mod = 0
     eventPlayer.Active_Mod_Index = eventPlayer.Active_Mod
     eventPlayer.Active_Mod = 0
     eventPlayer.Mod_Menu_Select = 1
-    wait(0.116)
+    wait(0.25)
     eventPlayer.disallowButton(Button.PRIMARY_FIRE)
     eventPlayer.disallowButton(Button.SECONDARY_FIRE)
     eventPlayer.setStatusEffect(null, Status.ROOTED, 9999)
@@ -452,10 +466,10 @@ rule "Mechanics - Open Mod Menu":
     eventPlayer.Mod_Menu_Select = 3
     destroyInWorldText(eventPlayer.Mod_Menu_Text)
     wait(0.5)
-    if eventPlayer.Passive_Mod_Index == 5 and (eventPlayer.Active_Mod_Index in [5, 24]):
+    if (eventPlayer.Passive_Mod_Index == 5 and (eventPlayer.Active_Mod_Index in [5, 24])):
         createInWorldText(eventPlayer, "Incompatible mods! Choose again.", eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED, SpecVisibility.DEFAULT)
         eventPlayer.Mod_Menu_Text = getLastCreatedText()
-        wait(1.5)
+        wait(1.25)
         destroyInWorldText(eventPlayer.Mod_Menu_Text)
         goto RULE_START
     else:
@@ -661,19 +675,7 @@ def SmolModeDeath():
     eventPlayer.startModifyingVoicelinePitch(1, true)
     eventPlayer.setMaxHealth(100)
     eventPlayer.setDamageDealt(100)
-
-def CheatDeath():
-    @Name "Passive Mods - Cheat Death"
-
-    eventPlayer.setStatusEffect(null, Status.UNKILLABLE, 99999)
-    createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.PURPLE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Passive_Mod_FX_Array[0] = getLastCreatedEntity()
-    createEffect(getAllPlayers(), Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED_SOUND, null, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Passive_Mod_FX_Array[1] = getLastCreatedEntity()
-    wait(3)
-    destroyEffect(eventPlayer.Passive_Mod_FX_Array)
-    eventPlayer.clearStatusEffect(Status.UNKILLABLE)
-    wait(10)
+    
     
 def CorpseExplosion():
     @Name "Passive Mods - Corpse Explosion (Active)"
@@ -718,6 +720,16 @@ def ColossusDeath():
     wait(3)
     eventPlayer.setGravity(50)
 
+rule "Fix Mod Menu Bug":
+    @Event playerDied
+    eventPlayer.disallowButton(Button.RELOAD)
+    eventPlayer.disallowButton(Button.INTERACT)
+    eventPlayer.Temp_Index = eventPlayer.Mod_Menu_Select
+    eventPlayer.Mod_Menu_Select = 0
+    wait(1)
+    eventPlayer.allowButton(Button.RELOAD)
+    eventPlayer.allowButton(Button.INTERACT)
+    eventPlayer.Mod_Menu_Select = eventPlayer.Temp_Index
 
 rule "Mods PlayerDied Events":
     @Event playerDied
@@ -734,9 +746,6 @@ rule "Mods PlayerDied Events":
 
     elif (eventPlayer.Passive_Mod == 13): 
         async(CorpseExplosion(),AsyncBehavior.NOOP)
-
-    elif (eventPlayer.Passive_Mod == 18):
-        async(CheatDeath(),AsyncBehavior.NOOP)
 
     elif (eventPlayer.Passive_Mod == 24 and attacker != victim and [player for player in getAllPlayers() if player == attacker] == true):
         async(Revenge(),AsyncBehavior.NOOP)
@@ -935,7 +944,7 @@ rule "Mods PlayerTookDamage Events":
     
     elif (eventPlayer.isAlive() == true and attacker != victim):
 
-        if (eventPlayer.Passive_Mod == 25):
+        if (eventPlayer.Passive_Mod == 25 and eventPlayer.Is_Colossus == false):
             async(ThornsDamaged(),AsyncBehavior.NOOP)
 
         elif (eventPlayer.Passive_Mod == 26 and distance(attacker, eventPlayer) <= 6 and isInLoS(attacker, eventPlayer, BarrierLos.BLOCKED_BY_ENEMY_BARRIERS) == true):

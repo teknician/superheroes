@@ -24,6 +24,13 @@ rule "Passive Mods - Get Behind Me (Preloader)":
     eventPlayer.Current_Hero = eventPlayer.getCurrentHero()
     eventPlayer.setPrimaryFireEnabled(true) */
 
+rule "Initialize":
+    @Condition isInSetup() == true
+    @Condition isMatchBetweenRounds() == false
+
+    setMatchTime(5)
+    #setMatchTime(75)
+
 rule "Initialize Mod Menu": #If you haven't opened the menu yet, don't check for mods.
     @Event eachPlayer
     @Hero all
@@ -102,8 +109,8 @@ def Health150(): # 4
 def SmolMode(): # 5
     @Name "Passive Mods 4 - Smol Mode"
     if  eventPlayer.Active_Mod not in [5,24] \
-    and eventPlayer.isHoldingButton(Button.CROUCH) == true:
-        wait(0.25)    
+    and eventPlayer.isCrouching() == true:
+        wait(0.2)    
         eventPlayer.startScalingSize(0.4, true)
         eventPlayer.setDamageDealt(50)
         eventPlayer.setMoveSpeed(150)
@@ -111,17 +118,19 @@ def SmolMode(): # 5
         eventPlayer.setMaxHealth(50)
         eventPlayer.Passive_Mod_Skill_Toggle = 1
         eventPlayer.setCrouchEnabled(false)
-        wait(1.5)
+        wait(0.75)
         eventPlayer.setCrouchEnabled(true)
         waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == true, 99999)
-        wait(0.25)
+        wait(0.2)
+        eventPlayer.setCrouchEnabled(false)
         eventPlayer.startScalingSize(1, true)
         eventPlayer.setDamageDealt(100)
         eventPlayer.setMoveSpeed(100)
         eventPlayer.startModifyingVoicelinePitch(1, true)
         eventPlayer.setMaxHealth(100)
         eventPlayer.Passive_Mod_Skill_Toggle = 0
-        wait(1.5)
+        wait(0.75)
+        eventPlayer.setCrouchEnabled(true)
 
 
 def SmolModeFX(): # 5
@@ -306,26 +315,21 @@ def Aimbot(): #14
 #@Name "Passive Mods 14 - Fast Projectiles"
 
 
-/* def CheatDeath(): # 18
+def CheatDeath(): # 18
     @Name "Passive Mods 17 - Cheat Death (On)"
     if eventPlayer.getHealth() != 1:
         eventPlayer.setStatusEffect(null, Status.UNKILLABLE, 9999)
         eventPlayer.Passive_Mod_Skill_Toggle = 1
-
-
-def CheatDeathOff(): # 18
-    @Name "Passive Mods 17 - Cheat Death (Off)"
-    if eventPlayer.getHealth() == 1:
-        createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.PURPLE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.Passive_Mod_FX_Array[0] = getLastCreatedEntity()
-        createEffect(getAllPlayers(), Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED_SOUND, null, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        eventPlayer.Passive_Mod_FX_Array[1] = getLastCreatedEntity()
-        wait(3)
-        destroyEffect(eventPlayer.Passive_Mod_FX_Array)
-        eventPlayer.clearStatusEffect(Status.UNKILLABLE)
-        eventPlayer.Passive_Mod_Skill_Toggle = 0
-        wait(10)
-        eventPlayer.Passive_Mod_Skill_Toggle = 1 */
+    waitUntil(eventPlayer.getHealth() == 1, 99999)
+    createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.PURPLE, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Passive_Mod_FX_Array[0] = getLastCreatedEntity()
+    createEffect(getAllPlayers(), Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED_SOUND, null, eventPlayer, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Passive_Mod_FX_Array[1] = getLastCreatedEntity()
+    wait(3)
+    destroyEffect(eventPlayer.Passive_Mod_FX_Array)
+    eventPlayer.clearStatusEffect(Status.UNKILLABLE)
+    eventPlayer.Passive_Mod_Skill_Toggle = 0
+    wait(10)
 
 
 def RaidBoss(): # 19
@@ -344,10 +348,10 @@ def RaidBoss(): # 19
 
 def DarkRitual(): # 20
     @Name "Passive Mods 19 - Dark Ritual"
-    eventPlayer.setMaxHealth(50)
+    eventPlayer.setMaxHealth(75)
     while eventPlayer.getUltCharge() != 100 and eventPlayer.isUsingUltimate() == false:
-        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 40)
-        wait(3)
+        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 25)
+        wait(4)
 
 def ManaShield(): # 22
     @Name "Passive Mods 21 - Mana Shield"
@@ -359,10 +363,10 @@ def ManaShield(): # 22
         destroyEffect(eventPlayer.Passive_Mod_FX)
 
 
-def UltimatePerSec5(): # 23
+def UltimatePerSec2(): # 23
     @Name "Passive Mods 22 - 5% Ultimate / sec"
     while eventPlayer.getUltCharge() < 100:
-        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 5)
+        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 2.5)
         wait(1)
 
 
@@ -371,6 +375,9 @@ def ThornsFX(): # 25
     while eventPlayer.isAlive() == true:
         if entityExists(eventPlayer.Passive_Mod_FX):
             return
+        elif eventPlayer.Is_Colossus == true:
+            destroyEffect(eventPlayer.Passive_Mod_FX)
+            waitUntil(eventPlayer.Is_Colossus == false, 90)
         createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.GREEN, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         eventPlayer.Passive_Mod_FX = getLastCreatedEntity()
         wait(1)
@@ -422,10 +429,10 @@ def Boxer(): # 30
 def Forcefield():
     @Name "Passive Mods 32 - Forcefield"
     while eventPlayer.Passive_Mod == 32:
-        eventPlayer.Affected_Players = getPlayersInRadius(eventPlayer, 5, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)
+        eventPlayer.Affected_Players = getPlayersInRadius(eventPlayer, 5.5, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)
         for eventPlayer.Index in range(len(eventPlayer.Affected_Players)):
-            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.6, 0), 4.5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
-            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(directionTowards(eventPlayer.getPosition(), eventPlayer.Affected_Players[eventPlayer.Index].getPosition()), 8, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+           #  eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.6, 0), 5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
+            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(directionTowards(eventPlayer.getPosition() * vect(1, 0, 1), ((eventPlayer.Affected_Players[eventPlayer.Index].getPosition() * vect (1, 0, 1))/*  + Vector.UP */)), 10, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
             playEffect(getAllPlayers(), DynamicEffect.ECHO_STICKY_BOMB_EXPLOSION, null, eventPlayer, 0.5)
             wait(0.116)
         wait(0.116)
@@ -437,7 +444,7 @@ def ForcefieldFX():
         return
     createEffect(getAllPlayers(), Effect.RING, Color.AQUA, eventPlayer, 4.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Passive_Mod_FX_Array[0] = getLastCreatedEntity()
-    createEffect(getAllPlayers(), Effect.LUCIO_SOUND_BARRIER_PROTECTED_SOUND, Color.TEAM_1, eventPlayer, 17.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.LUCIO_SOUND_BARRIER_PROTECTED_SOUND, Color.TEAM_1, eventPlayer, 22.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Passive_Mod_FX_Array[1] = getLastCreatedEntity()
 
 
@@ -521,21 +528,20 @@ def GetBehindMeOff():
 rule "Choose/Check Passive Mod":
     @Event eachPlayer
     @Hero all
-    @Condition (eventPlayer.isHoldingButton(Button.CROUCH) or \
+    @Condition eventPlayer.Mod_Menu_Select == 3
+  /*   (eventPlayer.isHoldingButton(Button.CROUCH) or \
     eventPlayer.isHoldingButton(Button.MELEE) or \
     eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) or \
     eventPlayer.isHoldingButton(Button.INTERACT) or 
     eventPlayer.isCrouching() or 
     eventPlayer.isMoving() or \
-    eventPlayer.Mod_Menu_Select == 3 or \
     entityExists(eventPlayer.Passive_Mod_FX) or \
-    entityExists(eventPlayer.Passive_Mod_FX_Array) or \
-    getPlayersInRadius(eventPlayer, 5, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS) > 0)
+    entityExists(eventPlayer.Passive_Mod_FX_Array) */
     
     if eventPlayer.Mod_Menu_Select == 0:
         return
     if eventPlayer.hasStatusEffect(Status.STUNNED) == true or eventPlayer.isDead():
-        wait(2)
+        wait(1.5)
         goto RULE_START
     else:
         wait(0.116)
@@ -599,10 +605,9 @@ rule "Choose/Check Passive Mod":
                 break
             # miss 16 Victory Rush - In PlayerEarnedElimination
             # miss 17 Knockout - In PlayerDealtDamage
-            # miss 18 - convert to PlayerDied case 18:
-                #CheatDeath()
-                #async(CheatDeathOff(),AsyncBehavior.NOOP)
-                #break
+            case 18:
+                async(CheatDeath(),AsyncBehavior.NOOP)
+                break
             case 19:
                 RaidBoss()
                 break
@@ -614,7 +619,7 @@ rule "Choose/Check Passive Mod":
                 ManaShield()
                 break
             case 23:
-                async(UltimatePerSec5(), AsyncBehavior.NOOP)
+                async(UltimatePerSec2(), AsyncBehavior.NOOP)
                 break
             # miss 24 Revenge - In PlayerDied
             case 25:
