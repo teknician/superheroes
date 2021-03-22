@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.7. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.8. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -756,8 +756,8 @@ rule ("Passive Mods 32 - Forcefield") {
         While(Compare((Event Player).Passive_Mod, ==, 32));
             Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 5, To Player, Cancel Contrary Motion);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Add(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Multiply(Up, 1.75))), 10, To World, Cancel Contrary Motion);
+                "eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.6, 0), 5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)"
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Multiply(Position Of(Event Player), Vector(1, 0, 1)), Multiply(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Vector(1, 0, 1))), 10, To World, Cancel Contrary Motion);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
                 Wait(0.116, Ignore Condition);
             End;
@@ -2737,3 +2737,4 @@ rule ("Mods PlayerEarnedElimination Events") {
             Start Rule(VictoryRush, Do Nothing);
     }
 }
+
