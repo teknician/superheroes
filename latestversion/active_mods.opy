@@ -22,11 +22,15 @@ rule "Active Mods 1 - Blink": #2
     @Condition eventPlayer.Active_Mod == 2
     @Condition eventPlayer.isHoldingButton(Button.MELEE) == true
 
-    playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR, Color.TEAM_1, eventPlayer.getPosition(), 1)
-    eventPlayer.teleport(eventPlayer + eventPlayer.getFacingDirection() * 6)
-    playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, Color.TEAM_1, eventPlayer.getPosition(), 500)
-    playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, Color.TEAM_2, eventPlayer.getPosition(), 0.75)
-    wait(2)    
+    playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_DISAPPEAR, eventPlayer.getTeam(), eventPlayer.getPosition(), 3)
+    wait(0.25)
+    eventPlayer.teleport(eventPlayer + eventPlayer.getFacingDirection() * 7)
+    playEffect(getAllPlayers(), DynamicEffect.SYMMETRA_TELEPORTER_REAPPEAR_SOUND, getOppositeTeam(eventPlayer.getTeam()), eventPlayer.getPosition(), 200)
+    if eventPlayer.isMoving() == false:
+        playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+    elif eventPlayer.isMoving() == true:
+        playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, eventPlayer.getTeam(), eventPlayer.getPosition() + eventPlayer.getFacingDirection() * 1.2, 1)
+    wait(2.25)    
 
 
 rule "Active Mods 2 - Death Grip": #3
@@ -75,7 +79,7 @@ rule "Active Mods 4 - Zero Gravity": #5
     wait(0.5)
     eventPlayer.Active_Mod_Skill_Toggle = 1
     wait(0.5)
-    waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == true and eventPlayer.isInAir() == true and eventPlayer.Active_Mod_Skill_Toggle == 0, 99999)
+    waitUntil(eventPlayer.isHoldingButton(Button.CROUCH) == true and eventPlayer.isInAir() == true and eventPlayer.Active_Mod_Skill_Toggle == 1, 99999)
     eventPlayer.setGravity(100)
     wait(0.5)
     eventPlayer.Active_Mod_Skill_Toggle = 0
@@ -127,11 +131,11 @@ rule "Active Mods 7 - Entangling Roots": #8
     @Condition eventPlayer.Active_Mod == 8
     @Condition eventPlayer.CastMelee_Mod_Conditions == 1
     
-    playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION_SOUND, Color.WHITE, eventPlayer.Mod_Effect_Target, 50)
+    playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION_SOUND, getOppositeTeam(eventPlayer.getTeam()), eventPlayer.Mod_Effect_Target, 200)
     playEffect(getAllPlayers(), DynamicEffect.GOOD_EXPLOSION, Color.GREEN, worldVector(vect(0, 0.75, 1), eventPlayer, Transform.ROTATION_AND_TRANSLATION), 1)
     eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
     eventPlayer.getPlayerClosestToReticle(Team.ALL).setStatusEffect(eventPlayer, Status.ROOTED, 1.5)
-    bigMessage(eventPlayer.Mod_Effect_Target, "\n\nROOTED")
+    bigMessage(eventPlayer.Mod_Effect_Target, "ROOTED")
     createEffect(getAllPlayers(), Effect.LIGHT_SHAFT, Color.GREEN, eventPlayer.Mod_Effect_Target + Vector.DOWN, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Active_Mod_FX = getLastCreatedEntity()
     eventPlayer.Mod_Effect_Target.applyImpulse(directionTowards(eventPlayer.Mod_Effect_Target, eventPlayer.Mod_Effect_Target), 0.01, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
@@ -330,11 +334,15 @@ rule "Active Mods 15 - Sneak": #16
 
     wait(1.25, Wait.ABORT_WHEN_FALSE)
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION, Color.BLUE, eventPlayer.getPosition() + Vector.UP / 2, 3)
+    playEffect(getAllPlayers(), DynamicEffect.REAPER_WRAITH_FORM_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 17.5)
     eventPlayer.setInvisibility(Invis.ALL)
     eventPlayer.Active_Mod_Skill_Toggle = 1
     waitUntil(eventPlayer.Active_Mod_Skill_Toggle == 1 and eventPlayer.isCrouching() == false, 99999)
     eventPlayer.setInvisibility(Invis.NONE)
     eventPlayer.Active_Mod_Skill_Toggle = 0
+    eventPlayer.setCrouchEnabled(false)
+    wait(0.5)
+    eventPlayer.setCrouchEnabled(true)
 
 
 rule "Active Mods 16 - Hex": #17
@@ -416,7 +424,7 @@ rule "Active Mods 21 - Lightning Bolt": #22
     @Event eachPlayer
     @Hero all
     @Condition eventPlayer.Mod_Menu_Select == 3
-    @Condition eventPlayer.Active_Mod == 21
+    @Condition eventPlayer.Active_Mod == 22
     @Condition eventPlayer.CastMelee_Mod_Conditions == 1
     @Condition eventPlayer.getUltCharge() >= 20
     
@@ -468,11 +476,11 @@ def Colossus_Reset():
     eventPlayer.setSecondaryFireEnabled(true)
     eventPlayer.stopCamera()
 
-rule "Active Mods 24 - Colossus": #25
+rule "Active Mods 24 - Colossus": #24
     @Event eachPlayer
     @Hero all
     @Condition eventPlayer.Mod_Menu_Select == 3
-    @Condition eventPlayer.Active_Mod == 25
+    @Condition eventPlayer.Active_Mod == 24
     @Condition eventPlayer.getUltCharge() == 100
     @Condition eventPlayer.isHoldingButton(Button.MELEE)
     @Condition eventPlayer.isHoldingButton(Button.INTERACT)
@@ -490,10 +498,11 @@ rule "Active Mods 24 - Colossus": #25
         if not eventPlayer.isAlive():
             return
         wait(0.116)
-    eventPlayer.Player_Position = eventPlayer.getPosition()
     eventPlayer.addHealthPool(Health.ARMOR, 5000, false, true)
     eventPlayer.Is_Colossus = true
     eventPlayer.startScalingSize(3, true)
+    wait(0.25)
+    eventPlayer.Player_Position = eventPlayer.getPosition()
     eventPlayer.startForcingPosition(eventPlayer.Player_Position, true)
     eventPlayer.setUltCharge(0)
     eventPlayer.setAbility1Enabled(false)
@@ -511,30 +520,30 @@ rule "Active Mods 24 - Colossus": #25
     #Reset player status upon death
     waitUntil(eventPlayer.isDead(), 90)
     kill(eventPlayer, null)
-    playEffect(getAllPlayers(), DynamicEffect.DVA_SELF_DESTRUCT_EXPLOSION, Color.TEAM_2, eventPlayer, 4)
-    playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_METEOR_STRIKE_IMPACT_SOUND, Color.TEAM_2, eventPlayer, 1000)
+    playEffect(getAllPlayers(), DynamicEffect.DVA_SELF_DESTRUCT_EXPLOSION, Color.WHITE, eventPlayer, 4)
+    playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_METEOR_STRIKE_IMPACT_SOUND, Color.WHITE, eventPlayer, 200)
     getPlayersInRadius(eventPlayer, 8, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, 1.75)
-    damage(getPlayersInRadius(eventPlayer, 8, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS), null, 300)
+    damage(getPlayersInRadius(eventPlayer, 8, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS), eventPlayer, 300)
     async(Colossus_Reset(),AsyncBehavior.NOOP)
     wait(20)
     if isGameInProgress() == false:
         async(Colossus_Reset(),AsyncBehavior.NOOP)
     
-rule "Active Mods 24 - Colossus (FX)": #25
+rule "Active Mods 24 - Colossus (FX)": #24
     @Event eachPlayer
     @Hero all
     @Condition eventPlayer.Mod_Menu_Select == 3
-    @Condition eventPlayer.Active_Mod == 25
+    @Condition eventPlayer.Active_Mod == 24
     @Condition eventPlayer.Is_Colossus == true
-    for eventPlayer.Active_Index in range(0, 10):
-        playEffect(getAllPlayers(), DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.TEAM_1, eventPlayer, 1000)
+    eventPlayer.Active_Index = 0
+    while eventPlayer.Active_Index < 10:
+        playEffect(getAllPlayers(), DynamicEffect.BRIGITTE_REPAIR_PACK_IMPACT_SOUND, Color.TEAM_2, eventPlayer, 100)
+        eventPlayer.Active_Index += 1
         wait(0.5)
-    createEffect(getAllPlayers(), Effect.WINSTON_PRIMAL_RAGE, null, eventPlayer, 1000, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_2, eventPlayer, 1000, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Active_Mod_FX_Array[0] = getLastCreatedEntity()
-    createEffect(getAllPlayers(), Effect.SMOKE_SOUND, null, eventPlayer, 1000, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.SMOKE_SOUND, Color.TEAM_2, eventPlayer, 100000, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Active_Mod_FX_Array[1] = getLastCreatedEntity()
-    createEffect(getAllPlayers(), Effect.TORBJORN_OVERLOADING, Color.GRAY, eventPlayer, 5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Active_Mod_FX_Array[2] = getLastCreatedEntity()
     waitUntil(eventPlayer.Is_Colossus == false or isInSetup() == true or isGameInProgress() == false, 99999)
     destroyEffect(eventPlayer.Active_Mod_FX_Array)
 

@@ -37,12 +37,20 @@ def PlayerReset(): #last
     @Name "Reset Player Parameters"
     if entityExists(eventPlayer.Passive_Mod_FX):
         destroyEffect(eventPlayer.Passive_Mod_FX)
+        destroyInWorldText(eventPlayer.Passive_Mod_FX)
+        destroyIcon(eventPlayer.Passive_Mod_FX)
     if entityExists(eventPlayer.Active_Mod_FX):
         destroyEffect(eventPlayer.Active_Mod_FX)
+        destroyInWorldText(eventPlayer.Active_Mod_FX)
+        destroyIcon(eventPlayer.Active_Mod_FX)
     if entityExists(eventPlayer.Passive_Mod_FX_Array):
         destroyEffect(eventPlayer.Passive_Mod_FX_Array)
+        destroyInWorldText(eventPlayer.Active_Mod_FX_Array)
+        destroyIcon(eventPlayer.Passive_Mod_FX_Array)
     if entityExists(eventPlayer.Active_Mod_FX_Array):
         destroyEffect(eventPlayer.Active_Mod_FX_Array)
+        destroyInWorldText(eventPlayer.Active_Mod_FX_Array)
+        destroyIcon(eventPlayer.Active_Mod_FX_Array)
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setDamageDealt(100)
     eventPlayer.setDamageReceived(100)
@@ -65,8 +73,9 @@ def PlayerReset(): #last
     eventPlayer.stopCamera()
     eventPlayer.stopAllHoT()
     eventPlayer.stopAllDoT()
-    eventPlayer.Player_ATK_SPD_HP = 0
+    eventPlayer.Affected_Players = 0
     eventPlayer.Passive_Mod_Skill_Toggle = 0
+    eventPlayer.Player_ATK_SPD_HP = 0
     eventPlayer.clearStatusEffect(Status.FROZEN)
     eventPlayer.clearStatusEffect(Status.BURNING)
     eventPlayer.clearStatusEffect(Status.HACKED)
@@ -134,7 +143,6 @@ def ImmolationAura(): # 7
         damage([player for player in getPlayersInRadius(eventPlayer, 6, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer], eventPlayer, 50)
         ([player for player in getPlayersInRadius(eventPlayer, 6, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS) if player != eventPlayer]).setStatusEffect(eventPlayer, Status.BURNING, 1.25)
         wait(1)
-
 
 def Spellslinger1(): # 8
     @Name "Passive Mods 7 - Spellslinger (Ability 1)"
@@ -275,6 +283,8 @@ def LevelUp(): #12
     eventPlayer.setMaxHealth(100 + eventPlayer.Player_ATK_SPD_HP)
     createInWorldText(getAllPlayers(), l"{0} {1}".format("Level: ", eventPlayer.Player_ATK_SPD_HP / 2.5), eventPlayer, 1, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.WHITE, SpecVisibility.DEFAULT)
     eventPlayer.Passive_Mod_FX = getLastCreatedText()
+    waitUntil(eventPlayer.Passive_Mod != 12, 99999)
+    destroyInWorldText(eventPlayer.Passive_Mod_FX)
 
 
 def Aimbot(): #14
@@ -296,7 +306,7 @@ def Aimbot(): #14
 #@Name "Passive Mods 14 - Fast Projectiles"
 
 
-def CheatDeath(): # 18
+/* def CheatDeath(): # 18
     @Name "Passive Mods 17 - Cheat Death (On)"
     if eventPlayer.getHealth() != 1:
         eventPlayer.setStatusEffect(null, Status.UNKILLABLE, 9999)
@@ -315,7 +325,7 @@ def CheatDeathOff(): # 18
         eventPlayer.clearStatusEffect(Status.UNKILLABLE)
         eventPlayer.Passive_Mod_Skill_Toggle = 0
         wait(10)
-        eventPlayer.Passive_Mod_Skill_Toggle = 1
+        eventPlayer.Passive_Mod_Skill_Toggle = 1 */
 
 
 def RaidBoss(): # 19
@@ -336,8 +346,8 @@ def DarkRitual(): # 20
     @Name "Passive Mods 19 - Dark Ritual"
     eventPlayer.setMaxHealth(50)
     while eventPlayer.getUltCharge() != 100 and eventPlayer.isUsingUltimate() == false:
-        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 50)
-        wait(2)
+        eventPlayer.setUltCharge(eventPlayer.getUltCharge() + 40)
+        wait(3)
 
 def ManaShield(): # 22
     @Name "Passive Mods 21 - Mana Shield"
@@ -411,47 +421,55 @@ def Boxer(): # 30
 
 def Forcefield():
     @Name "Passive Mods 32 - Forcefield"
-    while eventPlayer.Mod_Menu_Select == 3:
-        eventPlayer.Affected_Players = getPlayersInRadius(eventPlayer, 4, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)
+    while eventPlayer.Passive_Mod == 32:
+        eventPlayer.Affected_Players = getPlayersInRadius(eventPlayer, 5, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)
         for eventPlayer.Index in range(len(eventPlayer.Affected_Players)):
-            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.5, 0), 5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
-            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(directionTowards(eventPlayer.getPosition(), eventPlayer.Affected_Players[eventPlayer.Index].getPosition()), 5, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-        wait(0.3)
+            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.6, 0), 4.5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
+            eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(directionTowards(eventPlayer.getPosition(), eventPlayer.Affected_Players[eventPlayer.Index].getPosition()), 8, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+            playEffect(getAllPlayers(), DynamicEffect.ECHO_STICKY_BOMB_EXPLOSION, null, eventPlayer, 0.5)
+            wait(0.116)
+        wait(0.116)
 
 
 def ForcefieldFX():
     @Name "Passive Mods 32 - Forcefield FX"
-    if entityExists(eventPlayer.Passive_Mod_FX):
+    if entityExists(eventPlayer.Passive_Mod_FX_Array):
         return
-    createEffect(getAllPlayers(), Effect.RING, Color.AQUA, eventPlayer, 5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Passive_Mod_FX = getLastCreatedEntity()
+    createEffect(getAllPlayers(), Effect.RING, Color.AQUA, eventPlayer, 4.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Passive_Mod_FX_Array[0] = getLastCreatedEntity()
+    createEffect(getAllPlayers(), Effect.LUCIO_SOUND_BARRIER_PROTECTED_SOUND, Color.TEAM_1, eventPlayer, 17.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Passive_Mod_FX_Array[1] = getLastCreatedEntity()
 
 
 def GetBehindMe():
     @Name "Passive Mods 33 - Get Behind Me (Initialize)"
     
-    wait(0.116)
-    Shield_Vertical_Position = -1
-    Shield_Distance = 1
-    eventPlayer.setSecondaryFireEnabled(false)
-    eventPlayer.disallowButton(Button.SECONDARY_FIRE)
-    createDummy(Hero.REINHARDT, eventPlayer.getTeam(), -1, vect(0, 10000, 0), vect(0, 0, 0))
-    eventPlayer.Reinhardt = getLastCreatedEntity()
-    eventPlayer.Reinhardt.startScalingSize(0, true)
-    eventPlayer.Reinhardt.disableEnvironmentCollision(true)
-    eventPlayer.Reinhardt.startModifyingVoicelinePitch(1.5, true)
-    eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
-    wait(0.25)
-    eventPlayer.Reinhardt.startForcingPosition(updateEveryTick(raycast(eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0), eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0) + eventPlayer.getFacingDirection() * Shield_Distance, null, eventPlayer, false).getHitPosition()), true)
-    eventPlayer.Reinhardt.startFacing(eventPlayer.getFacingDirection(), 10000, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
-    eventPlayer.Reinhardt.startScalingBarriers(8, true)
-    eventPlayer.Reinhardt.disableNameplatesFor(getAllPlayers())
-    wait(0.116)
-    eventPlayer.Reinhardt.startForcingOutlineFor(getAllPlayers(), false, Color.WHITE, OutlineVisibility.DEFAULT)
-    wait(0.116)
-    eventPlayer.Reinhardt.setMaxHealth(62.5)
-    eventPlayer.Reinhardt.setHealth(eventPlayer.Reinhardt.getMaxHealth())
-    wait(0.75)
+    if eventPlayer.Reinhardt == 0:
+        wait(0.116)
+        Shield_Vertical_Position = -1
+        Shield_Distance = 1
+        eventPlayer.setSecondaryFireEnabled(false)
+        eventPlayer.disallowButton(Button.SECONDARY_FIRE)
+        createDummy(Hero.REINHARDT, eventPlayer.getTeam(), -1, vect(0, 10000, 0), vect(0, 0, 0))
+        eventPlayer.Reinhardt = getLastCreatedEntity()
+        eventPlayer.Reinhardt.startScalingSize(0, true)
+        eventPlayer.Reinhardt.disableEnvironmentCollision(true)
+        eventPlayer.Reinhardt.startModifyingVoicelinePitch(1.5, true)
+        eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
+        wait(0.116)
+        eventPlayer.Reinhardt.startForcingPosition(updateEveryTick(raycast(eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0), eventPlayer.getEyePosition() + vect(0, Shield_Vertical_Position, 0) + eventPlayer.getFacingDirection() * Shield_Distance, null, eventPlayer, false).getHitPosition()), true)
+        eventPlayer.Reinhardt.startFacing(eventPlayer.getFacingDirection(), 10000, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
+        eventPlayer.Reinhardt.startScalingBarriers(8, true)
+        eventPlayer.Reinhardt.disableNameplatesFor(getAllPlayers())
+        eventPlayer.Reinhardt.startForcingOutlineFor(getAllPlayers(), false, Color.WHITE, OutlineVisibility.DEFAULT)
+        eventPlayer.Reinhardt.setMaxHealth(56.25)
+        eventPlayer.Reinhardt.setHealth(eventPlayer.Reinhardt.getMaxHealth())
+        wait(0.25)
+        waitUntil(eventPlayer.isDead(),99999)
+        destroyDummy(eventPlayer.Reinhardt.getTeam(), eventPlayer.Reinhardt.getSlot())
+        eventPlayer.Reinhardt = 0
+    else:
+        return
 
 def GetBehindMeShield():
     @Name "Passive Mods - Get Behind Me (Shielding)"
@@ -461,37 +479,40 @@ def GetBehindMeShield():
         eventPlayer.Facing_Direction = eventPlayer.getFacingDirection()
         eventPlayer.Reinhardt.setInvisibility(Invis.NONE)
         eventPlayer.Reinhardt.startForcingButton(Button.SECONDARY_FIRE)
-        eventPlayer.disallowButton(Button.SECONDARY_FIRE)
-        wait(0.25)
-        eventPlayer.allowButton(Button.SECONDARY_FIRE)
-        waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false, 99999)
-        eventPlayer.Facing_Direction = 0
-        eventPlayer.Reinhardt.stopForcingButton(Button.SECONDARY_FIRE)
-        wait(0.25)
-        eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
-        eventPlayer.disallowButton(Button.SECONDARY_FIRE)
-        wait(0.25)
-        eventPlayer.allowButton(Button.SECONDARY_FIRE)
+    wait(0.2)
+    waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false, 99999)
+    eventPlayer.Facing_Direction = 0
+    eventPlayer.Reinhardt.stopForcingButton(Button.SECONDARY_FIRE)
+    wait(0.2)
+    eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
+    eventPlayer.disallowButton(Button.SECONDARY_FIRE)
+    wait(0.2)
+    eventPlayer.allowButton(Button.SECONDARY_FIRE)
 
 def GetBehindMeOff():
     @Name "Passive Mods 33 - Get Behind Me (Deactivation)"
 
     if eventPlayer.Reinhardt != 0 and \
-    eventPlayer.isInSpawnRoom() == true and \
-    evalOnce(eventPlayer.getCurrentHero()) != eventPlayer.getCurrentHero():
+    eventPlayer.isInSpawnRoom() == true:
+        eventPlayer.Current_Hero = eventPlayer.getCurrentHero()
+        wait(0.116)
+        waitUntil(eventPlayer.getCurrentHero() != eventPlayer.getCurrentHero(), 99999)
+        wait(0.116)
         eventPlayer.Current_Hero = eventPlayer.getCurrentHero()
         destroyDummy(eventPlayer.Reinhardt.getTeam(), eventPlayer.Reinhardt.getSlot())
-        eventPlayer.Reinhardt = 0
-        if eventPlayer.Current_Hero == Hero.REINHARDT:
-            wait(1)
+        if eventPlayer.Current_Hero == Hero.REINHARDT or eventPlayer.Current_Hero == Hero.BRIGITTE:
+            wait(0.5)
             eventPlayer.setSecondaryFireEnabled(true)
             eventPlayer.allowButton(Button.SECONDARY_FIRE)
             return
-        wait(2)
-        GetBehindMe()
-    waitUntil ((eventPlayer.Reinhardt != 0 and eventPlayer.Passive_Mod != 33) or isMatchComplete() == true, 99999)
+        else:
+            wait(0.5)
+            GetBehindMe()
+    waitUntil((eventPlayer.Reinhardt != 0 and eventPlayer.Passive_Mod != 33) or isMatchComplete() == true, 99999)
     destroyDummy(eventPlayer.Reinhardt.getTeam(), eventPlayer.Reinhardt.getSlot())
     eventPlayer.Reinhardt = 0
+    eventPlayer.setSecondaryFireEnabled(true)
+    eventPlayer.allowButton(Button.SECONDARY_FIRE)
     wait(0.5)
     if isMatchComplete() == false:
         GetBehindMe()
@@ -508,7 +529,8 @@ rule "Choose/Check Passive Mod":
     eventPlayer.isMoving() or \
     eventPlayer.Mod_Menu_Select == 3 or \
     entityExists(eventPlayer.Passive_Mod_FX) or \
-    entityExists(eventPlayer.Passive_Mod_FX_Array))
+    entityExists(eventPlayer.Passive_Mod_FX_Array) or \
+    getPlayersInRadius(eventPlayer, 5, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS) > 0)
     
     if eventPlayer.Mod_Menu_Select == 0:
         return
@@ -577,10 +599,10 @@ rule "Choose/Check Passive Mod":
                 break
             # miss 16 Victory Rush - In PlayerEarnedElimination
             # miss 17 Knockout - In PlayerDealtDamage
-            case 18:
-                CheatDeath()
-                async(CheatDeathOff(),AsyncBehavior.NOOP)
-                break
+            # miss 18 - convert to PlayerDied case 18:
+                #CheatDeath()
+                #async(CheatDeathOff(),AsyncBehavior.NOOP)
+                #break
             case 19:
                 RaidBoss()
                 break
@@ -617,17 +639,14 @@ rule "Choose/Check Passive Mod":
                 ForcefieldFX()
                 break
             case 33:
-                if eventPlayer.getCurrentHero() == Hero.REINHARDT:
-                    return
+                if eventPlayer.getCurrentHero() == Hero.REINHARDT or eventPlayer.getCurrentHero() == Hero.BRIGITTE:
                 else:
-                    if eventPlayer.Reinhardt == 0:
-                        async(GetBehindMe(), AsyncBehavior.NOOP)
-                    else:
-                        async(GetBehindMeShield(), AsyncBehavior.NOOP)
-                        async(GetBehindMeOff(), AsyncBehavior.NOOP)
+                    async(GetBehindMe(), AsyncBehavior.NOOP)
+                    async(GetBehindMeShield(), AsyncBehavior.NOOP)
+                    async(GetBehindMeOff(), AsyncBehavior.NOOP)
                 break
 
-    wait(0.116)
+    wait(0.5)
     if RULE_CONDITION:
         goto RULE_START
 
