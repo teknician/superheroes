@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.3. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1788,7 +1788,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 28, Custom String("Disruption: Damaging enemies hacks them for 1 sec. (1.5 sec cooldown)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 29, Custom String("Maximum Might: Raises damage, speed, and HP to 140% while at 100% ultimate", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for half the damage your hero deals to you", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
@@ -2514,9 +2514,17 @@ rule ("Passive Mods - Infection") {
         Infection;
     }
     actions {
+        Set Player Variable(Victim, Current_Hero, Hero Of(Victim));
         Start Forcing Player To Be Hero(Victim, Hero Of(Attacker));
         Wait(0.25, Ignore Condition);
         Stop Forcing Player To Be Hero(Victim);
+        If(Is Alive(Victim));
+            Wait(10, Ignore Condition);
+            Start Forcing Player To Be Hero(Victim, (Victim).Current_Hero);
+            Wait(0.25, Ignore Condition);
+            Stop Forcing Player To Be Hero(Victim);
+        Else;
+            Wait(6, Ignore Condition);
     }
 }
 
@@ -2687,8 +2695,8 @@ rule ("Passive Mods - Infection (Active)") {
         InfectionDamaged;
     }
     actions {
-        Heal(Victim, Null, Max Health(Victim));
-        Wait(0.5, Ignore Condition);
+        Heal(Victim, Attacker, Divide(Event Damage, 2));
+        Wait(1, Ignore Condition);
     }
 }
 
