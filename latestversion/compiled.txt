@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.9. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.0. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -217,7 +217,7 @@ rule ("Initialize") {
 
 rule ("Initialize Mod Menu") {
     event {
-        Ongoing - Each Player;
+        Player Joined Match;
         All;
         All;
     }
@@ -280,6 +280,7 @@ rule ("Reset Player Parameters") {
         Stop All Damage Over Time(Event Player);
         Set Player Variable(Event Player, Affected_Players, 0);
         Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Player_ATK_SPD_HP, 0);
         Clear Status(Event Player, Frozen);
         Clear Status(Event Player, Burning);
@@ -369,9 +370,14 @@ rule ("Passive Mods 7 - Spellslinger (Ability 1)") {
     }
     actions {
         While(Compare(Ability Cooldown(Event Player, Button(Ability 1)), >, 0));
-            Wait(3, Ignore Condition);
-            Set Ability Cooldown(Event Player, Button(Ability 1), 0);
-            Wait(0.116, Ignore Condition);
+            If(Compare(Hero Of(Event Player), ==, Hero(Ana)));
+                Wait(11, Ignore Condition);
+                Set Ability Cooldown(Event Player, Button(Ability 1), 0);
+            Else;
+                Wait(3, Ignore Condition);
+                Set Ability Cooldown(Event Player, Button(Ability 1), 0);
+                Wait(0.116, Ignore Condition);
+            End;
         End;
     }
 }
@@ -477,9 +483,14 @@ rule ("Passive Mods 10 - Archmage (Ability 1)") {
     }
     actions {
         While(Compare(Ability Cooldown(Event Player, Button(Ability 1)), >, 0));
-            Wait(1.5, Ignore Condition);
-            Set Ability Cooldown(Event Player, Button(Ability 1), 0);
-            Wait(0.116, Ignore Condition);
+            If(Compare(Hero Of(Event Player), ==, Hero(Ana)));
+                Wait(9, Ignore Condition);
+                Set Ability Cooldown(Event Player, Button(Ability 1), 0);
+            Else;
+                Wait(1.5, Ignore Condition);
+                Set Ability Cooldown(Event Player, Button(Ability 1), 0);
+                Wait(0.116, Ignore Condition);
+            End;
         End;
     }
 }
@@ -1445,16 +1456,17 @@ rule ("Active Mods 15 - Sneak") {
         Is Crouching(Event Player) == True;
     }
     actions {
-        Wait(1.25, Abort When False);
+        Wait(1.15, Abort When False);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Blue), Add(Position Of(Event Player), Divide(Up, 2)), 3);
         Play Effect(All Players(All Teams), Reaper Wraith Form Sound, Team Of(Event Player), Position Of(Event Player), 17.5);
         Set Invisible(Event Player, All);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
-        Wait Until(And(Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1), Not(Is Crouching(Event Player))), 99999);
+        Wait Until(Not(Is Crouching(Event Player)), 99999);
+        Wait(0.116, Ignore Condition);
         Set Invisible(Event Player, None);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Set Crouch Enabled(Event Player, False);
-        Wait(0.5, Ignore Condition);
+        Wait(0.2, Ignore Condition);
         Set Crouch Enabled(Event Player, True);
     }
 }
@@ -1660,7 +1672,11 @@ rule ("Active Mods 24 - Colossus") {
             Abort If(Is Dead(Event Player));
             Wait(0.116, Ignore Condition);
         End;
-        Add Health Pool To Player(Event Player, Armor, 5000, False, True);
+        If(Compare(Hero Of(Event Player), ==, Hero(D.Va)));
+            Add Health Pool To Player(Event Player, Armor, 2500, False, True);
+        Else;
+            Add Health Pool To Player(Event Player, Armor, 5000, False, True);
+        End;
         Set Player Variable(Event Player, Is_Colossus, True);
         Start Scaling Player(Event Player, 3, True);
         Wait(0.25, Ignore Condition);
@@ -1738,7 +1754,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("None (Press Melee to select a mod)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("150% Movement speed", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("150% Damage", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("135% Damage. 165% Projectile damage.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G, Colossus)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("50% Gravity + 133% movement speed", Null, Null, Null));
@@ -1763,7 +1779,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 25, Custom String("Thorns: Attackers take 15% of their Max HP in damage (up to 2 times per sec.)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 26, Custom String("Frost Armor: Attackers within 6 meters freeze when they damage you", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 27, Custom String("Boots of Mobility: After 3 sec. of not taking damage, gain 200% speed and 5% HP regen. per sec.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 28, Custom String("Disruption: Damaging enemies hacks them for 1.5 sec.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 28, Custom String("Disruption: Damaging enemies hacks them for 1 sec. (1.5 sec cooldown)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 29, Custom String("Maximum Might: Raises damage, speed, and HP to 140% while at 100% ultimate", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you", Null, Null, Null));
@@ -2315,15 +2331,10 @@ rule ("Passive Mods - Corpse Explosion (Active)") {
     }
     actions {
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Event Player, 2);
-        Wait(0.3, Ignore Condition);
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Event Player, 1);
-        Wait(0.116, Ignore Condition);
+        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 1);
         Set Status(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, 2);
         Damage(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply(Max Health(Event Player), 0.6));
-        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 2), Event Player, 1);
-        Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Color(Team 2), Event Player, 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), Event Player, 200);
-        Wait(2, Ignore Condition);
     }
 }
 
@@ -2411,7 +2422,7 @@ rule ("Mods PlayerDied Events") {
         If(Compare((Event Player).Passive_Mod, ==, 5));
             Call Subroutine(SmolModeDeath);
         Else If(Compare((Event Player).Passive_Mod, ==, 13));
-            Start Rule(CorpseExplosion, Do Nothing);
+            Call Subroutine(CorpseExplosion);
         Else If(And(And(Compare((Event Player).Passive_Mod, ==, 24), Compare(Attacker, !=, Victim)), Compare(Filtered Array(All Players(All Teams), Compare(Current Array Element, ==, Attacker)), ==, True)));
             Start Rule(Revenge, Do Nothing);
         Else If(And(Compare((Event Player).Passive_Mod, ==, 33), Compare((Event Player).Reinhardt, !=, 0)));
@@ -2527,6 +2538,11 @@ rule ("Active Mods - Sneak (Deactivate 3)") {
     }
     actions {
         Set Invisible(Event Player, None);
+        Wait(0.116, Ignore Condition);
+        Set Crouch Enabled(Event Player, False);
+        Wait(0.2, Ignore Condition);
+        Set Crouch Enabled(Event Player, True);
+        Wait(0.116, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
 }
@@ -2537,8 +2553,8 @@ rule ("Passive Mods - Disruption (Active)") {
         Disruption;
     }
     actions {
-        Set Status(Victim, Event Player, Hacked, 1.5);
-        Wait(0.5, Ignore Condition);
+        Set Status(Victim, Event Player, Hacked, 1);
+        Wait(2.5, Ignore Condition);
     }
 }
 
@@ -2655,6 +2671,11 @@ rule ("Active Mods - Sneak (Deactivate 2)") {
     }
     actions {
         Set Invisible(Event Player, None);
+        Wait(0.116, Ignore Condition);
+        Set Crouch Enabled(Event Player, False);
+        Wait(0.2, Ignore Condition);
+        Set Crouch Enabled(Event Player, True);
+        Wait(0.116, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
 }
