@@ -757,7 +757,7 @@ rule ("Passive Mods 32 - Forcefield") {
             Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 5, To Player, Cancel Contrary Motion);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Add(Position Of(Event Player), Multiply(Down, 2)), Add(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Multiply(Up, 1.25))), 10, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Add(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Multiply(Up, 1.75))), 10, To World, Cancel Contrary Motion);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
                 Wait(0.116, Ignore Condition);
             End;
@@ -775,7 +775,7 @@ rule ("Passive Mods 32 - Forcefield FX") {
         Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 4.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 27.5, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
@@ -2737,4 +2737,3 @@ rule ("Mods PlayerEarnedElimination Events") {
             Start Rule(VictoryRush, Do Nothing);
     }
 }
-
