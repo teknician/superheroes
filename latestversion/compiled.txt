@@ -2734,5 +2734,3 @@ rule ("Mods PlayerEarnedElimination Events") {
             Start Rule(VictoryRush, Do Nothing);
     }
 }
-
-ú
