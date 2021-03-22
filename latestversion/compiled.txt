@@ -757,7 +757,7 @@ rule ("Passive Mods 32 - Forcefield") {
             Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
                 "eventPlayer.Affected_Players[eventPlayer.Index].applyImpulse(vect(0, 1.6, 0), 5, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)"
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Multiply(Position Of(Event Player), Vector(1, 0, 1)), Multiply(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Vector(1, 0, 1))), 10, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Multiply(Position Of(Event Player), Vector(1, 0, 1)), Add(Multiply(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Vector(1, 0, 1)), Multiply(Up, 2))), 10, To World, Cancel Contrary Motion);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
                 Wait(0.116, Ignore Condition);
             End;
@@ -2738,3 +2738,4 @@ rule ("Mods PlayerEarnedElimination Events") {
     }
 }
 
+ö
