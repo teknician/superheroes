@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.3. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.5. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -138,7 +138,7 @@ subroutines {
     17: RaidBoss
     18: DarkRitual
     19: ManaShield
-    20: UltimatePerSec5
+    20: UltimatePerSec2
     21: ThornsFX
     22: FrostArmorFX
     23: BootsOfMobility
@@ -628,10 +628,10 @@ rule ("Passive Mods 19 - Dark Ritual") {
         DarkRitual;
     }
     actions {
-        Set Max Health(Event Player, 50);
+        Set Max Health(Event Player, 75);
         While(And(Compare(Ultimate Charge Percent(Event Player), !=, 100), Not(Is Using Ultimate(Event Player))));
-            Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 30));
-            Wait(3, Ignore Condition);
+            Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
+            Wait(4, Ignore Condition);
         End;
     }
 }
@@ -654,11 +654,11 @@ rule ("Passive Mods 21 - Mana Shield") {
 rule ("Passive Mods 22 - 5% Ultimate / sec") {
     event {
         Subroutine;
-        UltimatePerSec5;
+        UltimatePerSec2;
     }
     actions {
         While(Compare(Ultimate Charge Percent(Event Player), <, 100));
-            Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 5));
+            Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 2.5));
             Wait(1, Ignore Condition);
         End;
     }
@@ -754,10 +754,10 @@ rule ("Passive Mods 32 - Forcefield") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 32));
-            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
+            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 4.5, To Player, Cancel Contrary Motion);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index))), 8, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Vector(0, 1.6, 0), 5, To Player, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Direction Towards(Position Of(Event Player), Add(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Up)), 8, To World, Cancel Contrary Motion);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
                 Wait(0.116, Ignore Condition);
             End;
@@ -960,7 +960,7 @@ rule ("Choose/Check Passive Mod") {
             Call Subroutine(ManaShield);
             Else;
             //__label_switch_2_19__:
-            Start Rule(UltimatePerSec5, Do Nothing);
+            Start Rule(UltimatePerSec2, Do Nothing);
             Else;
             //__label_switch_2_20__:
             Call Subroutine(ThornsFX);
@@ -1252,7 +1252,10 @@ rule ("Active Mods 8 - Blind") {
         Enable Hero HUD((Event Player).Mod_Effect_Target);
         Play Effect(All Players(All Teams), Moira Fade Reappear Sound, Null, Position Of((Event Player).Mod_Effect_Target), 200);
         Destroy Effect(((Event Player).Mod_Effect_Target).Active_Mod_FX_Array);
-        Wait(11, Ignore Condition);
+        Wait(4, Ignore Condition);
+        "if player dies before beam disconnects"
+        Destroy Effect(((Event Player).Mod_Effect_Target).Active_Mod_FX);
+        Wait(7, Ignore Condition);
     }
 }
 
@@ -1752,10 +1755,10 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 17, Custom String("Knockout: Melee attacks cause enemies to fall asleep (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 18, Custom String("Cheat Death: Damage that would normally kill you instead renders you unkillable for 3 sec. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 19, Custom String("Raid Boss: Gain 300% HP and 150% damage, but lose 15% speed and reveal your location to enemes", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 20, Custom String("Dark Ritual: Sacrifice 50% of your Max HP to gain 50% ultimate charge every 2 sec.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 20, Custom String("Dark Ritual: Sacrifice 25% of your Max HP to gain 25% ultimate charge every 4 sec.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 21, Custom String("Ambush: Melee attacking an enemy from behind insta-kills them", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 22, Custom String("Mana Shield: While above 15% ultimate charge, heal for any damage taken, but drain charge", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 23, Custom String("Gain 10% ultimate charge every 2 sec.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 23, Custom String("Gain 2.5% ultimate charge every second.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 24, Custom String("Revenge: Respawn instantly at your killer's location", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 25, Custom String("Thorns: Attackers take 15% of their Max HP in damage (up to 2 times per sec.)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 26, Custom String("Frost Armor: Attackers within 6 meters freeze when they damage you", Null, Null, Null));
@@ -2734,3 +2737,4 @@ rule ("Mods PlayerEarnedElimination Events") {
             Start Rule(VictoryRush, Do Nothing);
     }
 }
+
