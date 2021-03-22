@@ -1752,7 +1752,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("None (Press Melee to select a mod)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("150% Movement speed", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("133% Damage.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("133% Damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G, Colossus)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("50% Gravity + 133% movement speed", Null, Null, Null));
@@ -2564,7 +2564,10 @@ rule ("Passive Mods - Lifesteal") {
     }
     actions {
         Heal(Attacker, Attacker, Multiply(Event Damage, 0.5));
-        Wait(0.5, Ignore Condition);
+        Create Effect(All Players(All Teams), Cloud, Color(Red), Event Player, 1, Visible To Position and Radius);
+        Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+        Wait(0.25, Ignore Condition);
+        Destroy Effect((Event Player).Passive_Mod_FX);
     }
 }
 
