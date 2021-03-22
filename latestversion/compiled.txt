@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.2. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -2313,6 +2313,9 @@ rule ("Passive Mods - Remove FX on Death") {
         Destroy Icon((Event Player).Passive_Mod_FX);
         Destroy Effect((Event Player).Passive_Mod_FX_Array);
         Destroy Icon((Event Player).Passive_Mod_FX_Array);
+        Allow Button(Event Player, Button(Reload));
+        Allow Button(Event Player, Button(Interact));
+        Allow Button(Event Player, Button(Secondary Fire));
     }
 }
 
@@ -2434,8 +2437,9 @@ rule ("Mods PlayerDied Events") {
             Start Rule(Revenge, Do Nothing);
         Else If(And(Compare((Event Player).Passive_Mod, ==, 33), Compare((Event Player).Reinhardt, !=, 0)));
             Call Subroutine(GetBehindMeDeath);
-        Else;
-            Call Subroutine(RemoveFXOnDeath);
+        End;
+        Wait(1, Ignore Condition);
+        Call Subroutine(RemoveFXOnDeath);
     }
 }
 
