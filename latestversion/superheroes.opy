@@ -2385,9 +2385,8 @@ rule ("Passive Mods - Immolation Aura (Did Damage)") {
         Immolation;
     }
     actions {
-        Set Ability 1 Enabled(Event Player, False);
-        Wait(2, Ignore Condition);
-        Set Ability 1 Enabled(Event Player, True);
+        Damage(Event Player, Null, 0.001);
+        Wait(1, Ignore Condition);
     }
 }
 
@@ -2543,7 +2542,7 @@ rule ("Mods PlayerDealtDamage Events") {
         If(Compare((Event Player).Passive_Mod, ==, 28));
             Start Rule(Disruption, Do Nothing);
         End;
-        If(And(Compare((Event Player).Passive_Mod, ==, 7), Compare(Hero Of(Event Player), ==, Hero(Sombra))));
+        If(And(And(Compare((Event Player).Passive_Mod, ==, 7), Compare(Hero Of(Event Player), ==, Hero(Sombra))), Is Using Ability 1(Event Player)));
             Start Rule(Immolation, Do Nothing);
     }
 }
