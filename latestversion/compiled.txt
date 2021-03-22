@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.0. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -59,10 +59,6 @@ settings
 			Ashe
 			{
 				Ultimate Duration: 50%
-			}
-			Bastion
-			{
-				Ultimate Ability Configuration: Tank: Off
 			}
 		}
 	}
@@ -149,58 +145,60 @@ subroutines {
     28: GetBehindMe
     29: GetBehindMeShield
     30: GetBehindMeOff
-    31: Blink
-    32: DeathGrip
-    33: Preparation
-    34: ZeroG
-    35: Corruption
-    36: Translocate
-    37: EntanglingRoots
-    38: Blind
-    39: Fear
-    40: Shadowstep
-    41: GoombaStomp
-    42: SaveDisc
-    43: SaveDiscTeleport
-    44: Telekinesis
-    45: FeignDeath
-    46: Sneak
-    47: Hex
-    48: Taunt
-    49: Cleanse
-    50: LifeTap
-    51: LightningBolt
-    52: HealthingHand
-    53: Colossus_Reset
-    54: Colossus
-    55: ColossusFX
-    56: Immolation
-    57: Ambush
-    58: Knockout
-    59: BoxerDealtDmg
-    60: Devour
-    61: Infection
-    62: BoxerBrig
-    63: BoxerRein
-    64: SneakDealtDmg
-    65: Disruption
-    66: ManaShieldDamaged
-    67: ThornsDamaged
-    68: FrostArmorDamaged
-    69: BootsOfMobilityDamaged
-    70: InfectionDamaged
-    71: SneakDamaged
-    72: ColossusHookDamaged
-    73: RemoveFXOnDeath
-    74: SmolModeDeath
-    75: CorpseExplosion
-    76: Revenge
-    77: GetBehindMeDeath
-    78: ZeroGDeath
-    79: ColossusDeath
-    80: LevelUpDing
-    81: VictoryRush
-    82: PlayerReset
+    31: Lifesteal
+    32: SuperheroLanding
+    33: Blink
+    34: DeathGrip
+    35: Preparation
+    36: ZeroG
+    37: Corruption
+    38: Translocate
+    39: EntanglingRoots
+    40: Blind
+    41: Fear
+    42: Shadowstep
+    43: GoombaStomp
+    44: SaveDisc
+    45: SaveDiscTeleport
+    46: Telekinesis
+    47: FeignDeath
+    48: Sneak
+    49: Hex
+    50: Taunt
+    51: Cleanse
+    52: LifeTap
+    53: LightningBolt
+    54: HealthingHand
+    55: Colossus_Reset
+    56: Colossus
+    57: ColossusFX
+    58: Immolation
+    59: Ambush
+    60: Knockout
+    61: BoxerDealtDmg
+    62: Devour
+    63: Infection
+    64: BoxerBrig
+    65: BoxerRein
+    66: SneakDealtDmg
+    67: Disruption
+    68: ManaShieldDamaged
+    69: ThornsDamaged
+    70: FrostArmorDamaged
+    71: BootsOfMobilityDamaged
+    72: InfectionDamaged
+    73: SneakDamaged
+    74: ColossusHookDamaged
+    75: RemoveFXOnDeath
+    76: SmolModeDeath
+    77: CorpseExplosion
+    78: Revenge
+    79: GetBehindMeDeath
+    80: ZeroGDeath
+    81: ColossusDeath
+    82: LevelUpDing
+    83: VictoryRush
+    84: PlayerReset
 }
 rule ("Initialize") {
     event {
@@ -211,7 +209,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(5);
+        Set Match Time(70);
     }
 }
 
@@ -786,7 +784,7 @@ rule ("Passive Mods 32 - Forcefield FX") {
         Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 7.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Löcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
@@ -910,7 +908,7 @@ rule ("Choose/Check Passive Mod") {
             Set Move Speed(Event Player, 150);
             Else;
             //__label_switch_2_3__:
-            Set Damage Dealt(Event Player, 150);
+            Set Damage Dealt(Event Player, 133);
             Else;
             //__label_switch_2_4__:
             Call Subroutine(Health150);
@@ -1754,7 +1752,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("None (Press Melee to select a mod)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("150% Movement speed", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("135% Damage. 165% Projectile damage.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("133% Damage.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G, Colossus)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("50% Gravity + 133% movement speed", Null, Null, Null));
@@ -1785,6 +1783,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
     }
 }
 
@@ -2558,6 +2557,17 @@ rule ("Passive Mods - Disruption (Active)") {
     }
 }
 
+rule ("Passive Mods - Lifesteal") {
+    event {
+        Subroutine;
+        Lifesteal;
+    }
+    actions {
+        Heal(Attacker, Attacker, Multiply(Event Damage, 0.5));
+        Wait(0.5, Ignore Condition);
+    }
+}
+
 rule ("Mods PlayerDealtDamage Events") {
     event {
         Player Dealt Damage;
@@ -2599,6 +2609,9 @@ rule ("Mods PlayerDealtDamage Events") {
         End;
         If(Compare((Event Player).Passive_Mod, ==, 28));
             Start Rule(Disruption, Do Nothing);
+        End;
+        If(Compare((Event Player).Passive_Mod, ==, 34));
+            Start Rule(Lifesteal, Do Nothing);
         End;
         If(And(And(Compare((Event Player).Passive_Mod, ==, 7), Compare(Hero Of(Event Player), ==, Hero(Sombra))), Is Using Ability 1(Event Player)));
             Start Rule(Immolation, Do Nothing);
