@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V.2.1.1"
 	}
 	lobby
 	{
@@ -1034,7 +1034,7 @@ rule ("Active Mods 1 - Blink") {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Position Of(Event Player), 3);
         Wait(0.25, Ignore Condition);
         Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Position Of(Event Player), 500);
+        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Position Of(Event Player), 200);
         If(Not(Is Moving(Event Player)));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Else If(Is Moving(Event Player));
@@ -1435,11 +1435,15 @@ rule ("Active Mods 15 - Sneak") {
     actions {
         Wait(1.25, Abort When False);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Blue), Add(Position Of(Event Player), Divide(Up, 2)), 3);
+        Play Effect(All Players(All Teams), Reaper Wraith Form Sound, Team Of(Event Player), Position Of(Event Player), 17.5);
         Set Invisible(Event Player, All);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Wait Until(And(Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1), Not(Is Crouching(Event Player))), 99999);
         Set Invisible(Event Player, None);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
+        Set Crouch Enabled(Event Player, False);
+        Wait(0.5, Ignore Condition);
+        Set Crouch Enabled(Event Player, True);
     }
 }
 
@@ -1905,12 +1909,12 @@ rule ("Camera - 3rd Person Toggle") {
     }
     actions {
         If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 0));
-            Wait(0.5, Abort When False);
+            Wait(0.2, Abort When False);
             Start Camera(Event Player, Ray Cast Hit Position(Event Player, Add(Add(Add(Event Player, World Vector Of(Vector(-0.5, 0.06, 0.5), Event Player, Rotation)), Multiply(Up, 1.5)), Multiply(Facing Direction Of(Event Player), -3)), Null, Event Player, False), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), 40);
             Set Player Variable(Event Player, Third_Person_Camera_Toggle, 1);
             Abort;
         Else If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 1));
-            Wait(0.5, Abort When False);
+            Wait(0.2, Abort When False);
             Stop Camera(Event Player);
             Set Player Variable(Event Player, Third_Person_Camera_Toggle, 0);
     }
