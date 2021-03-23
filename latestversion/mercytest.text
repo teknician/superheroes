@@ -1,0 +1,128 @@
+settings
+{
+	modes
+	{
+		disabled Control
+		{
+			Capture Speed Modifier: 500%
+			Limit Valid Control Points: First
+			Score To Win: 1
+		}
+
+		disabled Deathmatch
+		{
+			Score To Win: 40
+		}
+
+		Skirmish
+		{
+			Limit Valid Control Points: Second
+
+			enabled maps
+			{
+				Busan
+			}
+		}
+
+		General
+		{
+			Game Mode Start: Manual
+			Limit Roles: 2 Of Each Role Per Team
+		}
+	}
+
+	heroes
+	{
+		General
+		{
+			Mercy
+			{
+				Health: 500%
+				Movement Speed: 200%
+				Spawn With Ultimate Ready: On
+				Ultimate Generation - Combat Valkyrie: 500%
+				Ultimate Generation - Passive Valkyrie: 500%
+				Ultimate Generation Valkyrie: 500%
+			}
+		}
+	}
+}
+
+rule("Mercy")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{
+		Start Scaling Player(Event Player, 0.100, True);
+		Set Gravity(Event Player, 10);
+		Set Ultimate Charge(Event Player, 100);
+		While(Is Using Ultimate(Event Player));
+			Set Ultimate Charge(Event Player, 100);
+			Wait(1, Ignore Condition);
+	}
+}
+
+rule("crouch")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		While(Is Crouching(Event Player));
+			Apply Impulse(Event Player, Vector(0, -1, 0), 4, To World, Cancel Contrary Motion);
+			Wait(0.250, Ignore Condition);
+	}
+}
+
+rule("height hud")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{
+		Create HUD Text(All Players(All Teams), Eye Position(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
+			Visible To and String, Default Visibility);
+	}
+}
+
+rule("Rule 4")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Moving(Event Player) == True;
+	}
+
+	actions
+	{
+		Set Ultimate Charge(Event Player, 100);
+		Wait Until(!Is Using Ultimate(Event Player), 999);
+	}
+}
