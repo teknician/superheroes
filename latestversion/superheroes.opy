@@ -1,6 +1,6 @@
 settings {
     "main": {
-        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.1.3. CODE: VHAV8"
+        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
     },
     "lobby": {
         "allowPlayersInQueue": true,
@@ -9,7 +9,7 @@ settings {
         "team1Slots": 4,
         "team2Slots": 4,
         "returnToLobby": "never",
-        "teamBalancing": "afterMirrorMatch"
+        "teamBalancing": "afterGame"
     },
     "gamemodes": {
         "control": {
@@ -28,7 +28,6 @@ settings {
             "payloadSpeed%": 85
         },
         "hybrid": {
-            "enabled": false,
             "payloadSpeed%": 85
         },
         "tdm": {
@@ -45,9 +44,6 @@ settings {
         "allTeams": {
             "ashe": {
                 "ultDuration%": 50
-            },
-            "bastion": {
-                "enableUlt": false
             },
             "general": {
                 "enableSpawningWithUlt": false,
@@ -87,15 +83,20 @@ playervar Melee_Mod_Conditions_Ally
 playervar Third_Person_Camera_Toggle 
 playervar Player_ATK_SPD_HP 
 playervar Player_Position 
+playervar Player_Height
+playervar Vertical_Speed
 playervar Affected_Players
 playervar Current_Hero 
 playervar Current_Hero_2
 playervar Index
+playervar Scalar_1
+playervar Scalar_2
 playervar Active_Index
 playervar Temp_Index
 playervar Facing_Direction 
 playervar Is_Colossus 
 playervar Is_Blind 
+playervar Is_Visible
 playervar Reinhardt 
 playervar Shield_Toggle 
 
@@ -135,6 +136,8 @@ subroutine ForcefieldFX
 subroutine GetBehindMe 
 subroutine GetBehindMeShield 
 subroutine GetBehindMeOff 
+subroutine Lifesteal
+subroutine SuperheroLanding
 
 #Active Mod
 subroutine Blink 
@@ -220,12 +223,17 @@ rule "Initialization - Quick Assemble":
     
     setMatchTime(8)
 
+/* rule "TDM Settings"
+    @Condition Gamemode.TDM = true
+
+     */
+
 
 rule "Initialization - Passive Mod Strings":
     Passive_Mod_Strings[0] = "Click to scroll through Passive Mods. Press Melee to select one"
     Passive_Mod_Strings[1] = "None (Press Melee to select a mod)"
-    Passive_Mod_Strings[2] = "150% Movement speed"
-    Passive_Mod_Strings[3] = "150% Damage"
+    Passive_Mod_Strings[2] = "160% Movement speed"
+    Passive_Mod_Strings[3] = "140% Damage"
     Passive_Mod_Strings[4] = "150% HP + 150% Healing Received"
     Passive_Mod_Strings[5] = "Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G, Colossus)"
     Passive_Mod_Strings[6] = "50% Gravity + 133% movement speed"
@@ -241,7 +249,7 @@ rule "Initialization - Passive Mod Strings":
     Passive_Mod_Strings[16] = "Victory Rush: Getting a kill or assist refreshes your cooldowns, heals you, and grants a speed boost"
     Passive_Mod_Strings[17] = "Knockout: Melee attacks cause enemies to fall asleep (8 sec. CD)"
     Passive_Mod_Strings[18] = "Cheat Death: Damage that would normally kill you instead renders you unkillable for 3 sec. (10 sec. CD)"
-    Passive_Mod_Strings[19] = "Raid Boss: Gain 300% HP and 150% damage, but lose 15% speed and reveal your location to enemes"
+    Passive_Mod_Strings[19] = "Raid Boss: Gain 250% HP and 133% damage, but lose 25% speed and reveal your location to enemies"
     Passive_Mod_Strings[20] = "Dark Ritual: Sacrifice 25% of your Max HP to gain 25% ultimate charge every 4 sec."
     Passive_Mod_Strings[21] = "Ambush: Melee attacking an enemy from behind insta-kills them"
     Passive_Mod_Strings[22] = "Mana Shield: While above 15% ultimate charge, heal for any damage taken, but drain charge"
@@ -250,31 +258,33 @@ rule "Initialization - Passive Mod Strings":
     Passive_Mod_Strings[25] = "Thorns: Attackers take 15% of their Max HP in damage (up to 2 times per sec.)"
     Passive_Mod_Strings[26] = "Frost Armor: Attackers within 6 meters freeze when they damage you"
     Passive_Mod_Strings[27] = "Boots of Mobility: After 3 sec. of not taking damage, gain 200% speed and 5% HP regen. per sec."
-    Passive_Mod_Strings[28] = "Disruption: Damaging enemies hacks them for 1.5 sec."
+    Passive_Mod_Strings[28] = "Disruption: Damaging enemies hacks them for 1 sec. (1.5 sec cooldown)"
     Passive_Mod_Strings[29] = "Maximum Might: Raises damage, speed, and HP to 140% while at 100% ultimate"
     Passive_Mod_Strings[30] = "Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked"
-    Passive_Mod_Strings[31] = "Infection: Melee turns enemies into your hero. Heal for any damage your hero deals to you"
+    Passive_Mod_Strings[31] = "Infection: Melee turns enemies into your hero for a time. You take half damage from your hero."
     Passive_Mod_Strings[32] = "Forcefield: Repel enemies within a 5 metre radius."
     Passive_Mod_Strings[33] = "Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield."
+    Passive_Mod_Strings[34] = "Lifesteal: Heal for twice the damage you deal."
+    Passive_Mod_Strings[35] = "Superhero Landing: Fall from a height to deal damage and knock down enemies around you\n(Damage and stun time are proportional to starting height)"
 
 
 rule "Initialization - Active Mod Strings":
     Active_Mod_Strings[0] = "Click to scroll through Active Mods. Press Melee to select one"
     Active_Mod_Strings[1] = "None (Click to scroll through mods, press Melee to select one)"
     Active_Mod_Strings[2] = "Blink: Melee teleports you 7 meters forward (2.5 sec. CD)"
-    Active_Mod_Strings[3] = "Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range)"
+    Active_Mod_Strings[3] = "Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)"
     Active_Mod_Strings[4] = "Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)"
     Active_Mod_Strings[5] = "Zero Gravity (crouch in midair to toggle)"
     Active_Mod_Strings[6] = "Corruption: Melee deals 40% of an enemy's max HP over 4 sec. (25m range)"
     Active_Mod_Strings[7] = "Translocate: Melee to swap positions with an enemy (25m range, 8 sec. CD)"
-    Active_Mod_Strings[8] = "Entangling Roots: Melee roots an enemy for 1.5 sec. (25m range, 8 sec. CD)"
+    Active_Mod_Strings[8] = "Entangling Roots: Melee roots an enemy for 1.5 sec. (25m range, 9 sec. CD)"
     Active_Mod_Strings[9] = "Blind: Target an enemy and press melee to blind them (11 sec. CD)"
-    Active_Mod_Strings[10] = "Fear: Melee forces a target enemy to run away from you (25m range, 8 sec. CD)"
+    Active_Mod_Strings[10] = "Fear: Melee forces a target enemy to run away from you (25m range, 11 sec. CD)"
     Active_Mod_Strings[11] = "Shadowstep: Melee teleports you behind your target  enemy (25m range, 7 sec. CD)"
     Active_Mod_Strings[12] = "Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage"
     Active_Mod_Strings[13] = "Save Disc: Press Reload + Melee to set a point you can return to by pressing them again (4 sec. CD)"
     Active_Mod_Strings[14] = "Telekinesis: Melee to push an enemy towards your cursor after 0.75 sec. (25m range, 4 sec. CD)"
-    Active_Mod_Strings[15] = "Feign Death: Press Reload + Melee to kill yourself. Press it again to revive (12 sec. CD)"
+    Active_Mod_Strings[15] = "Feign Death: Press Reload + Melee to kill yourself. Press it again to revive (12 sec. CD) (excl. Smol Mode)"
     Active_Mod_Strings[16] = "Sneak: Become invisible after crouching for 1.25 sec. (Lasts until you uncrouch, deal or take damage)"
     Active_Mod_Strings[17] = "Hex: Melee turns target enemy into Torbjorn for 8 sec. (25m range, 14 sec. CD)"
     Active_Mod_Strings[18] = "Taunt: Melee forces your target to chase and attack you (25m range, 8 sec. CD)"
@@ -373,6 +383,9 @@ rule "Mechanics - Conditions to use Melee Cast Mods":
     @Hero all
     @Condition distance(eventPlayer, eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))) <= 25
     @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).isAlive() == true
+    @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).Is_Visible == true
+    @Condition (eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).getCurrentHero() == Hero.SOMBRA and 
+    eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).isUsingAbility1() == true) == false
     @Condition isInLoS(eventPlayer, eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())), BarrierLos.BLOCKED_BY_ENEMY_BARRIERS) == true
     @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).hasStatusEffect(Status.PHASED_OUT) == false
     @Condition eventPlayer.isInViewAngle(eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())), 30) == true
@@ -466,11 +479,14 @@ rule "Mechanics - Open Mod Menu":
     eventPlayer.Mod_Menu_Select = 3
     destroyInWorldText(eventPlayer.Mod_Menu_Text)
     wait(0.5)
-    if (eventPlayer.Passive_Mod_Index == 5 and (eventPlayer.Active_Mod_Index in [5, 24])):
-        createInWorldText(eventPlayer, "Incompatible mods! Choose again.", eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED, SpecVisibility.DEFAULT)
+    if (eventPlayer.Passive_Mod_Index == 5 and (eventPlayer.Active_Mod_Index in [5, 15, 24])):
+        createInWorldText(eventPlayer, "Incompatible mods! Choose again with Reload + Interact.", eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 1.5, 1.6, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED, SpecVisibility.DEFAULT)
         eventPlayer.Mod_Menu_Text = getLastCreatedText()
-        wait(1.25)
+        wait(1.5)
         destroyInWorldText(eventPlayer.Mod_Menu_Text)
+        eventPlayer.clearStatusEffect(Status.HACKED)
+        eventPlayer.Passive_Mod_Index = 0
+        eventPlayer.Active_Mod_Index = 0
         goto RULE_START
     else:
         eventPlayer.setAimSpeed(100)
@@ -658,12 +674,19 @@ rule "Mechanics - Hero Swap":
 ——————————————————————————————————————————————————————————————————————————*/
 
 def RemoveFXOnDeath():
-    @Name "Passive Mods - Remove FX on Death"
+    @Name "Mods - Remove FX on Death"
 	
 	destroyEffect(eventPlayer.Passive_Mod_FX)
     destroyIcon(eventPlayer.Passive_Mod_FX)
     destroyEffect(eventPlayer.Passive_Mod_FX_Array)
     destroyIcon(eventPlayer.Passive_Mod_FX_Array)
+    destroyEffect(eventPlayer.Active_Mod_FX)
+    destroyIcon(eventPlayer.Active_Mod_FX)
+    destroyEffect(eventPlayer.Active_Mod_FX_Array)
+    destroyIcon(eventPlayer.Active_Mod_FX_Array)
+    eventPlayer.allowButton(Button.RELOAD)
+    eventPlayer.allowButton(Button.INTERACT)
+    eventPlayer.allowButton(Button.SECONDARY_FIRE)
 
 
 def SmolModeDeath():
@@ -681,16 +704,10 @@ def CorpseExplosion():
     @Name "Passive Mods - Corpse Explosion (Active)"
 
     playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION, Color.TEAM_2, eventPlayer, 2)
-    wait(0.4)
-    playEffect(getAllPlayers(), DynamicEffect.SIGMA_HYPERSPHERE_IMPLOSION, Color.TEAM_2, eventPlayer, 1)
-    wait(0.2)
-    getPlayersInRadius(eventPlayer, 7, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, 2)
-    playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, Color.TEAM_2, eventPlayer, 1)
-    wait(0.116)
     playEffect(getAllPlayers(), DynamicEffect.BASTION_TANK_CANNON_EXPLOSION, Color.TEAM_2, eventPlayer, 1)
-    wait(0.116)
-    playEffect(getAllPlayers(), DynamicEffect.BASTION_TANK_CANNON_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer, 200)
+    getPlayersInRadius(eventPlayer, 7, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, 2)
     damage(getPlayersInRadius(eventPlayer, 7, getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS), eventPlayer, eventPlayer.getMaxHealth() * 0.6)
+    playEffect(getAllPlayers(), DynamicEffect.BASTION_TANK_CANNON_EXPLOSION_SOUND, Color.TEAM_2, eventPlayer, 200)
 
 def Revenge():
     @Name "Passive Mods - Revenge (Active)"
@@ -745,7 +762,7 @@ rule "Mods PlayerDied Events":
         SmolModeDeath()
 
     elif (eventPlayer.Passive_Mod == 13): 
-        async(CorpseExplosion(),AsyncBehavior.NOOP)
+        CorpseExplosion()
 
     elif (eventPlayer.Passive_Mod == 24 and attacker != victim and [player for player in getAllPlayers() if player == attacker] == true):
         async(Revenge(),AsyncBehavior.NOOP)
@@ -753,8 +770,9 @@ rule "Mods PlayerDied Events":
     elif (eventPlayer.Passive_Mod == 33 and eventPlayer.Reinhardt != 0):
         GetBehindMeDeath()
 
-    else:
-        RemoveFXOnDeath()
+    
+    wait(1)
+    RemoveFXOnDeath()
 
 /*————————————————————————————————————————————————————————————————————————   
 8888b.  888888    db    88     888888     8888b.  8b    d8  dP""b8 
@@ -804,9 +822,17 @@ def Devour():
 
 def Infection():
 	@Name "Passive Mods - Infection"
-	victim.startForcingHero(attacker.getCurrentHero())
+	victim.Current_Hero = victim.getCurrentHero()
+    victim.startForcingHero(attacker.getCurrentHero())
 	wait(0.25)
 	victim.stopForcingCurrentHero()
+    if victim.isAlive():
+        wait(15)
+        victim.startForcingHero(victim.Current_Hero)
+        wait(0.25)
+        victim.stopForcingCurrentHero()
+    else:
+        wait(6)
 		
 
 def BoxerBrig():
@@ -824,13 +850,27 @@ def BoxerRein():
 def SneakDealtDmg():
 	@Name "Active Mods - Sneak (Deactivate 3)"
 	eventPlayer.setInvisibility(Invis.NONE)
-	eventPlayer.Active_Mod_Skill_Toggle = 0
+    eventPlayer.Is_Visible = true
+    wait(0.116)
+    eventPlayer.setCrouchEnabled(false)
+    wait(0.2)
+    eventPlayer.setCrouchEnabled(true)
+    wait(0.116)
+    eventPlayer.Active_Mod_Skill_Toggle = 0
 
 
 def Disruption():
 	@Name "Passive Mods - Disruption (Active)"
-	victim.setStatusEffect(eventPlayer, Status.HACKED, 1.5)
-	wait(0.5)
+	victim.setStatusEffect(eventPlayer, Status.HACKED, 1)
+	wait(2.5)
+
+def Lifesteal():
+	@Name "Passive Mods - Lifesteal"
+	heal(attacker, attacker, eventDamage*2)
+    createEffect(getAllPlayers(), Effect.CLOUD, Color.RED, eventPlayer, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Passive_Mod_FX = getLastCreatedEntity()
+    wait(0.25)
+    destroyEffect(eventPlayer.Passive_Mod_FX)
 
 
 rule "Mods PlayerDealtDamage Events":
@@ -870,6 +910,9 @@ rule "Mods PlayerDealtDamage Events":
 
 	if (eventPlayer.Passive_Mod == 28):
 		async(Disruption(),AsyncBehavior.NOOP)
+
+    if (eventPlayer.Passive_Mod == 34):
+		async(Lifesteal(),AsyncBehavior.NOOP)
     
     if (eventPlayer.Passive_Mod == 7 and eventPlayer.getCurrentHero() == Hero.SOMBRA and eventPlayer.isUsingAbility1()):
         async(Immolation(),AsyncBehavior.NOOP)
@@ -912,13 +955,19 @@ def BootsOfMobilityDamaged():
 def InfectionDamaged():
     @Name "Passive Mods - Infection (Active)"
 
-    heal(victim, null, victim.getMaxHealth())
-    wait(0.5)
+    heal(victim, attacker, eventDamage/2)
+    wait(1)
 
 def SneakDamaged():
     @Name "Active Mods - Sneak (Deactivate 2)"
 
     eventPlayer.setInvisibility(Invis.NONE)
+    eventPlayer.Is_Visible = true
+    wait(0.116)
+    eventPlayer.setCrouchEnabled(false)
+    wait(0.2)
+    eventPlayer.setCrouchEnabled(true)
+    wait(0.116)
     eventPlayer.Active_Mod_Skill_Toggle = 0
 
 def ColossusHookDamaged():

@@ -43,12 +43,12 @@ rule "Active Mods 2 - Death Grip": #3
     eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
     createBeam(getAllPlayers(), Beam.BAD, eventPlayer, eventPlayer.Mod_Effect_Target, Color.PURPLE, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Active_Mod_FX = getLastCreatedEntity()
-    eventPlayer.Mod_Effect_Target.setStatusEffect(null, Status.ROOTED, 1.25)
+    eventPlayer.Mod_Effect_Target.setStatusEffect(null, Status.ROOTED, 1)
     eventPlayer.Mod_Effect_Target.applyImpulse(directionTowards(eventPlayer.Mod_Effect_Target, worldVector(vect(0, 2, 0), eventPlayer, Transform.ROTATION_AND_TRANSLATION)), distance(eventPlayer, eventPlayer.Mod_Effect_Target) * 1.5, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     wait(1)
     destroyEffect(eventPlayer.Active_Mod_FX)
     eventPlayer.Mod_Effect_Target = null
-    wait(6)
+    wait(10)
 
 
 rule "Active Mods 3 - Preparation": #4
@@ -134,15 +134,15 @@ rule "Active Mods 7 - Entangling Roots": #8
     playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, eventPlayer.getTeam(), eventPlayer.Mod_Effect_Target, 1)
     playEffect(getAllPlayers(), DynamicEffect.GOOD_EXPLOSION, Color.GREEN, worldVector(vect(0, 0.75, 1), eventPlayer, Transform.ROTATION_AND_TRANSLATION), 1)
     eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
-    eventPlayer.getPlayerClosestToReticle(Team.ALL).setStatusEffect(eventPlayer, Status.ROOTED, 1.5)
+    eventPlayer.getPlayerClosestToReticle(Team.ALL).setStatusEffect(eventPlayer, Status.ROOTED, 1.75)
     bigMessage(eventPlayer.Mod_Effect_Target, "ROOTED")
     createEffect(getAllPlayers(), Effect.LIGHT_SHAFT, Color.GREEN, eventPlayer.Mod_Effect_Target + Vector.DOWN, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Active_Mod_FX = getLastCreatedEntity()
     eventPlayer.Mod_Effect_Target.applyImpulse(directionTowards(eventPlayer.Mod_Effect_Target, eventPlayer.Mod_Effect_Target), 0.01, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.Mod_Effect_Target.applyImpulse(Vector.DOWN, 20, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    wait(1)
+    wait(1.5)
     destroyEffect(eventPlayer.Active_Mod_FX)
-    wait(7)
+    wait(8)
 
 
 rule "Active Mods 8 - Blind": #9
@@ -156,32 +156,30 @@ rule "Active Mods 8 - Blind": #9
 
     eventPlayer.Mod_Effect_Target = eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))
     createBeam(getAllPlayers(), Beam.MOIRA_GRASP_CONNECTED, eventPlayer, eventPlayer.Mod_Effect_Target, Color.TEAM_1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Mod_Effect_Target.Active_Mod_FX = getLastCreatedEntity()
+    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[0] = getLastCreatedEntity()
     eventPlayer.Mod_Effect_Target.Is_Blind = true
     eventPlayer.Mod_Effect_Target.stopCamera()
-    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array = 0
     createEffect(getAllPlayers(), Effect.ZENYATTA_ORB_OF_DISCORD_TARGET_SOUND, null, eventPlayer.Mod_Effect_Target, 100, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[0] = getLastCreatedEntity()
+    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[1] = getLastCreatedEntity()
     eventPlayer.Mod_Effect_Target.disableHeroHUD()
     createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, eventPlayer.Mod_Effect_Target.getEyePosition() + eventPlayer.Mod_Effect_Target.getFacingDirection() * 0.75, 7, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[1] = getLastCreatedEntity()
-    wait(0.6)
-    bigMessage(eventPlayer.Mod_Effect_Target, "\n\nBLINDED")
-    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[2] = getLastCreatedEntity()
-    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    wait(0.6)
+    bigMessage(eventPlayer.Mod_Effect_Target, "BLINDED")
+    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[3] = getLastCreatedEntity()
-    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 3, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[4] = getLastCreatedEntity()
-    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 4, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 3, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[5] = getLastCreatedEntity()
-    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 4, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[6] = getLastCreatedEntity()
+    createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, vect(0, -500, 0), 5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[7] = getLastCreatedEntity()
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, null, eventPlayer.Mod_Effect_Target.getPosition(), 100)
     wait(0.5)
     eventPlayer.Mod_Effect_Target.startCamera(vect(0.5, -499, 0), vect(0, -500, 0), 0)
     wait(2)
-    destroyEffect(eventPlayer.Mod_Effect_Target.Active_Mod_FX)
     createEffect(eventPlayer.Mod_Effect_Target, Effect.BAD_AURA, Color.BLACK, eventPlayer.Mod_Effect_Target.getEyePosition() + eventPlayer.Mod_Effect_Target.getFacingDirection() * 0.75, 7, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array[7] = getLastCreatedEntity()
     eventPlayer.Mod_Effect_Target.Is_Blind = false
@@ -191,9 +189,7 @@ rule "Active Mods 8 - Blind": #9
     eventPlayer.Mod_Effect_Target.enableHeroHud()
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_REAPPEAR_SOUND, null, eventPlayer.Mod_Effect_Target.getPosition(), 200)
     destroyEffect(eventPlayer.Mod_Effect_Target.Active_Mod_FX_Array)
-    wait(4)
-    destroyEffect(eventPlayer.Mod_Effect_Target.Active_Mod_FX) #if player dies before beam disconnects
-    wait(7)
+    wait(11) #if player dies before beam disconnects
 
 
 rule "Active Mods 9 - Fear": #10
@@ -209,11 +205,11 @@ rule "Active Mods 9 - Fear": #10
     bigMessage(eventPlayer.Mod_Effect_Target, "FEARED")
     eventPlayer.Mod_Effect_Target.startFacing(worldVector(vect(0, 0, 1), eventPlayer, Transform.ROTATION), 1000, Relativity.TO_PLAYER, FacingReeval.NONE)
     eventPlayer.Mod_Effect_Target.startThrottleInDirection(worldVector(vect(0, 0, 1), eventPlayer.Mod_Effect_Target, Transform.ROTATION), 2, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.DIRECTION_AND_MAGNITUDE)
-    wait(3)
+    wait(2.65)
     eventPlayer.Mod_Effect_Target.stopFacing()
     eventPlayer.Mod_Effect_Target.stopThrottleInDirection()
     destroyEffect(eventPlayer.Active_Mod_FX)
-    wait(8)
+    wait(11)
 
 rule "Active Mods 10 - Shadowstep": #11
     @Event eachPlayer
@@ -296,7 +292,7 @@ rule "Active Mods 13 - Telekinesis": #14
     if eventPlayer.isDead() or eventPlayer.hasStatusEffect(Status.STUNNED):
         return
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION, Color.TURQUOISE, eventPlayer.Mod_Effect_Target, 5)
-    eventPlayer.Mod_Effect_Target.applyImpulse(directionTowards(eventPlayer.Mod_Effect_Target, raycast(eventPlayer.getEyePosition(), eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 25, null, getAllPlayers(), true).getHitPosition()), 14, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.Mod_Effect_Target.applyImpulse(directionTowards(eventPlayer.Mod_Effect_Target, raycast(eventPlayer.getEyePosition(), eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 25, null, getAllPlayers(), true).getHitPosition()), 16, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     wait(4)
 
 rule "Active Mods 14 - Feign Death": #15
@@ -334,16 +330,19 @@ rule "Active Mods 15 - Sneak": #16
     @Condition eventPlayer.Active_Mod_Skill_Toggle == 0
     @Condition eventPlayer.isCrouching() == true
 
-    wait(1.25, Wait.ABORT_WHEN_FALSE)
+    wait(1.15, Wait.ABORT_WHEN_FALSE)
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION, Color.BLUE, eventPlayer.getPosition() + Vector.UP / 2, 3)
     playEffect(getAllPlayers(), DynamicEffect.REAPER_WRAITH_FORM_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 17.5)
     eventPlayer.setInvisibility(Invis.ALL)
+    eventPlayer.Is_Visible = false
     eventPlayer.Active_Mod_Skill_Toggle = 1
-    waitUntil(eventPlayer.Active_Mod_Skill_Toggle == 1 and eventPlayer.isCrouching() == false, 99999)
+    waitUntil(eventPlayer.isCrouching() == false, 99999)
+    wait(0.116)
     eventPlayer.setInvisibility(Invis.NONE)
+    eventPlayer.Is_Visible = true
     eventPlayer.Active_Mod_Skill_Toggle = 0
     eventPlayer.setCrouchEnabled(false)
-    wait(0.5)
+    wait(0.2)
     eventPlayer.setCrouchEnabled(true)
 
 
@@ -500,7 +499,10 @@ rule "Active Mods 24 - Colossus": #24
         if not eventPlayer.isAlive():
             return
         wait(0.116)
-    eventPlayer.addHealthPool(Health.ARMOR, 5000, false, true)
+    if eventPlayer.getCurrentHero() == Hero.DVA:
+        eventPlayer.addHealthPool(Health.ARMOR, 2500, false, true)
+    else:
+        eventPlayer.addHealthPool(Health.ARMOR, 5000, false, true)
     eventPlayer.Is_Colossus = true
     eventPlayer.startScalingSize(3, true)
     wait(0.25)
