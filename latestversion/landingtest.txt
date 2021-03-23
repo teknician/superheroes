@@ -1,3 +1,4 @@
+
 settings
 {
 	modes
@@ -8,10 +9,12 @@ settings
 			Limit Valid Control Points: First
 			Score To Win: 1
 		}
+
 		disabled Deathmatch
 		{
 			Score To Win: 40
 		}
+
 		Skirmish
 		{
 			enabled maps
@@ -19,16 +22,25 @@ settings
 				Workshop Chamber
 			}
 		}
+
 		General
 		{
 			Game Mode Start: Manual
 			Limit Roles: 2 Of Each Role Per Team
+			Respawn Time Scalar: 40%
 		}
 	}
+
 	heroes
 	{
 		General
 		{
+			Ability Cooldown Time: 2%
+			Spawn With Ultimate Ready: On
+			Ultimate Generation: 500%
+			Ultimate Generation - Combat: 500%
+			Ultimate Generation - Passive: 500%
+
 			Mercy
 			{
 				Health: 500%
@@ -40,6 +52,7 @@ settings
 			}
 		}
 	}
+
 	extensions
 	{
 		Kinetic Explosion Effects
@@ -47,81 +60,279 @@ settings
 		Energy Explosion Effects
 	}
 }
-variables {
-    player:
-        0: Scalar_2
-        1: Scalar_1
+
+variables
+{
+	player:
+		0: Scalar_2
+		1: Scalar_1
+		2: Speed
+		3: Third_Person_Camera_Toggle
 }
-rule ("Player in air") {
+
+disabled rule("Player in air")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is In Air(Event Player) == True;
+	}
+
+	actions
+	{
+		While(Is In Air(Event Player));
+			If(Y Component Of(Velocity Of(Event Player)) < 0 && !Is On Ground(Event Player));
+				"chase(eventPlayer.Scalar_1, 2, rate=0.25, ChaseReeval.DESTINATION_AND_RATE) # whats the point of it???\ndamage scalar + radius"
+				Chase Player Variable At Rate(Event Player, Scalar_2, 3, 1.250, Destination and Rate);
+			Else If(Y Component Of(Velocity Of(Event Player)) >= 0);
+				"eventPlayer.Scalar_1 = 0"
+				Event Player.Scalar_2 = 0;
+				"stopChasingVariable(eventPlayer.Scalar_1)"
+				Stop Chasing Player Variable(Event Player, Scalar_2);
+				"eventPlayer.Scalar_1 = 0"
+				Event Player.Scalar_2 = 0;
+				Wait(0.116, Ignore Condition);
+			End;
+			Wait(0.116, Ignore Condition);
+		End;
+		"waitUntil(not eventPlayer.isInAir(), 90) #useless"
+		If(Event Player.Scalar_2 > 2);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 200);
+		Else If(Event Player.Scalar_2 > 1.500);
+			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+		Else If(Event Player.Scalar_2 > 0.500);
+			Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Team Of(Event Player), Position Of(Event Player), 25);
+		End;
+		If(Event Player.Scalar_2 > 0.500);
+			Damage(Remove From Array(Players Within Radius(Event Player, Min(4, Event Player.Scalar_2 * 30), Opposite Team Of(Team Of(
+				Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(15, Event Player.Scalar_2 * 30));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Min(4, Event Player.Scalar_2 * 1.500), Opposite Team Of(Team Of(
+				Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(0.750 * Event Player.Scalar_2,
+				1));
+		End;
+		Event Player.Scalar_2 = 0;
+		Event Player.Scalar_1 = 0;
+		Wait(1, Ignore Condition);
+	}
+}
+
+rule("Player init")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		disabled Has Spawned(Event Player) == True;
+		Is Button Held(Event Player, Button(Melee)) == True;
+	}
+
+	actions
+	{
+		If(Event Player == Host Player);
+			Create HUD Text(All Players(All Teams), Custom String("sc1: {0}", Event Player.Speed), Null, Null, Left, 0, Color(White), Null,
+				Null, Visible To and String, Default Visibility);
+			Create Dummy Bot(Hero(Roadhog), Team 2, -1, Position Of(Event Player), Up);
+		Else;
+			Set Max Health(Event Player, 999);
+			Disable Nameplates(Event Player, Host Player);
+			Create In-World Text(Host Player, Health(Event Player), Event Player, 1, Do Not Clip, Visible To Position String and Color, Color(
+				Blue), Default Visibility);
+	}
+}
+
+rule("On damage")
+{
+	event
+	{
+		Player Took Damage;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Dummy Bot(Event Player) == True;
+	}
+
+	actions
+	{
+		Small Message(Host Player, Custom String("Damage: {0}", Event Damage));
+	}
+}
+
+rule("change hero")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
+		Is Button Held(Event Player, Button(Interact)) == True;
+	}
+
+	actions
+	{
+		Kill(Event Player, Null);
+	}
+}
+
+rule("different way")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is In Air(Event Player) == True;
+	}
+
+	actions
+	{
+		Chase Player Variable At Rate(Event Player, Speed, Vertical Speed Of(Event Player), Is In Air(Event Player) ? 1000 : Null,
+			Destination and Rate);
+		Wait Until(Is On Ground(Event Player), 99999);
+		"waitUntil(not eventPlayer.isInAir(), 90) #useless"
+		If(Event Player.Speed < -22);
+			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Effect, Team Of(Event Player), Position Of(Event Player), 200);
+		Else If(Event Player.Speed < -18);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+		Else If(Event Player.Speed < -14);
+			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 50);
+		End;
+		If(Event Player.Speed < -12);
+			Damage(Remove From Array(Players Within Radius(Event Player, Max((Absolute Value(Event Player.Speed) / 10) ^ 5, 5),
+				Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(15, (Absolute Value(
+				Event Player.Speed) / 10) ^ 5));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Max(Absolute Value(0.150 * Event Player.Speed), 5),
+				Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
+				Absolute Value(0.100 * Event Player.Speed), 1));
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, Absolute Value(Event Player.Speed) * 0.150);
+			Play Effect(All Players(All Teams), DVa Micro Missiles Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 25);
+	}
+}
+
+rule ("Camera - 3rd Person Toggle") {
     event {
         Ongoing - Each Player;
         All;
         All;
     }
     conditions {
-        Is In Air(Event Player) == True;
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Interact)) == True;
     }
     actions {
-        While(Is In Air(Event Player));
-            If(Compare(Y Component Of(Velocity Of(Event Player)), <, 0));
-                "chase(eventPlayer.Scalar_1, 2, rate=0.25, ChaseReeval.DESTINATION_AND_RATE) # whats the point of it???\ndamage scalar + radius"
-                Chase Player Variable At Rate(Event Player, Scalar_2, 4, 0.5, Destination and Rate);
-            Else If(Compare(Y Component Of(Velocity Of(Event Player)), >=, 0));
-                "eventPlayer.Scalar_1 = 0"
-                Set Player Variable(Event Player, Scalar_2, 0);
-                "stopChasingVariable(eventPlayer.Scalar_1)"
-                Stop Chasing Player Variable(Event Player, Scalar_2);
-            End;
+        If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 0));
             Wait(0.116, Ignore Condition);
-        End;
-        "waitUntil(not eventPlayer.isInAir(), 90) #useless"
-        If(Compare((Event Player).Scalar_2, >, 3));
-            Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
-            Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 200);
-        Else If(Compare((Event Player).Scalar_2, >, 2));
-            Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
-            Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
-        Else If(Compare((Event Player).Scalar_2, >, 0.5));
-            Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
-            Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Team Of(Event Player), Position Of(Event Player), 25);
-        End;
-        Damage(Remove From Array(Players Within Radius(Event Player, Min(4, Multiply((Event Player).Scalar_2, 30)), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(15, Multiply((Event Player).Scalar_2, 30)));
-        Set Status(Remove From Array(Players Within Radius(Event Player, Min(4, Multiply((Event Player).Scalar_2, 1.5)), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Min(Multiply(0.25, (Event Player).Scalar_1), 2));
-        Wait(2, Ignore Condition);
+            Start Camera(Event Player, Ray Cast Hit Position(Event Player, Add(Add(Add(Event Player, World Vector Of(Vector(-0.5, 0.06, 0.5), Event Player, Rotation)), Multiply(Up, 1.5)), Multiply(Facing Direction Of(Event Player), -3)), Null, Event Player, False), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), 40);
+            Set Player Variable(Event Player, Third_Person_Camera_Toggle, 1);
+            Abort;
+        Else If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 1));
+            Wait(0.116, Ignore Condition);
+            Stop Camera(Event Player);
+            Set Player Variable(Event Player, Third_Person_Camera_Toggle, 0);
     }
 }
 
-rule ("Player init") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Has Spawned(Event Player) == True;
-    }
-    actions {
-        If(Compare(Event Player, ==, Host Player));
-            Create HUD Text(All Players(All Teams), Custom String("sc1: {0}, sc2: {1}", (Event Player).Scalar_1, (Event Player).Scalar_2, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create Dummy Bot(Hero(Roadhog), All Teams, -1, Up, Up);
-        Else;
-            Set Max Health(Event Player, 999);
-            Disable Nameplates(Event Player, Host Player);
-            Create In-World Text(Host Player, Health(Event Player), Event Player, 1, Do Not Clip, Visible To Position String and Color, Color(Blue), Default Visibility);
-    }
+disabled rule("do the thing")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is On Ground(Event Player) == True;
+	}
+
+	actions
+	{
+		disabled If(Event Player.Speed < -5.500);
+		disabled Damage(Remove From Array(Players Within Radius(Event Player, Event Player.Speed * 0.250, Opposite Team Of(Team Of(Event Player)),
+			Surfaces And Enemy Barriers), Event Player), Event Player, Max(Event Player.Speed * 6, Event Player.Speed * 30));
+		disabled Set Status(Remove From Array(Players Within Radius(Event Player, Min(6, (Event Player.Speed * 0.500).Scalar_2), Opposite Team Of(
+			Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
+			0.100 * Event Player.Speed, 1.250));
+		disabled End;
+		"waitUntil(not eventPlayer.isInAir(), 90) #useless"
+		If(Event Player.Speed < -20);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 200);
+			Damage(All Players(Team 2), Event Player, 20);
+			Damage(Remove From Array(Players Within Radius(Event Player, Event Player.Speed * 0.250, Opposite Team Of(Team Of(Event Player)),
+				Surfaces And Enemy Barriers), Event Player), Event Player, Max(Event Player.Speed * 6, Event Player.Speed * 30));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Min(6, (Event Player.Speed * 0.500).Scalar_2), Opposite Team Of(
+				Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
+				0.100 * Event Player.Speed, 1.250));
+		Else If(Event Player.Speed < -15.500);
+			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+			Damage(Remove From Array(Players Within Radius(Event Player, Event Player.Speed * 0.250, Opposite Team Of(Team Of(Event Player)),
+				Surfaces And Enemy Barriers), Event Player), Event Player, Max(Event Player.Speed * 6, Event Player.Speed * 30));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Min(6, (Event Player.Speed * 0.500).Scalar_2), Opposite Team Of(
+				Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
+				0.100 * Event Player.Speed, 1.250));
+		Else If(Event Player.Speed < -10.500);
+			Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Team Of(Event Player), Position Of(Event Player), 25);
+			Damage(Remove From Array(Players Within Radius(Event Player, Event Player.Speed * 0.250, Opposite Team Of(Team Of(Event Player)),
+				Surfaces And Enemy Barriers), Event Player), Event Player, Max(Event Player.Speed * 6, Event Player.Speed * 30));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Min(6, (Event Player.Speed * 0.500).Scalar_2), Opposite Team Of(
+				Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
+				0.100 * Event Player.Speed, 1.250));
+		End;
+	}
 }
 
-rule ("On damage") {
-    event {
-        Player Took Damage;
-        All;
-        All;
-    }
-    conditions {
-        Is Dummy Bot(Event Player) == True;
-    }
-    actions {
-        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
-    }
-}
+disabled rule("do thing 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
 
+	conditions
+	{
+		Is On Ground(Event Player) == True;
+	}
+
+	actions
+	{
+		Damage(Players Within Radius(Event Player, Event Player.Speed * 0.400, Team 2, Surfaces And Enemy Barriers), Event Player,
+			Event Player.Speed * 0.100);
+	}
+}
