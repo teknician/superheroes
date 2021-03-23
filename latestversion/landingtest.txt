@@ -15,17 +15,13 @@ rule ("Player in air") {
     actions {
         While(Is In Air(Event Player));
             If(Compare(Y Component Of(Velocity Of(Event Player)), <, 0));
-                "chase(eventPlayer.Scalar_1, 2, rate=0.25, ChaseReeval.DESTINATION_AND_RATE) # whats the point of it???\ndamage scalar + radius"
                 Chase Player Variable At Rate(Event Player, Scalar_2, 4, 0.5, Destination and Rate);
             Else If(Compare(Y Component Of(Velocity Of(Event Player)), >=, 0));
-                "eventPlayer.Scalar_1 = 0"
                 Set Player Variable(Event Player, Scalar_2, 0);
-                "stopChasingVariable(eventPlayer.Scalar_1)"
                 Stop Chasing Player Variable(Event Player, Scalar_2);
             End;
             Wait(0.116, Ignore Condition);
         End;
-        "waitUntil(not eventPlayer.isInAir(), 90) #useless"
         If(Compare((Event Player).Scalar_2, >, 3));
             Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
             Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 200);
