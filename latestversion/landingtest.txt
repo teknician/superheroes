@@ -16,9 +16,8 @@ settings
 		{
 			enabled maps
 			{
-				Busan
+				Workshop Chamber
 			}
-			Limit Valid Control Points: Second
 		}
 		General
 		{
