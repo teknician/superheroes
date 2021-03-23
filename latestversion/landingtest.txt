@@ -1,0 +1,45 @@
+rule "Player in air":
+    @Event eachPlayer
+    @Condition eventPlayer.isInAir()
+
+    while eventPlayer.isInAir():
+        if eventPlayer.getVelocity().y < 0:
+            #chase(eventPlayer.Scalar_1, 2, rate=0.25, ChaseReeval.DESTINATION_AND_RATE) # whats the point of it???
+            chase(eventPlayer.Scalar_2, 4, rate=0.5, ChaseReeval.DESTINATION_AND_RATE) #damage scalar + radius
+        elif eventPlayer.getVelocity().y >= 0:
+            #eventPlayer.Scalar_1 = 0
+            eventPlayer.Scalar_2 = 0
+            #stopChasingVariable(eventPlayer.Scalar_1)
+            stopChasingVariable(eventPlayer.Scalar_2)
+        wait(0.116)
+    #waitUntil(not eventPlayer.isInAir(), 90) #useless
+    if eventPlayer.Scalar_2 > 3:
+        playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+        playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer.getPosition(), 200)
+    elif eventPlayer.Scalar_2 > 2:
+        playEffect(getAllPlayers(), DynamicEffect.SIGMA_ACCRETION_IMPACT, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+        playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 100)
+    elif eventPlayer.Scalar_2 > 0.5:
+        playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+        playEffect(getAllPlayers(), DynamicEffect.PHARAH_CONCUSSIVE_BLAST_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 25)
+    damage(getPlayersInRadius(eventPlayer, min(4, eventPlayer.Scalar_2 * 30), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).exclude(eventPlayer), eventPlayer, max(15, eventPlayer.Scalar_2 * 30))
+    getPlayersInRadius(eventPlayer, min(4, eventPlayer.Scalar_2 * 1.5), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).exclude(eventPlayer).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, min(0.25 * eventPlayer.Scalar_1, 2))
+    wait(2)
+
+rule "Player init":
+    @Event eachPlayer
+    @Condition eventPlayer.hasSpawned()
+
+    if eventPlayer == hostPlayer:
+        print("sc1: {}, sc2: {}".format(eventPlayer.Scalar_1, eventPlayer.Scalar_2))
+        createDummy(Hero.ROADHOG, Team.ALL, -1, Vector.UP, Vector.UP)
+    else:
+        eventPlayer.setMaxHealth(999)
+        eventPlayer.disableNameplatesFor(hostPlayer)
+        createInWorldText(hostPlayer, eventPlayer.getHealth(), eventPlayer, 1, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, Color.BLUE, SpecVisibility.DEFAULT)
+
+rule "On damage":
+    @Event playerTookDamage
+    @Condition eventPlayer.isDummy()
+
+    smallMessage(hostPlayer, "Damage: {}".format(eventDamage))
