@@ -1,4 +1,3 @@
-
 settings
 {
 	modes
@@ -217,50 +216,59 @@ rule("different way")
 		"waitUntil(not eventPlayer.isInAir(), 90) #useless"
 		If(Event Player.Speed < -22);
 			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+			Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Position Of(Event Player), 200);
 			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
 			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
 			Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Effect, Team Of(Event Player), Position Of(Event Player), 200);
 		Else If(Event Player.Speed < -18);
 			Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
 			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
-		Else If(Event Player.Speed < -14);
+		Else If(Event Player.Speed < -15);
 			Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
 			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 50);
 		End;
-		If(Event Player.Speed < -12);
-			Damage(Remove From Array(Players Within Radius(Event Player, Max((Absolute Value(Event Player.Speed) / 10) ^ 5, 5),
-				Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(15, (Absolute Value(
-				Event Player.Speed) / 10) ^ 5));
-			Set Status(Remove From Array(Players Within Radius(Event Player, Max(Absolute Value(0.150 * Event Player.Speed), 5),
-				Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Max(
-				Absolute Value(0.100 * Event Player.Speed), 1));
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, Absolute Value(Event Player.Speed) * 0.150);
-			Play Effect(All Players(All Teams), DVa Micro Missiles Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
+		If(Event Player.Speed < -12.750);
+			Damage(Remove From Array(Players Within Radius(Event Player, Max(Absolute Value(Event Player.Speed) * 0.250, 3), Opposite Team Of(
+				Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(30, (Absolute Value(Event Player.Speed)
+				/ 6.600) ^ 4));
+			Set Status(Remove From Array(Players Within Radius(Event Player, Max(Absolute Value(Event Player.Speed) * 0.250, 3),
+				Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down,
+				Absolute Value(Event Player.Speed) * 0.085);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, Max(Absolute Value(Event Player.Speed) * 0.250, 3));
+			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
 			Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 25);
 	}
 }
 
-rule ("Camera - 3rd Person Toggle") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Is Button Held(Event Player, Button(Reload)) == True;
-        Is Button Held(Event Player, Button(Interact)) == True;
-    }
-    actions {
-        If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 0));
-            Wait(0.116, Ignore Condition);
-            Start Camera(Event Player, Ray Cast Hit Position(Event Player, Add(Add(Add(Event Player, World Vector Of(Vector(-0.5, 0.06, 0.5), Event Player, Rotation)), Multiply(Up, 1.5)), Multiply(Facing Direction Of(Event Player), -3)), Null, Event Player, False), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), 40);
-            Set Player Variable(Event Player, Third_Person_Camera_Toggle, 1);
-            Abort;
-        Else If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 1));
-            Wait(0.116, Ignore Condition);
-            Stop Camera(Event Player);
-            Set Player Variable(Event Player, Third_Person_Camera_Toggle, 0);
-    }
+rule("Camera - 3rd Person Toggle")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Reload)) == True;
+		Is Button Held(Event Player, Button(Interact)) == True;
+	}
+
+	actions
+	{
+		If(Event Player.Third_Person_Camera_Toggle == 0);
+			Wait(0.116, Ignore Condition);
+			Start Camera(Event Player, Ray Cast Hit Position(Event Player, Event Player + World Vector Of(Vector(-0.500, 0.060, 0.500),
+				Event Player, Rotation) + Up * 1.500 + Facing Direction Of(Event Player) * -3, Null, Event Player, False),
+				Event Player + Facing Direction Of(Event Player) * 1000, 40);
+			Event Player.Third_Person_Camera_Toggle = 1;
+			Abort;
+		Else If(Event Player.Third_Person_Camera_Toggle == 1);
+			Wait(0.116, Ignore Condition);
+			Stop Camera(Event Player);
+			Event Player.Third_Person_Camera_Toggle = 0;
+	}
 }
 
 disabled rule("do the thing")
