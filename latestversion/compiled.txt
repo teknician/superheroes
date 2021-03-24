@@ -832,7 +832,7 @@ rule ("Passive Mods 33 - Get Behind Me (Initialize)") {
     actions {
         If(Compare((Event Player).Reinhardt, ==, 0));
             Wait(0.116, Ignore Condition);
-            Set Global Variable(Shield_Vertical_Position, -1);
+            Set Global Variable(Shield_Vertical_Position, -0.75);
             Set Global Variable(Shield_Distance, 1);
             Set Secondary Fire Enabled(Event Player, False);
             Disallow Button(Event Player, Button(Secondary Fire));
@@ -866,19 +866,18 @@ rule ("Passive Mods - Get Behind Me (Shielding)") {
     }
     actions {
         If(Is Button Held(Event Player, Button(Secondary Fire)));
-            Wait(0.116, Ignore Condition);
             Set Player Variable(Event Player, Facing_Direction, Facing Direction Of(Event Player));
             Set Invisible((Event Player).Reinhardt, None);
             Start Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
         End;
-        Wait(0.2, Ignore Condition);
+        Wait(0.116, Ignore Condition);
         Wait Until(Not(Is Button Held(Event Player, Button(Secondary Fire))), 99999);
+        Wait(0.116, Ignore Condition);
         Set Player Variable(Event Player, Facing_Direction, 0);
         Stop Holding Button((Event Player).Reinhardt, Button(Secondary Fire));
-        Wait(0.2, Ignore Condition);
         Set Invisible((Event Player).Reinhardt, All);
         Disallow Button(Event Player, Button(Secondary Fire));
-        Wait(0.2, Ignore Condition);
+        Wait(0.116, Ignore Condition);
         Allow Button(Event Player, Button(Secondary Fire));
     }
 }
@@ -925,7 +924,7 @@ rule ("Passive Mods 35 - Superhero Landing") {
             Chase Player Variable At Rate(Event Player, Vertical_Speed, Vertical Speed Of(Event Player), If-Then-Else(Is In Air(Event Player), 1000, Null), Destination and Rate);
             Wait Until(Is On Ground(Event Player), 99999);
             If(Compare(Hero Of(Event Player), ==, Hero(Wrecking Ball)));
-                Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.5);
+                Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.6);
             End;
             If(Compare((Event Player).Vertical_Speed, <, -23));
                 Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Position Of(Event Player), 200);
@@ -1979,6 +1978,40 @@ rule ("Player Welcome Message - Start") {
     }
 }
 
+rule ("Optional - Debugging") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+    }
+    actions {
+        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        If(Compare(Event Player, ==, Host Player));
+            Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+            Create Dummy Bot(Hero(Roadhog), Color(Team 2), 9, Position Of(Event Player), Up);
+    }
+}
+
+rule ("Optional - Damage Debugging") {
+    event {
+        Player Took Damage;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+    }
+    actions {
+        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
+    }
+}
+
 rule ("Camera - 3rd Person Toggle") {
     event {
         Ongoing - Each Player;
@@ -2014,7 +2047,7 @@ rule ("Mechanics - Conditions to use Melee Cast Mods") {
     conditions {
         Distance Between(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) <= 25;
         Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) == True;
-        (Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))).Is_Visible == True;
+        "@Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).Is_Visible == true"
         Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Enemy Barriers Block LOS) == True;
         Has Status(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Phased Out) == False;
         Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 30) == True;
