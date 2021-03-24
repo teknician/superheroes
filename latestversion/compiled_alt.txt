@@ -18,12 +18,8 @@ settings
 	{
 		Control
 		{
-			disabled maps
-			{
-				Lijiang Tower
-			}
 			Capture Speed Modifier: 250%
-			Scoring Speed Modifier: 85%
+			Scoring Speed Modifier: 90%
 		}
 		disabled Deathmatch
 		{
@@ -32,11 +28,11 @@ settings
 		}
 		Escort
 		{
-			Payload Speed Modifier: 85%
+			Payload Speed Modifier: 90%
 		}
 		Hybrid
 		{
-			Payload Speed Modifier: 85%
+			Payload Speed Modifier: 90%
 		}
 		disabled Team Deathmatch
 		{
@@ -46,7 +42,7 @@ settings
 		{
 			Game Mode Start: Immediately
 			Hero Limit: Off
-			Respawn Time Scalar: 40%
+			Respawn Time Scalar: 45%
 		}
 	}
 	heroes
@@ -1896,9 +1892,6 @@ rule ("Initialization - HUD Text Instructions") {
     actions {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact\nJump To Start of List.{0}", Custom String(".....Ultimate\nTo Middle of List..............Ability 1\nJump To End of List.........Ability 2\nChoose Mod...................{0}", Custom String("..Left/Right Click\nConfirm Mod...................Melee", Null, Null, Null), Null, Null), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -1978,34 +1971,6 @@ rule ("Player Welcome Message - Start") {
         Wait(8, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("More commands in top left!", Null, Null, Null));
-    }
-}
-
-rule ("Optional - Debugging") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    actions {
-        Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
-        If(Compare(Event Player, ==, Host Player));
-            Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create Dummy Bot(Hero(Roadhog), Color(Team 2), 9, Position Of(Event Player), Up);
-    }
-}
-
-rule ("Optional - Damage Debugging") {
-    event {
-        Player Took Damage;
-        All;
-        All;
-    }
-    conditions {
-        Is Dummy Bot(Event Player) == True;
-    }
-    actions {
-        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
     }
 }
 
