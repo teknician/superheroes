@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.5. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -901,31 +901,28 @@ rule ("Passive Mods 35 - Superhero Landing") {
         SuperheroLanding;
     }
     actions {
-        While(Is In Air(Event Player));
-            If(Compare(Y Component Of(Velocity Of(Event Player)), <, 0));
-                "knockdown time scalar"
-                Chase Player Variable At Rate(Event Player, Scalar_1, 2, 0.25, Destination and Rate);
-                "damage scalar + radius"
-                Chase Player Variable At Rate(Event Player, Scalar_2, 4, 0.5, Destination and Rate);
-            Else If(Compare(Y Component Of(Velocity Of(Event Player)), >, 0));
-                Stop Chasing Player Variable(Event Player, Scalar_1);
-                Stop Chasing Player Variable(Event Player, Scalar_2);
+        If(Is In Air(Event Player));
+            Chase Player Variable At Rate(Event Player, Vertical_Speed, Vertical Speed Of(Event Player), If-Then-Else(Is In Air(Event Player), 1000, Null), Destination and Rate);
+            Wait Until(Is On Ground(Event Player), 99999);
+            If(Compare((Event Player).Vertical_Speed, <, -22));
+                Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+                Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Position Of(Event Player), 200);
+                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+                Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+                Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Effect, Team Of(Event Player), Position Of(Event Player), 200);
+            Else If(Compare((Event Player).Vertical_Speed, <, -18));
+                Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
+                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
+            Else If(Compare((Event Player).Vertical_Speed, <, -15));
+                Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 50);
             End;
-            Wait(0.116, Ignore Condition);
-            If(Compare((Event Player).Scalar_2, >, 3));
-                Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Event Player, 1);
-                Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Event Player, 200);
-            Else If(Compare((Event Player).Scalar_2, >, 2));
-                Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Event Player, 1);
-                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Event Player, 100);
-            Else If(Compare((Event Player).Scalar_2, >, 0.5));
-                Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Team Of(Event Player), Event Player, 1);
-                Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Team Of(Event Player), Event Player, 25);
-            End;
-            Damage(Players Within Radius(Event Player, Min(4, Multiply((Event Player).Scalar_2, 30)), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Max(15, Multiply((Event Player).Scalar_2, 30)));
-            Set Status(Players Within Radius(Event Player, Min(4, Multiply((Event Player).Scalar_2, 1.5)), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Knocked Down, Min(Multiply(0.25, (Event Player).Scalar_1), 2));
-            Wait(0.116, Ignore Condition);
-        End;
+            If(Compare((Event Player).Vertical_Speed, <, -12.75));
+                Damage(Remove From Array(Players Within Radius(Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(30, Raise To Power(Divide(Absolute Value((Event Player).Vertical_Speed), 6.6), 4)));
+                Set Status(Remove From Array(Players Within Radius(Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Multiply(Absolute Value((Event Player).Vertical_Speed), 0.085));
+                Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3));
+                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
+                Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 25);
     }
 }
 
@@ -1831,7 +1828,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for twice the damage you deal.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: Fall from a height to deal damage and knock down enemies around you\n(Damage and stun time are proportio{0}", Custom String("nal to starting height)", Null, Null, Null), Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: Fall from a height to deal damage and knock down enemies around you\n            (Damage and stun time a{0}", Custom String("re proportional to starting height)", Null, Null, Null), Null, Null));
     }
 }
 
