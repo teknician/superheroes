@@ -1828,7 +1828,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for twice the damage you deal.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: Fall from a height to deal damage and knock down enemies around you\n            (Damage and stun time a{0}", Custom String("re proportional to starting height)", Null, Null, Null), Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
     }
 }
 
