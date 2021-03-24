@@ -217,7 +217,7 @@ rule ("Initialize") {
     }
 }
 
-rule ("Initialize Mod Menu") {
+rule ("Initialize Mod Menu (Joined)") {
     event {
         Player Joined Match;
         All;
@@ -229,7 +229,21 @@ rule ("Initialize Mod Menu") {
         Set Player Variable(Event Player, Active_Mod, 0);
         Set Player Variable(Event Player, Passive_Mod_Index, 0);
         Set Player Variable(Event Player, Active_Mod_Index, 0);
-        Wait Until(Is Dead(Event Player), 99999);
+        Disallow Button(Event Player, Button(Reload));
+        Disallow Button(Event Player, Button(Interact));
+        Wait(5, Ignore Condition);
+        Allow Button(Event Player, Button(Reload));
+        Allow Button(Event Player, Button(Interact));
+    }
+}
+
+rule ("Initialize Mod Menu (Death)") {
+    event {
+        Player Joined Match;
+        All;
+        All;
+    }
+    actions {
         Disallow Button(Event Player, Button(Reload));
         Disallow Button(Event Player, Button(Interact));
         Set Player Variable(Event Player, Temp_Index, (Event Player).Mod_Menu_Select);
@@ -947,9 +961,7 @@ rule ("Choose/Check Passive Mod") {
         (Event Player).Mod_Menu_Select == 3;
     }
     actions {
-        If(Compare((Event Player).Mod_Menu_Select, ==, 0));
-            Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 3), 99999);
-        End;
+        Abort If(Compare((Event Player).Mod_Menu_Select, ==, 0));
         If(Or(Has Status(Event Player, Stunned), Is Dead(Event Player)));
             Wait(1.5, Ignore Condition);
             Loop;
@@ -2044,6 +2056,7 @@ rule ("Mechanics - Open Mod Menu") {
     }
     conditions {
         Match Time > 5;
+        Is Alive(Event Player) == True;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Standing(Event Player) == True;
@@ -2109,6 +2122,8 @@ rule ("Mechanics - Open Mod Menu") {
             Allow Button(Event Player, Button(Primary Fire));
             Allow Button(Event Player, Button(Secondary Fire));
             Wait(0.5, Ignore Condition);
+        End;
+        Wait(0.116, Ignore Condition);
     }
 }
 
