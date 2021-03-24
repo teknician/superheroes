@@ -795,9 +795,9 @@ rule ("Passive Mods 32 - Forcefield") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 32));
-            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 7.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
+            Set Player Variable(Event Player, Affected_Players, Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Affected_Players), 1);
-                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Add(Direction Towards(Add(Multiply(Position Of(Event Player), Vector(1, 0, 1)), Vector(0, -2, 0)), Multiply(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Vector(1, 0, 1))), Vector(0, 2, 0)), 10, To World, Cancel Contrary Motion);
+                Apply Impulse(Value In Array((Event Player).Affected_Players, (Event Player).Index), Add(Direction Towards(Add(Multiply(Position Of(Event Player), Vector(1, 0, 1)), Vector(0, -2, 0)), Multiply(Position Of(Value In Array((Event Player).Affected_Players, (Event Player).Index)), Vector(1, 0, 1))), Vector(0, 1.5, 0)), 10, To World, Cancel Contrary Motion);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Null, Event Player, 0.5);
                 Wait(0.116, Ignore Condition);
             End;
@@ -1488,11 +1488,8 @@ rule ("Active Mods 14 - Feign Death") {
     }
     actions {
         Disable Built-In Game Mode Respawning(Event Player);
-        Kill(Event Player, Null);
-        Modify Player Score(Event Player, 1);
+        Kill(Event Player, Event Player);
         Wait(1.25, Ignore Condition);
-        Kill(Event Player, Null);
-        Wait(0.75, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Wait Until(And(And(Is Dead(Event Player), Is Button Held(Event Player, Button(Reload))), Is Button Held(Event Player, Button(Melee))), 99999);
         Enable Built-In Game Mode Respawning(Event Player);
@@ -2050,7 +2047,6 @@ rule ("Mechanics - Open Mod Menu") {
         All;
     }
     conditions {
-        Match Time > 5;
         Is Alive(Event Player) == True;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
