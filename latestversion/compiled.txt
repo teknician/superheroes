@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.5. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.6. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -101,22 +101,21 @@ variables {
         19: Third_Person_Camera_Toggle
         20: Player_ATK_SPD_HP
         21: Player_Position
-        22: Player_Height
-        23: Vertical_Speed
-        24: Affected_Players
-        25: Current_Hero
-        26: Current_Hero_2
-        27: Index
-        28: Scalar_1
-        29: Scalar_2
-        30: Active_Index
-        31: Temp_Index
-        32: Facing_Direction
-        33: Is_Colossus
-        34: Is_Blind
-        35: Is_Visible
-        36: Reinhardt
-        37: Shield_Toggle
+        22: Vertical_Speed
+        23: Affected_Players
+        24: Current_Hero
+        25: Current_Hero_2
+        26: Index
+        27: Scalar_1
+        28: Scalar_2
+        29: Active_Index
+        30: Temp_Index
+        31: Facing_Direction
+        32: Is_Colossus
+        33: Is_Blind
+        34: Is_Visible
+        35: Reinhardt
+        36: Shield_Toggle
 }
 subroutines {
     0: Health150
@@ -230,6 +229,15 @@ rule ("Initialize Mod Menu") {
         Set Player Variable(Event Player, Active_Mod, 0);
         Set Player Variable(Event Player, Passive_Mod_Index, 0);
         Set Player Variable(Event Player, Active_Mod_Index, 0);
+        Wait Until(Is Dead(Event Player), 99999);
+        Disallow Button(Event Player, Button(Reload));
+        Disallow Button(Event Player, Button(Interact));
+        Set Player Variable(Event Player, Temp_Index, (Event Player).Mod_Menu_Select);
+        Set Player Variable(Event Player, Mod_Menu_Select, 0);
+        Wait(1, Ignore Condition);
+        Allow Button(Event Player, Button(Reload));
+        Allow Button(Event Player, Button(Interact));
+        Set Player Variable(Event Player, Mod_Menu_Select, (Event Player).Temp_Index);
     }
 }
 
@@ -814,7 +822,7 @@ rule ("Passive Mods 33 - Get Behind Me (Initialize)") {
             Set Global Variable(Shield_Distance, 1);
             Set Secondary Fire Enabled(Event Player, False);
             Disallow Button(Event Player, Button(Secondary Fire));
-            Create Dummy Bot(Hero(Reinhardt), Team Of(Event Player), -1, Vector(0, 10000, 0), Vector(0, 0, 0));
+            Create Dummy Bot(Hero(Reinhardt), Team Of(Event Player), 4, Vector(0, 10000, 0), Vector(0, 0, 0));
             Set Player Variable(Event Player, Reinhardt, Last Created Entity);
             Start Scaling Player((Event Player).Reinhardt, 0, True);
             Disable Movement Collision With Environment((Event Player).Reinhardt, True);
@@ -887,10 +895,8 @@ rule ("Passive Mods 33 - Get Behind Me (Deactivation)") {
         Wait Until(Or(And(Compare((Event Player).Reinhardt, !=, 0), Compare((Event Player).Passive_Mod, !=, 33)), Is Match Complete), 99999);
         Destroy Dummy Bot(Team Of((Event Player).Reinhardt), Slot Of((Event Player).Reinhardt));
         Set Player Variable(Event Player, Reinhardt, 0);
-        Set Secondary Fire Enabled(Event Player, True);
-        Allow Button(Event Player, Button(Secondary Fire));
         Wait(0.5, Ignore Condition);
-        If(Not(Is Match Complete));
+        If(And(Not(Is Match Complete), Compare((Event Player).Passive_Mod, ==, 33)));
             Call Subroutine(GetBehindMe);
     }
 }
@@ -904,13 +910,15 @@ rule ("Passive Mods 35 - Superhero Landing") {
         If(Is In Air(Event Player));
             Chase Player Variable At Rate(Event Player, Vertical_Speed, Vertical Speed Of(Event Player), If-Then-Else(Is In Air(Event Player), 1000, Null), Destination and Rate);
             Wait Until(Is On Ground(Event Player), 99999);
-            If(Compare((Event Player).Vertical_Speed, <, -22));
-                Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
+            If(Compare(Hero Of(Event Player), ==, Hero(Wrecking Ball)));
+                Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.5);
+            End;
+            If(Compare((Event Player).Vertical_Speed, <, -23));
                 Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Position Of(Event Player), 200);
                 Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
                 Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
                 Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Effect, Team Of(Event Player), Position Of(Event Player), 200);
-            Else If(Compare((Event Player).Vertical_Speed, <, -18));
+            Else If(Compare((Event Player).Vertical_Speed, <, -19));
                 Play Effect(All Players(All Teams), Winston Jump Pack Landing Effect, Team Of(Event Player), Position Of(Event Player), 1);
                 Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 100);
             Else If(Compare((Event Player).Vertical_Speed, <, -15));
@@ -923,6 +931,9 @@ rule ("Passive Mods 35 - Superhero Landing") {
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3));
                 Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
                 Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 25);
+            End;
+        End;
+        Wait(3, Ignore Condition);
     }
 }
 
@@ -936,7 +947,9 @@ rule ("Choose/Check Passive Mod") {
         (Event Player).Mod_Menu_Select == 3;
     }
     actions {
-        Abort If(Compare((Event Player).Mod_Menu_Select, ==, 0));
+        If(Compare((Event Player).Mod_Menu_Select, ==, 0));
+            Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 3), 99999);
+        End;
         If(Or(Has Status(Event Player, Stunned), Is Dead(Event Player)));
             Wait(1.5, Ignore Condition);
             Loop;
@@ -1990,7 +2003,6 @@ rule ("Mechanics - Conditions to use Melee Cast Mods") {
         Distance Between(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) <= 25;
         Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) == True;
         (Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))).Is_Visible == True;
-        And(Compare(Hero Of(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), ==, Hero(Sombra)), Is Using Ability 1(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))) == False;
         Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Enemy Barriers Block LOS) == True;
         Has Status(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Phased Out) == False;
         Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 30) == True;
@@ -2024,27 +2036,6 @@ rule ("Mechanics - Conditions to use Friendly Melee Cast Mods") {
     }
 }
 
-rule ("Mechanics - Conditions to use Friendly Melee Mods") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Distance Between(Event Player, Player Closest To Reticle(Event Player, Team Of(Event Player))) <= 2.5;
-        Is Alive(Player Closest To Reticle(Event Player, Team Of(Event Player))) == True;
-        Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Team Of(Event Player)), Enemy Barriers Block LOS) == True;
-        Has Status(Player Closest To Reticle(Event Player, Team Of(Event Player)), Phased Out) == False;
-        Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Team Of(Event Player)), 20) == True;
-        Is Meleeing(Event Player) == True;
-    }
-    actions {
-        Set Player Variable(Event Player, Melee_Mod_Conditions_Ally, 1);
-        Wait(0.66, Ignore Condition);
-        Set Player Variable(Event Player, Melee_Mod_Conditions_Ally, 0);
-    }
-}
-
 rule ("Mechanics - Open Mod Menu") {
     event {
         Ongoing - Each Player;
@@ -2053,7 +2044,6 @@ rule ("Mechanics - Open Mod Menu") {
     }
     conditions {
         Match Time > 5;
-        Is Alive(Event Player) == True;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Standing(Event Player) == True;
@@ -2439,24 +2429,6 @@ rule ("Active Mods - Colossus (Gravity Mods)") {
     actions {
         Wait(3, Ignore Condition);
         Set Gravity(Event Player, 50);
-    }
-}
-
-rule ("Fix Mod Menu Bug") {
-    event {
-        Player Died;
-        All;
-        All;
-    }
-    actions {
-        Disallow Button(Event Player, Button(Reload));
-        Disallow Button(Event Player, Button(Interact));
-        Set Player Variable(Event Player, Temp_Index, (Event Player).Mod_Menu_Select);
-        Set Player Variable(Event Player, Mod_Menu_Select, 0);
-        Wait(1, Ignore Condition);
-        Allow Button(Event Player, Button(Reload));
-        Allow Button(Event Player, Button(Interact));
-        Set Player Variable(Event Player, Mod_Menu_Select, (Event Player).Temp_Index);
     }
 }
 
