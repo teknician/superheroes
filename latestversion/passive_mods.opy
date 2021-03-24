@@ -30,7 +30,7 @@ rule "Initialize":
 
     setMatchTime(70)
 
-rule "Initialize Mod Menu": #If you haven't opened the menu yet, don't check for mods.
+rule "Initialize Mod Menu (Joined)": #If you haven't opened the menu yet, don't check for mods.
     @Event playerJoined
     @Hero all
     eventPlayer.Mod_Menu_Select = 0
@@ -38,6 +38,23 @@ rule "Initialize Mod Menu": #If you haven't opened the menu yet, don't check for
     eventPlayer.Active_Mod = 0
     eventPlayer.Passive_Mod_Index = 0
     eventPlayer.Active_Mod_Index = 0
+    eventPlayer.disallowButton(Button.RELOAD)
+    eventPlayer.disallowButton(Button.INTERACT)
+    wait(5)
+    eventPlayer.allowButton(Button.RELOAD)
+    eventPlayer.allowButton(Button.INTERACT)
+    
+rule "Initialize Mod Menu (Death)": #If you haven't opened the menu yet, don't check for mods.
+    @Event playerJoined
+    @Hero all
+    eventPlayer.disallowButton(Button.RELOAD)
+    eventPlayer.disallowButton(Button.INTERACT)
+    eventPlayer.Temp_Index = eventPlayer.Mod_Menu_Select
+    eventPlayer.Mod_Menu_Select = 0
+    wait(1)
+    eventPlayer.allowButton(Button.RELOAD)
+    eventPlayer.allowButton(Button.INTERACT)
+    eventPlayer.Mod_Menu_Select = eventPlayer.Temp_Index
 
 def PlayerReset(): #last
     @Name "Reset Player Parameters"
@@ -101,10 +118,10 @@ def PlayerReset(): #last
     eventPlayer.clearStatusEffect(Status.UNKILLABLE)
 
 
-#@Name "Passive Mods 1 - 150% Movement Speed"
+#@Name "Passive Mods 1 - 160% Movement Speed"
 
 
-#@Name "Passive Mods 3 - 150% Damage"
+#@Name "Passive Mods 3 - 140% Damage"
 
 
 def Health150(): # 4
@@ -469,11 +486,11 @@ def GetBehindMe():
     
     if eventPlayer.Reinhardt == 0:
         wait(0.116)
-        Shield_Vertical_Position = -1
+        Shield_Vertical_Position = -0.75
         Shield_Distance = 1
         eventPlayer.setSecondaryFireEnabled(false)
         eventPlayer.disallowButton(Button.SECONDARY_FIRE)
-        createDummy(Hero.REINHARDT, eventPlayer.getTeam(), -1, vect(0, 10000, 0), vect(0, 0, 0))
+        createDummy(Hero.REINHARDT, eventPlayer.getTeam(), 4, vect(0, 10000, 0), vect(0, 0, 0))
         eventPlayer.Reinhardt = getLastCreatedEntity()
         eventPlayer.Reinhardt.startScalingSize(0, true)
         eventPlayer.Reinhardt.disableEnvironmentCollision(true)
@@ -498,18 +515,17 @@ def GetBehindMeShield():
     @Name "Passive Mods - Get Behind Me (Shielding)"
 
     if eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true:
-        wait(0.116)
         eventPlayer.Facing_Direction = eventPlayer.getFacingDirection()
         eventPlayer.Reinhardt.setInvisibility(Invis.NONE)
         eventPlayer.Reinhardt.startForcingButton(Button.SECONDARY_FIRE)
-    wait(0.2)
+    wait(0.116)
     waitUntil(eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == false, 99999)
+    wait(0.116)
     eventPlayer.Facing_Direction = 0
     eventPlayer.Reinhardt.stopForcingButton(Button.SECONDARY_FIRE)
-    wait(0.2)
     eventPlayer.Reinhardt.setInvisibility(Invis.ALL)
     eventPlayer.disallowButton(Button.SECONDARY_FIRE)
-    wait(0.2)
+    wait(0.116)
     eventPlayer.allowButton(Button.SECONDARY_FIRE)
 
 def GetBehindMeOff():
@@ -534,50 +550,40 @@ def GetBehindMeOff():
     waitUntil((eventPlayer.Reinhardt != 0 and eventPlayer.Passive_Mod != 33) or isMatchComplete() == true, 99999)
     destroyDummy(eventPlayer.Reinhardt.getTeam(), eventPlayer.Reinhardt.getSlot())
     eventPlayer.Reinhardt = 0
-    eventPlayer.setSecondaryFireEnabled(true)
-    eventPlayer.allowButton(Button.SECONDARY_FIRE)
     wait(0.5)
-    if isMatchComplete() == false:
+    if isMatchComplete() == false and eventPlayer.Passive_Mod == 33:
         GetBehindMe()
 
 def SuperheroLanding():
     @Name "Passive Mods 35 - Superhero Landing"
-    
-    while (eventPlayer.isInAir()):
-        if eventPlayer.getVelocity().y < 0:
-            chase(eventPlayer.Scalar_1, 2, rate=0.25, ChaseReeval.DESTINATION_AND_RATE) # knockdown time scalar
-            chase(eventPlayer.Scalar_2, 4, rate=0.5, ChaseReeval.DESTINATION_AND_RATE) #damage scalar + radius
-        elif eventPlayer.getVelocity().y >= 0:
-            stopChasingVariable(eventPlayer.Scalar_1)
-            stopChasingVariable(eventPlayer.Scalar_2)
-        wait(0.116)
-    
-    waitUntil(eventPlayer.isInAir() == false, 999)
-    if eventPlayer.Scalar_2 > 3:
-        playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer, 1)
-        playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer, 200)
-    elif eventPlayer.Scalar_2 > 2:
-        playEffect(getAllPlayers(), DynamicEffect.SIGMA_ACCRETION_IMPACT, eventPlayer.getTeam(), eventPlayer, 1)
-        playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer, 100)
-    elif eventPlayer.Scalar_2 > 0.5:
-        playEffect(getAllPlayers(), DynamicEffect.ORISA_HALT_IMPLOSION, eventPlayer.getTeam(), eventPlayer, 1)
-        playEffect(getAllPlayers(), DynamicEffect.PHARAH_CONCUSSIVE_BLAST_SOUND, eventPlayer.getTeam(), eventPlayer, 25)
-    damage(getPlayersInRadius(eventPlayer, min(4, eventPlayer.Scalar_2 * 30), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS), eventPlayer, max(15, eventPlayer.Scalar_2 * 30))
-    getPlayersInRadius(eventPlayer, min(4, eventPlayer.Scalar_2 * 1.5), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, min(0.25 * eventPlayer.Scalar_1, 2))
-    wait(0.116)
+    if eventPlayer.isInAir():
+        chase(eventPlayer.Vertical_Speed, eventPlayer.getVerticalSpeed(), rate=1000 if eventPlayer.isInAir() else null, ChaseReeval.DESTINATION_AND_RATE)
+        waitUntil(eventPlayer.isOnGround(), 99999)
+        if eventPlayer.Vertical_Speed < -23:
+            playEffect(getAllPlayers(), DynamicEffect.DOOMFIST_METEOR_STRIKE_IMPACT_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 200)
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 100)
+            playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+            playEffect(getAllPlayers(), DynamicEffect.WRECKING_BALL_PILEDRIVER_IMPACT, eventPlayer.getTeam(), eventPlayer.getPosition(), 200)
+        elif eventPlayer.Vertical_Speed < -19:
+            playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 100)
+        elif eventPlayer.Vertical_Speed < -15:
+            playEffect(getAllPlayers(), DynamicEffect.SIGMA_ACCRETION_IMPACT, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 50)
+        if eventPlayer.Vertical_Speed < -12.75:
+            if eventPlayer.getCurrentHero() == Hero.HAMMOND:
+                eventPlayer.Vertical_Speed *= 0.35
+            damage((getPlayersInRadius(eventPlayer, max(abs(eventPlayer.Vertical_Speed) * 0.25, 3), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)).exclude(eventPlayer), eventPlayer, max(30, (abs(eventPlayer.Vertical_Speed) / 6.5) ** 4))
+            ((getPlayersInRadius(eventPlayer, max(abs(eventPlayer.Vertical_Speed) * 0.25, 3), getOppositeTeam(eventPlayer.getTeam()), LosCheck.SURFACES_AND_ENEMY_BARRIERS)).exclude(eventPlayer)).setStatusEffect(eventPlayer, Status.KNOCKED_DOWN, abs(eventPlayer.Vertical_Speed) * 0.09)
+            playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION, Color.RED, eventPlayer, max(abs(eventPlayer.Vertical_Speed) * 0.25, 3))
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION, eventPlayer.getTeam(), eventPlayer.getPosition(), 1)
+            playEffect(getAllPlayers(), DynamicEffect.PHARAH_ROCKET_LAUNCHER_EXPLOSION_SOUND, eventPlayer.getTeam(), eventPlayer.getPosition(), 25)
+    wait(3)
 
 rule "Choose/Check Passive Mod":
     @Event eachPlayer
     @Hero all
     @Condition eventPlayer.Mod_Menu_Select == 3
-  /*   (eventPlayer.isHoldingButton(Button.CROUCH) or \
-    eventPlayer.isHoldingButton(Button.MELEE) or \
-    eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) or \
-    eventPlayer.isHoldingButton(Button.INTERACT) or 
-    eventPlayer.isCrouching() or 
-    eventPlayer.isMoving() or \
-    entityExists(eventPlayer.Passive_Mod_FX) or \
-    entityExists(eventPlayer.Passive_Mod_FX_Array) */
     
     if eventPlayer.Mod_Menu_Select == 0:
         return
@@ -591,10 +597,10 @@ rule "Choose/Check Passive Mod":
                 break
             case 1:
                 break
-            case 2: #@Name "Passive Mods 1 - 150% Movement Speed"
+            case 2: #@Name "Passive Mods 1 - 160% Movement Speed"
                 eventPlayer.setMoveSpeed(160)
                 break
-            case 3: #@Name "Passive Mods 2 - 150% Damage"
+            case 3: #@Name "Passive Mods 2 - 140% Damage"
                 eventPlayer.setDamageDealt(140)
                 break
             case 4:

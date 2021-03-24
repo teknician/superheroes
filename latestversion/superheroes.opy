@@ -1,6 +1,6 @@
 settings {
     "main": {
-        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.1. CODE: VHAV8"
+        "description": "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.2.6. CODE: VHAV8"
     },
     "lobby": {
         "allowPlayersInQueue": true,
@@ -83,7 +83,6 @@ playervar Melee_Mod_Conditions_Ally
 playervar Third_Person_Camera_Toggle 
 playervar Player_ATK_SPD_HP 
 playervar Player_Position 
-playervar Player_Height
 playervar Vertical_Speed
 playervar Affected_Players
 playervar Current_Hero 
@@ -265,7 +264,7 @@ rule "Initialization - Passive Mod Strings":
     Passive_Mod_Strings[32] = "Forcefield: Repel enemies within a 5 metre radius."
     Passive_Mod_Strings[33] = "Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield."
     Passive_Mod_Strings[34] = "Lifesteal: Heal for twice the damage you deal."
-    Passive_Mod_Strings[35] = "Superhero Landing: Fall from a height to deal damage and knock down enemies around you\n(Damage and stun time are proportional to starting height)"
+    Passive_Mod_Strings[35] = "Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land."
 
 
 rule "Initialization - Active Mod Strings":
@@ -353,11 +352,26 @@ rule "Player Welcome Message - Start":
     playEffect(eventPlayer, DynamicEffect.HANZO_SONIC_ARROW_INITIAL_PULSE_SOUND, null, eventPlayer.getPosition(), 4000)
     bigMessage(eventPlayer, "More commands in top left!")
 
-/* rule "Optional - Display Diagnostics":
+rule "Optional - Debugging":
+    @Event eachPlayer
+    @Hero all
+
     hudHeader(getAllPlayers(), "Average Load: {0}".format(getAverageServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
     hudHeader(getAllPlayers(), "Peak: {0}".format(getPeakServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
-    hudHeader(getAllPlayers(), "Server Load: {0}".format(getServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT) */
+    hudHeader(getAllPlayers(), "Server Load: {0}".format(getServerLoad()), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
 
+    waitUntil(eventPlayer.isHoldingButton(Button.RELOAD) and eventPlayer.isHoldingButton(Button.JUMP), 99999)
+    if eventPlayer == hostPlayer:
+        hudHeader(getAllPlayers(), "Speed: {0}".format(eventPlayer.Vertical_Speed), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)
+        createDummy(Hero.ROADHOG, Color.TEAM_2, 9, eventPlayer.getPosition(), Vector.UP)
+
+rule "Optional - Damage Debugging":
+    @Event playerTookDamage
+    @Hero all
+    @Condition eventPlayer.isDummy() == true
+    
+    smallMessage(hostPlayer, "Damage: {0}".format(eventDamage))
+    
 rule "Camera - 3rd Person Toggle":
     @Event eachPlayer
     @Hero all
@@ -383,9 +397,9 @@ rule "Mechanics - Conditions to use Melee Cast Mods":
     @Hero all
     @Condition distance(eventPlayer, eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam()))) <= 25
     @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).isAlive() == true
-    @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).Is_Visible == true
-    @Condition (eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).getCurrentHero() == Hero.SOMBRA and 
-    eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).isUsingAbility1() == true) == false
+    # @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).Is_Visible == true
+    /* @Condition (eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).getCurrentHero() == Hero.SOMBRA and 
+    eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).isUsingAbility1() == true) == false */
     @Condition isInLoS(eventPlayer, eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())), BarrierLos.BLOCKED_BY_ENEMY_BARRIERS) == true
     @Condition eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())).hasStatusEffect(Status.PHASED_OUT) == false
     @Condition eventPlayer.isInViewAngle(eventPlayer.getPlayerClosestToReticle(getOppositeTeam(eventPlayer.getTeam())), 30) == true
@@ -411,7 +425,7 @@ rule "Mechanics - Conditions to use Friendly Melee Cast Mods":
     eventPlayer.CastMelee_Mod_Conditions_Ally = 0
 
 
-rule "Mechanics - Conditions to use Friendly Melee Mods":
+/* rule "Mechanics - Conditions to use Friendly Melee Mods":
     @Event eachPlayer
     @Hero all
     @Condition distance(eventPlayer, eventPlayer.getPlayerClosestToReticle(eventPlayer.getTeam())) <= 2.5
@@ -423,7 +437,7 @@ rule "Mechanics - Conditions to use Friendly Melee Mods":
     
     eventPlayer.Melee_Mod_Conditions_Ally = 1
     wait(0.66)
-    eventPlayer.Melee_Mod_Conditions_Ally = 0
+    eventPlayer.Melee_Mod_Conditions_Ally = 0 */
 
 
 rule "Mechanics - Open Mod Menu":
@@ -499,7 +513,7 @@ rule "Mechanics - Open Mod Menu":
         eventPlayer.allowButton(Button.PRIMARY_FIRE)
         eventPlayer.allowButton(Button.SECONDARY_FIRE)
         wait(0.5)
-
+    wait(0.116)
 
 rule "Mechanics - Jump to Middle of Passive Mods (Ability 1)":
     @Event eachPlayer
@@ -736,17 +750,6 @@ def ColossusDeath():
     
     wait(3)
     eventPlayer.setGravity(50)
-
-rule "Fix Mod Menu Bug":
-    @Event playerDied
-    eventPlayer.disallowButton(Button.RELOAD)
-    eventPlayer.disallowButton(Button.INTERACT)
-    eventPlayer.Temp_Index = eventPlayer.Mod_Menu_Select
-    eventPlayer.Mod_Menu_Select = 0
-    wait(1)
-    eventPlayer.allowButton(Button.RELOAD)
-    eventPlayer.allowButton(Button.INTERACT)
-    eventPlayer.Mod_Menu_Select = eventPlayer.Temp_Index
 
 rule "Mods PlayerDied Events":
     @Event playerDied
