@@ -1896,6 +1896,9 @@ rule ("Initialization - HUD Text Instructions") {
     actions {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact\nJump To Start of List.{0}", Custom String(".....Ultimate\nTo Middle of List..............Ability 1\nJump To End of List.........Ability 2\nChoose Mod...................{0}", Custom String("..Left/Right Click\nConfirm Mod...................Melee", Null, Null, Null), Null, Null), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -1985,9 +1988,6 @@ rule ("Optional - Debugging") {
         All;
     }
     actions {
-        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         If(Compare(Event Player, ==, Host Player));
             Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
@@ -2153,12 +2153,13 @@ rule ("Mechanics - Close Mod Menu") {
     }
     conditions {
         Is Button Held(Event Player, Button(Melee)) == True;
-        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Mod_Menu_Select == 2;
         Has Status(Event Player, Rooted) == True;
         Has Status(Event Player, Hacked) == True;
         Has Status(Event Player, Phased Out) == True;
     }
     actions {
+        Set Player Variable(Event Player, Mod_Menu_Select, 3);
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Wait(0.5, Ignore Condition);
         If(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)));
