@@ -1010,22 +1010,23 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Damage Received((Event Player).Target, Multiply(100, Add(1, (Event Player).Passive_Time)));
                 Set Damage Dealt((Event Player).Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
                 Wait(0.016, Ignore Condition);
-                If(Compare((Event Player).Passive_Time, ==, 0.25));
-                    Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
-                    Wait Until(Not((Event Player).LoS_Mod_Conditions), 99999);
-                    Set Player Variable(Event Player, Target, Null);
-                    Set Healing Received((Event Player).Target, 100);
-                    Set Healing Dealt((Event Player).Target, 100);
-                    Set Damage Received((Event Player).Target, 100);
-                    Set Damage Dealt((Event Player).Target, 100);
-                    Set Player Variable(Event Player, Target, Null);
-                    Set Player Variable(Event Player, Passive_Time, 0);
-                    Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
-                    Destroy Effect((Event Player).Passive_Mod_FX_Array);
-                    Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
-                End;
-                Wait(0.02, Ignore Condition);
             End;
+            If(Compare((Event Player).Passive_Time, ==, 0.25));
+                Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
+            End;
+            Wait Until(Not((Event Player).LoS_Mod_Conditions), 99999);
+            Chase Player Variable Over Time(Event Player, Passive_Time, 0, 0.01, None);
+            Set Player Variable(Event Player, Target, Null);
+            Set Healing Received((Event Player).Target, 100);
+            Set Healing Dealt((Event Player).Target, 100);
+            Set Damage Received((Event Player).Target, 100);
+            Set Damage Dealt((Event Player).Target, 100);
+            Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
+            Destroy Effect((Event Player).Passive_Mod_FX_Array);
+            Small Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
+            Wait(0.016, Ignore Condition);
+            Wait Until((Event Player).LoS_Mod_Conditions, 99999);
+            Loop;
     }
 }
 
@@ -1894,7 +1895,7 @@ rule ("Active Mods 25 - Railgun") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 26;
+        (Event Player).Active_Mod == 25;
         Is Button Held(Event Player, Button(Interact)) == True;
     }
     actions {
@@ -1910,7 +1911,7 @@ rule ("Active Mods 26 - Armor Field") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 27;
+        (Event Player).Active_Mod == 26;
         Altitude Of(Event Player) <= 2;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
