@@ -991,7 +991,6 @@ rule ("Passive Mods 36 - Evil Eye") {
                     Wait(0.1, Ignore Condition);
                 End;
                 Stop Chasing Player Variable(Event Player, Passive_Time);
-                Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
                 Set Player Variable(Event Player, Old_Target, (Event Player).Current_Target);
                 Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
                 Set Player Variable(Event Player, Passive_Time, 0);
@@ -1000,7 +999,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Healing Dealt((Event Player).Current_Target, 100);
                 Set Damage Received((Event Player).Current_Target, 100);
                 Set Damage Dealt((Event Player).Current_Target, 100);
-                Wait(0.016, Ignore Condition);
+                Wait(0.5, Ignore Condition);
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 Play Effect(Array(Event Player, (Event Player).Old_Target), Bad Explosion, Color(Red), (Event Player).Old_Target, 1);
                 Set Player Variable(Event Player, Old_Target, Null);
@@ -1009,7 +1008,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
             End;
         End;
-        Wait(0.2, Ignore Condition);
+        Wait(2, Ignore Condition);
         Loop;
     }
 }
@@ -1912,6 +1911,7 @@ rule ("Active Mods 26 - Armor Field") {
         Wait(0.25, Ignore Condition);
         Chase Player Variable Over Time(Event Player, Active_Time, 6.1, 6, Destination and Duration);
         While(Compare((Event Player).Active_Time, <=, 6));
+            Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, False);
             End;
