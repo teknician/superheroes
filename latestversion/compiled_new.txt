@@ -302,6 +302,7 @@ rule ("Reset Player Parameters") {
         Stop Camera(Event Player);
         Stop All Heal Over Time(Event Player);
         Stop All Damage Over Time(Event Player);
+        Remove All Health Pools From Player(Event Player);
         Set Player Variable(Event Player, Affected_Players, 0);
         Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
@@ -979,7 +980,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Create Effect(Array(Event Player, (Event Player).Current_Target), Bad Aura Sound, Color(Red), (Event Player).Current_Target, 100, Position and Radius);
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
                 Chase Player Variable At Rate(Event Player, Passive_Time, 0.35, 0.035, Destination and Rate);
-                While(And(Compare((Event Player).Passive_Time, !=, 0.35), Compare((Event Player).Current_Target, !=, Null)));
+                While(Compare((Event Player).Passive_Time, !=, 0.35));
                     Set Move Speed((Event Player).Current_Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
                     Set Healing Received((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                     Set Healing Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
@@ -993,7 +994,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Set Player Variable(Event Player, Old_Target, (Event Player).Current_Target);
                 Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
-                Wait(1, Ignore Condition);
+                Wait(2, Ignore Condition);
                 If(And(Is Alive((Event Player).Current_Target), Compare((Event Player).Current_Target, ==, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))));
                     Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
                 End;
@@ -1913,7 +1914,7 @@ rule ("Active Mods 26 - Armor Field") {
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 125, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Wait(0.25, Ignore Condition);
-        Chase Player Variable Over Time(Event Player, Active_Time, 5.1, 5, Destination and Duration);
+        Chase Player Variable Over Time(Event Player, Active_Time, 5.01, 5, Destination and Duration);
         While(Compare((Event Player).Active_Time, <=, 5));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
@@ -1935,7 +1936,7 @@ rule ("Active Mods 26 - Armor Field") {
         Set Player Variable(Event Player, Active_Time, 0);
         Set Player Variable(Event Player, Scalar_1, 0);
         Set Player Variable(Event Player, Player_Position, 0);
-        Wait(9, Ignore Condition);
+        Wait(12, Ignore Condition);
     }
 }
 
@@ -2027,7 +2028,7 @@ rule ("Initialization - Active Mod Strings") {
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Interact to use 100% Ult and become a statue with +5000 Armor. Explode when you die. (20 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: WIP - Does nothing yet.", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (15 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (12 sec. CD)", Null, Null, Null));
     }
 }
 
@@ -2589,6 +2590,7 @@ rule ("Mods - Remove FX on Death") {
         Allow Button(Event Player, Button(Interact));
         Allow Button(Event Player, Button(Secondary Fire));
         Set Max Health(Event Player, 100);
+        Remove All Health Pools From Player(Event Player);
     }
 }
 
