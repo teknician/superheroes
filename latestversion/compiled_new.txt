@@ -1009,11 +1009,12 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Healing Dealt((Event Player).Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                 Set Damage Received((Event Player).Target, Multiply(100, Add(1, (Event Player).Passive_Time)));
                 Set Damage Dealt((Event Player).Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
+                Wait(0.25, Ignore Condition);
                 If(Compare((Event Player).Passive_Time, ==, 0.25));
                     Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
+                    Break;
                 End;
-                Small Message(All Players(All Teams), Custom String("Stats changing...", Null, Null, Null));
-                Wait(0.25, Ignore Condition);
+                Wait(0.116, Ignore Condition);
             End;
             Wait Until(Not((Event Player).LoS_Mod_Conditions), 99999);
             Set Healing Received((Event Player).Target, 100);
