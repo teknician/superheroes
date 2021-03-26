@@ -222,7 +222,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(7);
+        Set Match Time(70);
     }
 }
 
@@ -1901,6 +1901,7 @@ rule ("Active Mods 26 - Armor Field") {
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
+        Wait(0.5, Ignore Condition);
         Set Player Variable(Event Player, Scalar_1, 1);
         Set Player Variable(Event Player, Player_Position, Eye Position(Event Player));
         Set Player Variable(Event Player, Player_Foot_Position, Position Of(Event Player));
@@ -1912,13 +1913,13 @@ rule ("Active Mods 26 - Armor Field") {
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 125, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Wait(0.25, Ignore Condition);
-        Chase Player Variable Over Time(Event Player, Active_Time, 6.1, 6, Destination and Duration);
-        While(Compare((Event Player).Active_Time, <=, 6));
+        Chase Player Variable Over Time(Event Player, Active_Time, 5.1, 5, Destination and Duration);
+        While(Compare((Event Player).Active_Time, <=, 5));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, True);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.7, False, True);
             End;
-            If(Array Contains(Array(1, 2, 3, 4, 5, 6), (Event Player).Scalar_1));
+            If(Array Contains(Array(1, 2, 3, 4, 5), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Sound, Color(Orange), (Event Player).Player_Foot_Position, 50);
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), (Event Player).Player_Foot_Position, 4);
@@ -1927,7 +1928,7 @@ rule ("Active Mods 26 - Armor Field") {
             Set Player Variable(Event Player, Active_Affected_Players, 0);
             Wait(0.25, Ignore Condition);
         End;
-        Wait Until(Compare((Event Player).Active_Time, >, 6), 99999);
+        Wait Until(Compare((Event Player).Active_Time, >, 5), 99999);
         Stop Chasing Player Variable(Event Player, Active_Time);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Active_Affected_Players, 0);
@@ -2026,7 +2027,7 @@ rule ("Initialization - Active Mod Strings") {
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Interact to use 100% Ult and become a statue with +5000 Armor. Explode when you die. (20 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: WIP - Does nothing yet.", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 100 armor over 6 seconds. (9 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (15 sec. CD)", Null, Null, Null));
     }
 }
 
