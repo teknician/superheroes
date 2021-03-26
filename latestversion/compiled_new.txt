@@ -1916,7 +1916,7 @@ rule ("Active Mods 26 - Armor Field") {
         While(Compare((Event Player).Active_Time, <=, 6));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 3.25, False, False);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6, False, True);
             End;
             If(Array Contains(Array(1, 2, 3, 4, 5, 6), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
@@ -1924,6 +1924,7 @@ rule ("Active Mods 26 - Armor Field") {
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), (Event Player).Player_Foot_Position, 4);
             End;
             Modify Player Variable(Event Player, Scalar_1, Add, 0.25);
+            Set Player Variable(Event Player, Active_Affected_Players, 0);
             Wait(0.25, Ignore Condition);
         End;
         Wait Until(Compare((Event Player).Active_Time, >, 6), 99999);
