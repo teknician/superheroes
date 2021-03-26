@@ -987,7 +987,7 @@ rule ("Passive Mods 36 - Evil Eye") {
     actions {
         If((Event Player).LoS_Mod_Conditions);
             While((Event Player).LoS_Mod_Conditions);
-                Chase Player Variable Over Time(Event Player, Passive_Time, 0.25, 4, Destination and Duration);
+                Chase Player Variable At Rate(Event Player, Passive_Time, 0.25, 0.05, Destination and Rate);
                 If(Compare(((Event Player).Target).Passive_Mod, ==, 2));
                     Set Move Speed((Event Player).Target, Multiply(160, Subtract(1, (Event Player).Passive_Time)));
                 Else If(And(Compare(((Event Player).Target).Passive_Mod, ==, 5), Compare((Event Player).Passive_Mod_Skill_Toggle, ==, 1)));
@@ -1009,23 +1009,23 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Healing Dealt((Event Player).Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                 Set Damage Received((Event Player).Target, Multiply(100, Add(1, (Event Player).Passive_Time)));
                 Set Damage Dealt((Event Player).Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
-                Wait(0.25, Ignore Condition);
+                Wait(0.016, Ignore Condition);
                 If(Compare((Event Player).Passive_Time, ==, 0.25));
                     Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
-                    Break;
+                    Wait Until(Not((Event Player).LoS_Mod_Conditions), 99999);
+                    Set Player Variable(Event Player, Target, Null);
+                    Set Healing Received((Event Player).Target, 100);
+                    Set Healing Dealt((Event Player).Target, 100);
+                    Set Damage Received((Event Player).Target, 100);
+                    Set Damage Dealt((Event Player).Target, 100);
+                    Set Player Variable(Event Player, Target, Null);
+                    Set Player Variable(Event Player, Passive_Time, 0);
+                    Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
+                    Destroy Effect((Event Player).Passive_Mod_FX_Array);
+                    Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
                 End;
-                Wait(0.116, Ignore Condition);
+                Wait(0.02, Ignore Condition);
             End;
-            Wait Until(Not((Event Player).LoS_Mod_Conditions), 99999);
-            Set Healing Received((Event Player).Target, 100);
-            Set Healing Dealt((Event Player).Target, 100);
-            Set Damage Received((Event Player).Target, 100);
-            Set Damage Dealt((Event Player).Target, 100);
-            Set Player Variable(Event Player, Target, Null);
-            Set Player Variable(Event Player, Passive_Time, 0);
-            Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
-            Destroy Effect((Event Player).Passive_Mod_FX_Array);
-            Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
     }
 }
 
@@ -1886,6 +1886,22 @@ rule ("Active Mods 24 - Colossus (FX)") {
     }
 }
 
+rule ("Active Mods 25 - Railgun") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Active_Mod == 26;
+        Is Button Held(Event Player, Button(Interact)) == True;
+    }
+    actions {
+        Small Message(Event Player, Custom String("Doesn't work yet.", Null, Null, Null));
+    }
+}
+
 rule ("Active Mods 26 - Armor Field") {
     event {
         Ongoing - Each Player;
@@ -1895,19 +1911,22 @@ rule ("Active Mods 26 - Armor Field") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 27;
-        Altitude Of(Event Player) <= 1;
-        Or(Is Meleeing(Event Player), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
+        Altitude Of(Event Player) <= 2;
+        Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
+        Big Message(All Players(All Teams), Custom String("Is this working?", Null, Null, Null));
         Set Player Variable(Event Player, Player_Position, Eye Position(Event Player));
         Create Effect(All Players(All Teams), Ring, Color(Orange), Multiply(Position Of(Event Player), Vector(1, 0, 1)), 4.5, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Sparkles, Color(Yellow), Multiply(Position Of(Event Player), Vector(1, 0, 1)), 4.5, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
+        Small Message(All Players(All Teams), Custom String("1", Null, Null, Null));
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 4.5, Team Of(Event Player), Surfaces And Enemy Barriers));
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 25, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Chase Player Variable Over Time(Event Player, Active_Time, 6, 6, Destination and Duration);
+        Small Message(All Players(All Teams), Custom String("2", Null, Null, Null));
         While(Compare((Event Player).Active_Time, <=, 6));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, False);
@@ -1921,9 +1940,11 @@ rule ("Active Mods 26 - Armor Field") {
             Wait(0.25, Ignore Condition);
         End;
         Wait Until(Compare((Event Player).Active_Time, ==, 6), 7);
+        Small Message(All Players(All Teams), Custom String("3", Null, Null, Null));
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Active_Affected_Players, 0);
         Wait(9, Ignore Condition);
+        Small Message(All Players(All Teams), Custom String("4", Null, Null, Null));
     }
 }
 
@@ -2217,16 +2238,16 @@ rule ("Mechanics - Conditions to use LoS Mods") {
         All;
     }
     conditions {
-        Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 10) == True;
+        Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 15) == True;
     }
     actions {
         Set Player Variable(Event Player, Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        If(And(And(And(And(And(Is In Line of Sight(Event Player, (Event Player).Target, Enemy Barriers Block LOS), Compare(Distance Between(Event Player, (Event Player).Target), <=, 30)), Is Alive((Event Player).Target)), Not(And(Is Using Ability 1((Event Player).Target), Compare(Hero Of((Event Player).Target), ==, Hero(Sombra))))), Not(Has Status((Event Player).Target, Phased Out))), Is In View Angle(Event Player, (Event Player).Target, 10)));
+        If(And(And(And(And(Is In Line of Sight(Event Player, (Event Player).Target, Enemy Barriers Block LOS), Compare(Distance Between(Event Player, (Event Player).Target), <=, 30)), Is Alive((Event Player).Target)), Not(And(Is Using Ability 1((Event Player).Target), Compare(Hero Of((Event Player).Target), ==, Hero(Sombra))))), Not(Has Status((Event Player).Target, Phased Out))));
             Set Player Variable(Event Player, LoS_Mod_Conditions, True);
         Else;
             Set Player Variable(Event Player, LoS_Mod_Conditions, False);
         End;
-        Wait(0.1, Ignore Condition);
+        Wait(1, Ignore Condition);
         Loop If Condition Is True;
     }
 }
@@ -2554,10 +2575,10 @@ rule ("Mechanics - Hero Swap") {
         Is Button Held(Event Player, Button(Crouch)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Moving(Event Player) == False;
-        Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select) == False;
+        Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == False;
     }
     actions {
-        Wait(1.5, Abort When False);
+        Wait(1.25, Abort When False);
         Kill(Event Player, Null);
     }
 }
