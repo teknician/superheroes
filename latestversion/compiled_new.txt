@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.1. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.1. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -978,8 +978,8 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
                 Create Effect(Array(Event Player, (Event Player).Current_Target), Bad Aura Sound, Color(Red), (Event Player).Current_Target, 100, Position and Radius);
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
-                Chase Player Variable At Rate(Event Player, Passive_Time, 0.25, 0.025, Destination and Rate);
-                While(And(Compare((Event Player).Passive_Time, !=, 0.25), Compare((Event Player).Current_Target, !=, Null)));
+                Chase Player Variable At Rate(Event Player, Passive_Time, 0.35, 0.035, Destination and Rate);
+                While(And(Compare((Event Player).Passive_Time, !=, 0.35), Compare((Event Player).Current_Target, !=, Null)));
                     Set Move Speed((Event Player).Current_Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
                     Set Healing Received((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                     Set Healing Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
@@ -1916,7 +1916,7 @@ rule ("Active Mods 26 - Armor Field") {
         While(Compare((Event Player).Active_Time, <=, 6));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6, False, True);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, True);
             End;
             If(Array Contains(Array(1, 2, 3, 4, 5, 6), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
@@ -1991,7 +1991,7 @@ rule ("Initialization - Passive Mod Strings") {
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for 1.5 times the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually slow them and reduce their healing.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
     }
 }
 
@@ -2116,6 +2116,22 @@ rule ("Player Welcome Message - Start") {
         Wait(8, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("More commands in top left!", Null, Null, Null));
+    }
+}
+
+rule ("Optional - Debugging") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+    }
+    actions {
+        If(Compare(Event Player, ==, Host Player));
+            Create Dummy Bot(Hero(Roadhog), Color(Team 2), 7, Position Of(Event Player), Up);
     }
 }
 
