@@ -2203,14 +2203,17 @@ rule ("Mechanics - Conditions to use LoS Mods") {
         All;
     }
     conditions {
-        And(Compare(Hero Of(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), ==, Hero(Sombra)), Is Using Ability 1(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))) == False;
+        Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 10) == True;
     }
     actions {
         Set Player Variable(Event Player, Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        If(And(And(And(And(And(Is In Line of Sight(Event Player, (Event Player).Target, Enemy Barriers Block LOS), Compare(Distance Between(Event Player, (Event Player).Target), <=, 30)), Is Alive((Event Player).Target)), Not(And(Compare(Hero Of((Event Player).Target), ==, Hero(Sombra)), Is Using Ability 1((Event Player).Target)))), Not(Has Status((Event Player).Target, Phased Out))), Is In View Angle(Event Player, (Event Player).Target, 10)));
+        If(And(And(And(And(And(Is In Line of Sight(Event Player, (Event Player).Target, Enemy Barriers Block LOS), Compare(Distance Between(Event Player, (Event Player).Target), <=, 30)), Is Alive((Event Player).Target)), Not(And(Is Using Ability 1((Event Player).Target), Compare(Hero Of((Event Player).Target), ==, Hero(Sombra))))), Not(Has Status((Event Player).Target, Phased Out))), Is In View Angle(Event Player, (Event Player).Target, 10)));
             Set Player Variable(Event Player, LoS_Mod_Conditions, True);
         Else;
             Set Player Variable(Event Player, LoS_Mod_Conditions, False);
+        End;
+        Wait(0.1, Ignore Condition);
+        Loop If Condition Is True;
     }
 }
 
