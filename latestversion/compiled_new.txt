@@ -98,28 +98,29 @@ variables {
         20: Third_Person_Camera_Toggle
         21: Player_ATK_SPD_HP
         22: Player_Position
-        23: Vertical_Speed
-        24: Affected_Players
-        25: Active_Affected_Players
-        26: Current_Hero
-        27: Current_Hero_2
-        28: Index
-        29: Radius
-        30: Scalar_1
-        31: Scalar_2
-        32: Active_Index
-        33: Temp_Index
-        34: Active_Time
-        35: Passive_Time
-        36: Facing_Direction
-        37: Is_Colossus
-        38: Is_Blind
-        39: Is_Visible
-        40: Reinhardt
-        41: Target
-        42: Current_Target
-        43: Old_Target
-        44: Boolean_Eval
+        23: Player_Foot_Position
+        24: Vertical_Speed
+        25: Affected_Players
+        26: Active_Affected_Players
+        27: Current_Hero
+        28: Current_Hero_2
+        29: Index
+        30: Radius
+        31: Scalar_1
+        32: Scalar_2
+        33: Active_Index
+        34: Temp_Index
+        35: Active_Time
+        36: Passive_Time
+        37: Facing_Direction
+        38: Is_Colossus
+        39: Is_Blind
+        40: Is_Visible
+        41: Reinhardt
+        42: Target
+        43: Current_Target
+        44: Old_Target
+        45: Boolean_Eval
 }
 subroutines {
     0: MoveSpeed160
@@ -984,7 +985,10 @@ rule ("Passive Mods 36 - Evil Eye") {
                     Set Healing Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                     Set Damage Received((Event Player).Current_Target, Multiply(100, Add(1, (Event Player).Passive_Time)));
                     Set Damage Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
-                    Wait(0.016, Ignore Condition);
+                    If(Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False)));
+                        Break;
+                    End;
+                    Wait(0.1, Ignore Condition);
                 End;
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
@@ -1895,43 +1899,38 @@ rule ("Active Mods 26 - Armor Field") {
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
-        Big Message(All Players(All Teams), Custom String("Is this working?", Null, Null, Null));
         Set Player Variable(Event Player, Scalar_1, 1);
         Set Player Variable(Event Player, Player_Position, Eye Position(Event Player));
-        Small Message(All Players(All Teams), Custom String("1", Null, Null, Null));
+        Set Player Variable(Event Player, Player_Foot_Position, Position Of(Event Player));
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
         Create Effect(All Players(All Teams), Ring, Color(Orange), Add((Event Player).Player_Position, Down), 2, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Sparkles, Color(Yellow), Add((Event Player).Player_Position, Down), 2, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 75, Position and Radius);
+        Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 125, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Wait(0.25, Ignore Condition);
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
         Chase Player Variable Over Time(Event Player, Active_Time, 6.1, 6, Destination and Duration);
-        Small Message(All Players(All Teams), Custom String("2", Null, Null, Null));
         While(Compare((Event Player).Active_Time, <=, 6));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, False);
             End;
             If(Array Contains(Array(1, 2, 3, 4, 5, 6), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
-                Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Sound, Color(Orange), Add((Event Player).Player_Position, Down), 50);
-                Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Add((Event Player).Player_Position, Down), 4);
+                Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Sound, Color(Orange), (Event Player).Player_Foot_Position, 50);
+                Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), (Event Player).Player_Foot_Position, 4);
             End;
             Modify Player Variable(Event Player, Scalar_1, Add, 0.25);
             Wait(0.25, Ignore Condition);
         End;
         Wait Until(Compare((Event Player).Active_Time, >, 6), 99999);
         Stop Chasing Player Variable(Event Player, Active_Time);
-        Small Message(All Players(All Teams), Custom String("3", Null, Null, Null));
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Active_Affected_Players, 0);
         Set Player Variable(Event Player, Active_Time, 0);
         Set Player Variable(Event Player, Scalar_1, 0);
         Set Player Variable(Event Player, Player_Position, 0);
-        Small Message(All Players(All Teams), Custom String("4", Null, Null, Null));
         Wait(9, Ignore Condition);
-        Small Message(All Players(All Teams), Custom String("5", Null, Null, Null));
     }
 }
 
@@ -2034,9 +2033,6 @@ rule ("Initialization - HUD Text Instructions") {
     actions {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact\nJump To Start of List.{0}", Custom String(".....Ultimate\nTo Middle of List..............Ability 1\nJump To End of List.........Ability 2\nChoose Mod...................{0}", Custom String("..Left/Right Click\nConfirm Mod...................Melee", Null, Null, Null), Null, Null), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -2116,22 +2112,6 @@ rule ("Player Welcome Message - Start") {
         Wait(8, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("More commands in top left!", Null, Null, Null));
-    }
-}
-
-rule ("Optional - Debugging") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Is Button Held(Event Player, Button(Reload)) == True;
-        Is Button Held(Event Player, Button(Jump)) == True;
-    }
-    actions {
-        If(Compare(Event Player, ==, Host Player));
-            Create Dummy Bot(Hero(Roadhog), Color(Team 2), 7, Position Of(Event Player), Up);
     }
 }
 
