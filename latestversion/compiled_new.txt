@@ -325,6 +325,8 @@ rule ("Passive Mods 1 - 160% Movement Speed") {
         Set Move Speed(Event Player, 160);
         Create Effect(All Players(All Teams), Soldier: 76 Sprinting Effect, Team Of(Event Player), Event Player, 1, Position and Radius);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+        Wait Until(Compare((Event Player).Passive_Mod, !=, 2), 99999);
+        Destroy Effect((Event Player).Passive_Mod_FX);
     }
 }
 
@@ -967,16 +969,15 @@ rule ("Passive Mods 36 - Evil Eye") {
         EvilEye;
     }
     actions {
-        Set Player Variable(Event Player, Current_Target, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
-        Wait(0.016, Ignore Condition);
         If((Event Player).LoS_Mod_Conditions);
+            Set Player Variable(Event Player, Current_Target, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
             If(And(Compare((Event Player).Current_Target, !=, Null), Is Alive((Event Player).Current_Target)));
                 Create Effect(Array(Event Player, (Event Player).Current_Target), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Current_Target, 1, Position and Radius);
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
                 Create Effect(Array(Event Player, (Event Player).Current_Target), Bad Aura Sound, Color(Red), (Event Player).Current_Target, 100, Position and Radius);
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
                 Chase Player Variable At Rate(Event Player, Passive_Time, 0.25, 0.025, Destination and Rate);
-                While(Compare((Event Player).Passive_Time, !=, 0.25));
+                While(And(Compare((Event Player).Passive_Time, !=, 0.25), Compare((Event Player).Current_Target, !=, Null)));
                     Set Move Speed((Event Player).Current_Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
                     Set Healing Received((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                     Set Healing Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
@@ -984,10 +985,9 @@ rule ("Passive Mods 36 - Evil Eye") {
                     Set Damage Dealt((Event Player).Current_Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
                     Wait(0.016, Ignore Condition);
                 End;
-                Wait Until(Compare((Event Player).Passive_Time, ==, 0.25), 11);
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
-                Wait Until(Compare((Event Player).Current_Target, ==, Null), 99999);
+                Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
                 Set Player Variable(Event Player, Passive_Time, 0);
                 Set Move Speed((Event Player).Current_Target, 100);
                 Set Healing Received((Event Player).Current_Target, 100);
@@ -1001,7 +1001,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
             End;
         End;
-        Wait(0.5, Ignore Condition);
+        Wait(0.2, Ignore Condition);
         Loop;
     }
 }
