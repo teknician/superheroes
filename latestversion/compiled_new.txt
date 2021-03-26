@@ -231,7 +231,6 @@ rule ("Initialize Mod Menu (Joined)") {
         All;
     }
     actions {
-        Set Player Variable(Event Player, Target, Null);
         Set Player Variable(Event Player, Mod_Menu_Select, 0);
         Set Player Variable(Event Player, Passive_Mod, 0);
         Set Player Variable(Event Player, Active_Mod, 0);
@@ -968,7 +967,6 @@ rule ("Passive Mods 36 - Evil Eye") {
         EvilEye;
     }
     actions {
-        Set Player Variable(Event Player, Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         If((Event Player).LoS_Mod_Conditions);
             While((Event Player).LoS_Mod_Conditions);
                 Chase Player Variable Over Time(Event Player, Passive_Time, 0.25, 3, Destination and Duration);
@@ -2205,10 +2203,11 @@ rule ("Mechanics - Conditions to use LoS Mods") {
         All;
     }
     conditions {
-        Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Enemy Barriers Block LOS) == True;
+        And(Compare(Hero Of(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), ==, Hero(Sombra)), Is Using Ability 1(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))) == False;
     }
     actions {
-        If(And(And(And(And(Compare(Distance Between(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), <=, 30), Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))), Not(And(Compare(Hero Of(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), ==, Hero(Sombra)), Is Using Ability 1(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))))), Not(Has Status(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Phased Out))), Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 10)));
+        Set Player Variable(Event Player, Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
+        If(And(And(And(And(And(Is In Line of Sight(Event Player, (Event Player).Target, Enemy Barriers Block LOS), Compare(Distance Between(Event Player, (Event Player).Target), <=, 30)), Is Alive((Event Player).Target)), Not(And(Compare(Hero Of((Event Player).Target), ==, Hero(Sombra)), Is Using Ability 1((Event Player).Target)))), Not(Has Status((Event Player).Target, Phased Out))), Is In View Angle(Event Player, (Event Player).Target, 10)));
             Set Player Variable(Event Player, LoS_Mod_Conditions, True);
         Else;
             Set Player Variable(Event Player, LoS_Mod_Conditions, False);
