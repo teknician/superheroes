@@ -993,6 +993,10 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Set Player Variable(Event Player, Old_Target, (Event Player).Current_Target);
                 Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
+                Wait(1, Ignore Condition);
+                If(And(Is Alive((Event Player).Current_Target), Compare((Event Player).Current_Target, ==, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))));
+                    Wait Until(Or(Compare((Event Player).Current_Target, ==, Null), Compare((Event Player).Current_Target, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
+                End;
                 Set Player Variable(Event Player, Passive_Time, 0);
                 Set Move Speed((Event Player).Current_Target, 100);
                 Set Healing Received((Event Player).Current_Target, 100);
@@ -1003,7 +1007,6 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 Play Effect(Array(Event Player, (Event Player).Old_Target), Bad Explosion, Color(Red), (Event Player).Old_Target, 1);
                 Set Player Variable(Event Player, Old_Target, Null);
-                Big Message(All Players(All Teams), Custom String("Stats reset, FX destroyed", Null, Null, Null));
             Else If(Or(Is Dead((Event Player).Current_Target), Compare((Event Player).Passive_Mod, !=, 36)));
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
             End;
@@ -1913,7 +1916,7 @@ rule ("Active Mods 26 - Armor Field") {
         While(Compare((Event Player).Active_Time, <=, 6));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, False);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 3.25, False, False);
             End;
             If(Array Contains(Array(1, 2, 3, 4, 5, 6), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
