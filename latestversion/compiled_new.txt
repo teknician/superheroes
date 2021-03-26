@@ -961,6 +961,24 @@ rule ("Passive Mods 35 - Superhero Landing") {
     }
 }
 
+rule ("Passive Mods 36 - Evil Eye (FX)") {
+    event {
+        Subroutine;
+        EvilEyeFX;
+    }
+    actions {
+        Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
+        Create Effect(Array(Event Player, (Event Player).Target), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Target, 1, Position and Radius);
+        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
+        Create Effect(Array(Event Player, (Event Player).Target), Bad Aura Sound, Color(Red), (Event Player).Target, 100, Position and Radius);
+        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
+        Wait(2, Ignore Condition);
+        If(Or(Is Dead((Event Player).Target), Compare((Event Player).Passive_Mod, !=, 36)));
+            Destroy Effect((Event Player).Passive_Mod_FX_Array);
+            Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
+    }
+}
+
 rule ("Passive Mods 36 - Evil Eye") {
     event {
         Subroutine;
@@ -969,7 +987,7 @@ rule ("Passive Mods 36 - Evil Eye") {
     actions {
         If((Event Player).LoS_Mod_Conditions);
             While((Event Player).LoS_Mod_Conditions);
-                Chase Player Variable Over Time(Event Player, Passive_Time, 0.25, 5, Destination and Duration);
+                Chase Player Variable Over Time(Event Player, Passive_Time, 0.25, 4, Destination and Duration);
                 If(Compare(((Event Player).Target).Passive_Mod, ==, 2));
                     Set Move Speed((Event Player).Target, Multiply(160, Subtract(1, (Event Player).Passive_Time)));
                 Else If(And(Compare(((Event Player).Target).Passive_Mod, ==, 5), Compare((Event Player).Passive_Mod_Skill_Toggle, ==, 1)));
@@ -1005,23 +1023,6 @@ rule ("Passive Mods 36 - Evil Eye") {
             Set Player Variable(Event Player, Target, Null);
             Set Player Variable(Event Player, Passive_Time, 0);
             Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
-        Else;
-            Set Player Variable(Event Player, Target, Null);
-    }
-}
-
-rule ("Passive Mods 36 - Evil Eye (FX)") {
-    event {
-        Subroutine;
-        EvilEyeFX;
-    }
-    actions {
-        Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
-        Create Effect(Array(Event Player, (Event Player).Target), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Target, 1, Position and Radius);
-        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(Array(Event Player, (Event Player).Target), Bad Aura Sound, Color(Red), (Event Player).Target, 100, Position and Radius);
-        Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
-        If(Or(Or(Is Dead((Event Player).Target), Compare((Event Player).Passive_Mod, !=, 36)), Compare((Event Player).Index, !=, (Event Player).Target)));
             Destroy Effect((Event Player).Passive_Mod_FX_Array);
             Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
     }
@@ -1148,7 +1149,7 @@ rule ("Choose/Check Passive Mod") {
             Else;
             //__label_switch_2_28__:
             Start Rule(EvilEye, Do Nothing);
-            Call Subroutine(EvilEyeFX);
+            Start Rule(EvilEyeFX, Do Nothing);
             Else;
             //__label_switch_2_default__:
             End;
