@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.0. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.0. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1906,7 +1906,7 @@ rule ("Active Mods 26 - Armor Field") {
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 75, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Wait(0.25, Ignore Condition);
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2, Team Of(Event Player), Surfaces And Enemy Barriers));
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
         Chase Player Variable Over Time(Event Player, Active_Time, 6.1, 6, Destination and Duration);
         Small Message(All Players(All Teams), Custom String("2", Null, Null, Null));
         While(Compare((Event Player).Active_Time, <=, 6));
