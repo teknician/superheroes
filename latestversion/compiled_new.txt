@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.0. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.0. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -220,7 +220,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(70);
+        Set Match Time(7);
     }
 }
 
@@ -1014,7 +1014,7 @@ rule ("Passive Mods 36 - Evil Eye (FX)") {
         EvilEyeFX;
     }
     actions {
-        If(Or(Compare((Event Player).Target, ==, Null), Is Dead((Event Player).Target)));
+        If(And(Entity Exists((Event Player).Passive_Mod_FX_Array), Compare((Event Player).Target, ==, Null)));
             Destroy Effect((Event Player).Passive_Mod_FX_Array);
             Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
         End;
@@ -1023,6 +1023,7 @@ rule ("Passive Mods 36 - Evil Eye (FX)") {
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(Array(Event Player, (Event Player).Target), Bad Aura Sound, Color(Red), (Event Player).Target, 50, Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
+        If(Or(Compare((Event Player).Target, ==, Null), Is Dead((Event Player).Target)));
     }
 }
 
