@@ -985,22 +985,21 @@ rule ("Passive Mods 36 - Evil Eye") {
                     Wait(0.016, Ignore Condition);
                 End;
                 Wait Until(Compare((Event Player).Passive_Time, ==, 0.25), 11);
+                Stop Chasing Player Variable(Event Player, Passive_Time);
                 Small Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
                 If(Or(Is Dead((Event Player).Current_Target), Compare((Event Player).Passive_Mod, !=, 36)));
                     Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 End;
                 Wait Until(Compare((Event Player).Current_Target, ==, Null), 99999);
-                Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 Set Player Variable(Event Player, Passive_Time, 0);
                 Set Move Speed((Event Player).Current_Target, 100);
                 Set Healing Received((Event Player).Current_Target, 100);
                 Set Healing Dealt((Event Player).Current_Target, 100);
                 Set Damage Received((Event Player).Current_Target, 100);
                 Set Damage Dealt((Event Player).Current_Target, 100);
+                Wait(0.016, Ignore Condition);
+                Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 Big Message(All Players(All Teams), Custom String("Stats reset, FX destroyed", Null, Null, Null));
-            End;
-        Else;
-            Abort;
     }
 }
 
@@ -1891,17 +1890,18 @@ rule ("Active Mods 26 - Armor Field") {
     actions {
         Big Message(All Players(All Teams), Custom String("Is this working?", Null, Null, Null));
         Set Player Variable(Event Player, Player_Position, Eye Position(Event Player));
-        Chase Player Variable Over Time(Event Player, Active_Time, 6, 6, Destination and Duration);
-        Small Message(All Players(All Teams), Custom String("2", Null, Null, Null));
+        Small Message(All Players(All Teams), Custom String("1", Null, Null, Null));
         Create Effect(All Players(All Teams), Ring, Color(Orange), Add((Event Player).Player_Position, Down), 3, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Sparkles, Color(Yellow), Add((Event Player).Player_Position, Down), 3, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Small Message(All Players(All Teams), Custom String("1", Null, Null, Null));
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 4.5, Team Of(Event Player), Surfaces And Enemy Barriers));
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 25, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
-        While(Compare((Event Player).Active_Time, <, 6));
+        Wait(0.25, Ignore Condition);
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 3, Team Of(Event Player), Surfaces And Enemy Barriers));
+        Chase Player Variable Over Time(Event Player, Active_Time, 6.1, 6, Destination and Duration);
+        Small Message(All Players(All Teams), Custom String("2", Null, Null, Null));
+        While(Compare((Event Player).Active_Time, <=, 6));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 6.25, False, False);
             End;
@@ -1913,8 +1913,8 @@ rule ("Active Mods 26 - Armor Field") {
             End;
             Wait(0.25, Ignore Condition);
         End;
-        Wait(0.016, Ignore Condition);
-        Wait Until(Compare((Event Player).Active_Time, ==, 6), 99999);
+        Wait Until(Compare((Event Player).Active_Time, >, 6), 99999);
+        Stop Chasing Player Variable(Event Player, Active_Time);
         Small Message(All Players(All Teams), Custom String("3", Null, Null, Null));
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Active_Affected_Players, 0);
