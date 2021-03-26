@@ -967,7 +967,7 @@ rule ("Passive Mods 36 - Evil Eye") {
         EvilEye;
     }
     actions {
-        Set Player Variable(Event Player, Current_Target, Ray Cast Hit Player(Event Player, Multiply(Facing Direction Of(Event Player), 200), Opposite Team Of(Team Of(Event Player)), Team Of(Event Player), False));
+        Set Player Variable(Event Player, Current_Target, Ray Cast Hit Player(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 25)), Null, Team Of(Event Player), False));
         Wait(0.016, Ignore Condition);
         If((Event Player).LoS_Mod_Conditions);
             If(And(Compare((Event Player).Current_Target, !=, Null), Is Alive((Event Player).Current_Target)));
