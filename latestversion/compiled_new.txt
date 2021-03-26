@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.2. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.1. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -951,9 +951,11 @@ rule ("Passive Mods 35 - Superhero Landing") {
                 Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Team Of(Event Player), Position Of(Event Player), 1);
                 Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Team Of(Event Player), Position Of(Event Player), 50);
             End;
-            If(Compare((Event Player).Vertical_Speed, <, -12.75));
+            If(Compare((Event Player).Vertical_Speed, <, -10.75));
                 If(Compare(Hero Of(Event Player), ==, Hero(Wrecking Ball)));
                     Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.35);
+                Else If(Compare(Hero Of(Event Player), ==, Hero(Winston)));
+                    Modify Player Variable(Event Player, Vertical_Speed, Multiply, 1.15);
                 End;
                 Damage(Remove From Array(Players Within Radius(Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Max(30, Raise To Power(Divide(Absolute Value((Event Player).Vertical_Speed), 6.5), 4)));
                 Set Status(Remove From Array(Players Within Radius(Event Player, Max(Multiply(Absolute Value((Event Player).Vertical_Speed), 0.25), 3), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Knocked Down, Multiply(Absolute Value((Event Player).Vertical_Speed), 0.09));
