@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.0. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.0. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -991,13 +991,18 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Set Healing Dealt((Event Player).Target, Multiply(100, Subtract(1, Multiply(2, (Event Player).Passive_Time))));
                 Set Damage Received((Event Player).Target, Multiply(100, Add(1, (Event Player).Passive_Time)));
                 Set Damage Dealt((Event Player).Target, Multiply(100, Subtract(1, (Event Player).Passive_Time)));
+                If(Compare((Event Player).Passive_Time, ==, 0.25));
+                    Big Message(All Players(All Teams), Custom String("Maximum stat change", Null, Null, Null));
+                End;
                 Wait(0.116, Ignore Condition);
             End;
             Wait(1, Ignore Condition);
+            Big Message(All Players(All Teams), Custom String("Stats reset", Null, Null, Null));
             Set Healing Received((Event Player).Target, 100);
             Set Healing Dealt((Event Player).Target, 100);
             Set Damage Received((Event Player).Target, 100);
             Set Damage Dealt((Event Player).Target, 100);
+            Set Player Variable(Event Player, Target, Null);
         Else;
             Set Player Variable(Event Player, Target, Null);
     }
@@ -1010,11 +1015,8 @@ rule ("Passive Mods 36 - Evil Eye (FX)") {
     }
     actions {
         If(Or(Compare((Event Player).Target, ==, Null), Is Dead((Event Player).Target)));
-            Destroy Effect(First Of((Event Player).Passive_Mod_FX_Array));
-            Create Effect(Array(Event Player, (Event Player).Target), Cloud, Custom Color(255, 0, 0, 32), (Event Player).Target, 1, Position and Radius);
-            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 2, Last Created Entity);
-            Wait(0.75, Ignore Condition);
             Destroy Effect((Event Player).Passive_Mod_FX_Array);
+            Big Message(All Players(All Teams), Custom String("FX destroyed", Null, Null, Null));
         End;
         Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(Array(Event Player, (Event Player).Target), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Target, 1, Position and Radius);
