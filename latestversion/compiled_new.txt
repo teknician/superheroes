@@ -2952,13 +2952,12 @@ rule ("Active Mods 28 - ORA ORA!") {
         For Player Variable(Event Player, Active_Index, 0, 20, 1);
             Set Ability Cooldown(Event Player, Button(Melee), 0);
             Start Holding Button(Event Player, Button(Melee));
-            Wait(0.15, Ignore Condition);
+            Wait(0.016, Ignore Condition);
             Cancel Primary Action(Event Player);
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Skip If(Is Dead(Victim), 10);
-            Wait(0.1, Ignore Condition);
+            Wait(0.025, Ignore Condition);
         End;
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -2968,7 +2967,6 @@ rule ("Active Mods 28 - ORA ORA!") {
         Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
         Apply Impulse(Victim, Multiply(-1, Facing Direction Of(Event Player)), 15, To World, Cancel Contrary Motion);
         Wait(0.016, Ignore Condition);
-        //lbl_1:
         Stop Facing(Event Player);
         Stop Facing(Victim);
         Stop Forcing Player Position(Event Player);
@@ -2976,7 +2974,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Set Player Variable(Event Player, OraOra, False);
         Set Player Variable(Victim, OraOra, False);
         Destroy Effect((Event Player).Active_Mod_FX);
-        Wait(4, Ignore Condition);
+        Wait(2, Ignore Condition);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Null, Position Of(Victim), 1);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Sound, Null, Position Of(Victim), 100);
         Wait(4, Ignore Condition);
