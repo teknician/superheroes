@@ -1976,7 +1976,7 @@ rule ("Active Mods 27 - Human Cannonball") {
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 200);
         Apply Impulse(Event Player, Facing Direction Of(Event Player), 16, To Player, Cancel Contrary Motion);
-        Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 30)), All Players(All Teams), Null, False));
+        Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 30)), All Players(All Teams), Empty Array, False));
         Wait Until(Distance Between(Position Of(Event Player), Compare((Event Player).Target_Position, <, 2)), 99999);
         Stop Facing(Event Player);
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 2.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
