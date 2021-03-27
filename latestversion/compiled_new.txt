@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.2. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.2. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -2946,24 +2946,27 @@ rule ("Active Mods 28 - ORA ORA!") {
         Set Ability Cooldown(Attacker, Button(Melee), 0);
         Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Add(Eye Position(Victim), Vector(0, 0.1, 0))), 2000, To World, Direction and Turn Rate);
         Start Facing(Victim, Direction Towards(Eye Position(Victim), Add(Eye Position(Event Player), Vector(0, 0.1, 0))), 2000, To World, Direction and Turn Rate);
-        Create Effect(All Players(All Teams), Cloud, Color(Gray), Add((Event Player).Player_Position, Forward), 2, Position and Radius);
+        Create Effect(All Players(All Teams), Cloud, Color(Gray), Add((Event Player).Player_Position, Vector(0, 1, 1)), 4, Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         For Player Variable(Event Player, Active_Index, 0, 20, 1);
             Start Holding Button(Attacker, Button(Melee));
-            Wait(0.1, Ignore Condition);
+            Wait(0.016, Ignore Condition);
+            Stop Holding Button(Attacker, Button(Melee));
+            Wait(0.016, Ignore Condition);
             Cancel Primary Action(Attacker);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Add((Event Player).Player_Position, Forward), 1);
-            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Add((Event Player).Player_Position, Forward), 150);
-            Skip If(Is Dead(Victim), 9);
-            Wait(0.1, Ignore Condition);
+            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Add((Event Player).Player_Position, Forward), 200);
+            Skip If(Is Dead(Victim), 10);
+            Wait(0.15, Ignore Condition);
         End;
         Stop Facing(Event Player);
         Stop Facing(Victim);
         Stop Forcing Player Position(Event Player);
         Stop Forcing Player Position(Victim);
+        Wait(0.1, Ignore Condition);
         Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
         Apply Impulse(Victim, Multiply(-1, Facing Direction Of(Event Player)), 15, To World, Cancel Contrary Motion);
-        Wait(0.1, Ignore Condition);
+        Wait(0.016, Ignore Condition);
         //lbl_1:
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -2972,10 +2975,10 @@ rule ("Active Mods 28 - ORA ORA!") {
         Set Player Variable(Event Player, OraOra, False);
         Set Player Variable(Victim, OraOra, False);
         Destroy Effect((Event Player).Active_Mod_FX);
-        Wait(1, Ignore Condition);
+        Wait(4, Ignore Condition);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Null, Position Of(Victim), 1);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Sound, Null, Position Of(Victim), 100);
-        Wait(16, Ignore Condition);
+        Wait(4, Ignore Condition);
     }
 }
 
