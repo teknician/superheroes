@@ -115,19 +115,20 @@ variables {
         33: Scalar_1
         34: Scalar_2
         35: Active_Index
-        36: Temp_Index
-        37: Active_Time
-        38: Passive_Time
-        39: Facing_Direction
-        40: Is_Colossus
-        41: Is_Blind
-        42: Is_Visible
-        43: Reinhardt
-        44: Target
-        45: Current_Target
-        46: Target_Position
-        47: Old_Target
-        48: Boolean_Eval
+        36: Active_Index_2
+        37: Temp_Index
+        38: Active_Time
+        39: Passive_Time
+        40: Facing_Direction
+        41: Is_Colossus
+        42: Is_Blind
+        43: Is_Visible
+        44: Reinhardt
+        45: Target
+        46: Current_Target
+        47: Target_Position
+        48: Old_Target
+        49: Boolean_Eval
 }
 subroutines {
     0: MoveSpeed160
@@ -2971,18 +2972,26 @@ rule ("Active Mods 28 - ORA ORA!") {
         Set Ability Cooldown(Event Player, Button(Melee), 0);
         Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Eye Position(Victim)), 2000, To World, Direction and Turn Rate);
         Start Facing(Victim, Direction Towards(Eye Position(Victim), Eye Position(Event Player)), 2000, To World, Direction and Turn Rate);
-        Create Effect(All Players(All Teams), Cloud, Color(Gray), (Event Player).Player_Position, 4, Position and Radius);
+        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Color(White), (Event Player).Player_Position, 6, Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.3, Ignore Condition);
         Set Status(Attacker, Null, Unkillable, 4);
-        If(Or(And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire))), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))));
-            For Player Variable(Event Player, Active_Index, 0, 10, 1);
-                Wait(0.4, Ignore Condition);
+        If(And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire))));
+            For Player Variable(Event Player, Active_Index_2, 0, 10, 1);
                 Start Holding Button(Event Player, Button(Primary Fire));
-                Wait(1.5, Ignore Condition);
+                Wait(1, Ignore Condition);
                 Cancel Primary Action(Event Player);
                 Stop Holding Button(Event Player, Button(Primary Fire));
+                Set Ability Cooldown(Event Player, Button(Melee), 0);
                 Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
+                Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
+                Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
+                Heal(Victim, Null, 7.5);
+                Set Status(Victim, Attacker, Stunned, 0.25);
+                If(Is Dead(Victim));
+                    Break;
+                End;
+                Wait(0.11, Ignore Condition);
             End;
         Else;
             For Player Variable(Event Player, Active_Index, 0, 20, 1);
@@ -2994,7 +3003,7 @@ rule ("Active Mods 28 - ORA ORA!") {
                 Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
                 Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
                 Heal(Victim, Null, 7.5);
-                Set Status(Victim, Attacker, Stunned, 0.1);
+                Set Status(Victim, Attacker, Stunned, 0.25);
                 If(Is Dead(Victim));
                     Break;
                 End;
@@ -3008,7 +3017,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Wait(0.1, Ignore Condition);
         Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
         Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Attacker, 200);
-        Apply Impulse(Victim, Vector(0, 0.3, -1), 30, To Player, Cancel Contrary Motion);
+        Apply Impulse(Victim, Vector(0, 0.4, -1), 30, To Player, Cancel Contrary Motion);
         Wait(0.016, Ignore Condition);
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -3046,7 +3055,7 @@ rule ("Mods PlayerDealtDamage Events") {
                 If(Not(Is In View Angle(Victim, Attacker, 120)));
                     Call Subroutine(Ambush);
                 End;
-            Else If(Compare((Event Player).Active_Mod, ==, 28));
+            Else If(Or(Compare((Event Player).Active_Mod, ==, 28), And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player))));
                 If(Compare(Distance Between(Attacker, Victim), <, 3));
                     Start Rule(OraOra, Do Nothing);
                 End;
@@ -3065,8 +3074,6 @@ rule ("Mods PlayerDealtDamage Events") {
             Else If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
                 Start Rule(BoxerRein, Do Nothing);
             End;
-        Else If(And(And(Or(And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Compare(Distance Between(Event Player, Victim), <=, 6)), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))), Compare((Event Player).Active_Mod, ==, 28)), Compare(Distance Between(Event Player, Victim), <, 3)));
-            Start Rule(OraOra, Do Nothing);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 16), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1)));
             Call Subroutine(SneakDealtDmg);
