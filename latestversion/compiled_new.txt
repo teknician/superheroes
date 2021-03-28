@@ -1640,7 +1640,7 @@ rule ("Active Mods 16 - Hex") {
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Set Player Variable(Event Player, Current_Hero_2, Hero Of((Event Player).Mod_Effect_Target));
-        Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, Hero(Torbj√∂rn));
+        Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, Hero(Torbjörn));
         Wait(8, Ignore Condition);
         Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, (Event Player).Current_Hero_2);
         Wait(0.25, Ignore Condition);
