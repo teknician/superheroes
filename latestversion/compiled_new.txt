@@ -230,7 +230,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(7);
+        Set Match Time(70);
     }
 }
 
@@ -1975,22 +1975,21 @@ rule ("Active Mods 27 - Human Cannonball") {
         Set Player Variable(Event Player, Player_Position, Position Of(Event Player));
         Start Facing(Event Player, Facing Direction Of(Event Player), 360, To World, Direction and Turn Rate);
         Wait(0.02, Ignore Condition);
-        Apply Impulse(Event Player, Add(Facing Direction Of(Event Player), Vector(0, 0.25, 0)), 40, To Player, Cancel Contrary Motion);
+        Apply Impulse(Event Player, Add(Facing Direction Of(Event Player), Vector(0, 0.25, 0)), 30, To Player, Cancel Contrary Motion);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 200);
         Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 30)), All Players(All Teams), Empty Array, False));
         Wait(0.116, Ignore Condition);
-        Set Player Variable(Event Player, Distance_Num, Distance Between((Event Player).Player_Position, (Event Player).Target_Position));
         Stop Facing(Event Player);
-        Wait Until(Compare(Distance Between(Position Of(Event Player), (Event Player).Target_Position), <, 2), 5);
+        Wait Until(Compare(Altitude Of(Event Player), <=, 1), 10);
+        Set Status(Event Player, Null, Knocked Down, 1);
+        Damage(Players Within Radius(Position Of(Event Player), 3, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, 50);
+        Damage(Event Player, Null, 50);
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 2.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-            Set Status((Event Player).Active_Affected_Players, Null, Knocked Down, Multiply((Event Player).Distance_Num, 0.25));
-            Wait(0.116, Ignore Condition);
+            Set Status((Event Player).Active_Affected_Players, Null, Knocked Down, 1);
+            Wait(0.016, Ignore Condition);
         End;
-        Set Status(Event Player, Null, Knocked Down, Multiply((Event Player).Distance_Num, 0.33));
-        Damage(Players Within Radius(Position Of(Event Player), 3, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, (Event Player).Distance_Num);
-        Damage(Event Player, Null, (Event Player).Distance_Num);
         Wait(8, Ignore Condition);
     }
 }
@@ -2947,8 +2946,8 @@ rule ("Active Mods 28 - ORA ORA!") {
         Start Forcing Player Position(Event Player, (Event Player).Player_Position, False);
         Start Forcing Player Position(Victim, (Event Player).Target_Position, False);
         Set Ability Cooldown(Event Player, Button(Melee), 0);
-        Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Add(Eye Position(Victim), Vector(0, 0.1, 0))), 2000, To World, Direction and Turn Rate);
-        Start Facing(Victim, Direction Towards(Eye Position(Victim), Add(Eye Position(Event Player), Vector(0, 0.1, 0))), 2000, To World, Direction and Turn Rate);
+        Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Add(Eye Position(Victim), Vector(0, 1, 0))), 2000, To World, Direction and Turn Rate);
+        Start Facing(Victim, Direction Towards(Eye Position(Victim), Add(Eye Position(Event Player), Vector(0, 1, 0))), 2000, To World, Direction and Turn Rate);
         Create Effect(All Players(All Teams), Cloud, Color(Gray), (Event Player).Player_Position, 4, Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.3, Ignore Condition);
@@ -2961,7 +2960,10 @@ rule ("Active Mods 28 - ORA ORA!") {
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
             Set Status(Victim, Attacker, Stunned, 0.1);
-            Wait(0.125, Ignore Condition);
+            If(Is Dead(Victim));
+                Break;
+            End;
+            Wait(0.11, Ignore Condition);
         End;
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -2970,7 +2972,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Wait(0.1, Ignore Condition);
         Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
         Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Attacker, 200);
-        Apply Impulse(Victim, Vector(0, 0.35, -1), 30, To Player, Cancel Contrary Motion);
+        Apply Impulse(Victim, Vector(0, 0.3, -1), 30, To Player, Cancel Contrary Motion);
         Wait(0.016, Ignore Condition);
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -2982,7 +2984,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Wait Until(Compare(Altitude Of(Victim), <=, 1), 10);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Null, Position Of(Victim), 1);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Sound, Null, Position Of(Victim), 100);
-        Set Status(Event Player, Attacker, Knocked Down, 1);
+        Set Status(Event Player, Victim, Knocked Down, 1);
         Damage(Victim, Attacker, 30);
         Wait(10, Ignore Condition);
     }
