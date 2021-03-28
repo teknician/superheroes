@@ -229,7 +229,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(70);
+        Set Match Time(7);
     }
 }
 
@@ -2957,7 +2957,8 @@ rule ("Active Mods 28 - ORA ORA!") {
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Wait(0.025, Ignore Condition);
+            Set Status(Victim, Attacker, Stunned, 0.1);
+            Wait(0.05, Ignore Condition);
         End;
         Stop Facing(Event Player);
         Stop Facing(Victim);
@@ -2965,7 +2966,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Stop Forcing Player Position(Victim);
         Wait(0.1, Ignore Condition);
         Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
-        Apply Impulse(Victim, Multiply(-1, Facing Direction Of(Event Player)), 15, To World, Cancel Contrary Motion);
+        Apply Impulse(Victim, Vector(0, 1, -1), 15, To Player, Cancel Contrary Motion);
         Wait(0.016, Ignore Condition);
         Stop Facing(Event Player);
         Stop Facing(Victim);
