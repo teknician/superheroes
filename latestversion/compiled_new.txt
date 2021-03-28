@@ -3045,7 +3045,7 @@ rule ("Mods PlayerDealtDamage Events") {
         (Event Player).Mod_Menu_Select == 3;
     }
     actions {
-        If(Is Meleeing(Event Player));
+        If(Or(Is Meleeing(Event Player), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))));
             If(And(And(Compare((Event Player).Active_Mod, ==, 20), Compare(Hero Of(Event Player), !=, Hero(Sombra))), Compare((Victim).OraOra, ==, False)));
                 Start Rule(Devour, Do Nothing);
             End;
@@ -3055,7 +3055,7 @@ rule ("Mods PlayerDealtDamage Events") {
                 If(Not(Is In View Angle(Victim, Attacker, 120)));
                     Call Subroutine(Ambush);
                 End;
-            Else If(Or(Compare((Event Player).Active_Mod, ==, 28), And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player))));
+            Else If(Compare((Event Player).Active_Mod, ==, 28));
                 If(Compare(Distance Between(Attacker, Victim), <, 3));
                     Start Rule(OraOra, Do Nothing);
                 End;
