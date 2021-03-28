@@ -629,7 +629,7 @@ rule ("Passive Mods 11 - Level Up") {
         Set Damage Dealt(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Set Move Speed(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Set Max Health(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
-        Create In-World Text(All Players(All Teams), Custom String("{0} {1}", Custom String("Level: ", Null, Null, Null), Divide((Event Player).Player_ATK_SPD_HP, 2.5), Null), Event Player, 1, Clip Against Surfaces, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(All Players(All Teams), Custom String("{0} {1}", Custom String("Level: ", Null, Null, Null), Divide((Event Player).Player_ATK_SPD_HP, 5), Null), Event Player, 1, Clip Against Surfaces, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
         Wait Until(Compare((Event Player).Passive_Mod, !=, 12), 99999);
         Destroy In-World Text((Event Player).Passive_Mod_FX);
@@ -1640,7 +1640,7 @@ rule ("Active Mods 16 - Hex") {
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Set Player Variable(Event Player, Current_Hero_2, Hero Of((Event Player).Mod_Effect_Target));
-        Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, Hero(Torbjörn));
+        Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, Hero(Torbj√∂rn));
         Wait(8, Ignore Condition);
         Start Forcing Player To Be Hero((Event Player).Mod_Effect_Target, (Event Player).Current_Hero_2);
         Wait(0.25, Ignore Condition);
@@ -1943,7 +1943,7 @@ rule ("Active Mods 26 - Armor Field") {
         While(Compare((Event Player).Active_Time, <=, 5));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.69, False, True);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.65, False, True);
             End;
             If(Array Contains(Array(1, 2, 3, 4, 5), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
@@ -2052,7 +2052,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero for a time. You take half damage from your hero.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.\n               (Works unless all player slots ar{0}", Custom String("e filled.)", Null, Null, Null), Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
@@ -2937,7 +2937,7 @@ rule ("Active Mods 28 - ORA ORA!") {
         Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Color(White), Eye Position(Event Player), 1, Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.3, Ignore Condition);
-        Set Status(Attacker, Null, Unkillable, 4);
+        Set Status(Attacker, Null, Unkillable, 2.25);
         For Player Variable(Event Player, Active_Index, 0, 20, 1);
             Set Ability Cooldown(Event Player, Button(Melee), 0);
             Start Holding Button(Event Player, Button(Melee));
@@ -2948,7 +2948,7 @@ rule ("Active Mods 28 - ORA ORA!") {
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
             Heal(Victim, Null, 7.5);
             Set Status(Victim, Attacker, Stunned, 0.25);
-            If(Is Dead(Victim));
+            If(Or(Is Dead(Victim), Is Dead(Attacker)));
                 Break;
             End;
             Wait(0.11, Ignore Condition);
