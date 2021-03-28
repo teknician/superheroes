@@ -2973,10 +2973,11 @@ rule ("Active Mods 28 - ORA ORA!") {
         Wait(0.3, Ignore Condition);
         Set Status(Attacker, Null, Unkillable, 4);
         For Player Variable(Event Player, Active_Index, 0, 20, 1);
-            If(Or(And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire))), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))));
+            If(Or(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))));
+                Wait(0.2, Ignore Condition);
                 Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
                 Start Holding Button(Event Player, Button(Primary Fire));
-                Wait(0.15, Ignore Condition);
+                Wait(0.8, Ignore Condition);
                 Cancel Primary Action(Event Player);
                 Stop Holding Button(Event Player, Button(Primary Fire));
             End;
@@ -3040,7 +3041,7 @@ rule ("Mods PlayerDealtDamage Events") {
                     Call Subroutine(Ambush);
                 End;
             Else If(Compare((Event Player).Active_Mod, ==, 28));
-                If(Compare(Distance Between(Attacker, Victim), <, 3.5));
+                If(Compare(Distance Between(Attacker, Victim), <, 3));
                     Start Rule(OraOra, Do Nothing);
                 End;
             Else If(Compare((Event Player).Passive_Mod, ==, 30));
@@ -3058,7 +3059,7 @@ rule ("Mods PlayerDealtDamage Events") {
             Else If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
                 Start Rule(BoxerRein, Do Nothing);
             End;
-        Else If(And(And(And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire))), Compare((Event Player).Active_Mod, ==, 28)), Compare(Distance Between(Event Player, Victim), <=, 6)));
+        Else If(And(And(Or(And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Compare(Distance Between(Event Player, Victim), <=, 6)), And(And(Compare(Hero Of(Event Player), ==, Hero(Torbjörn)), Is In Alternate Form(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))), Compare((Event Player).Active_Mod, ==, 28)), Compare(Distance Between(Event Player, Victim), <, 3)));
             Start Rule(OraOra, Do Nothing);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 16), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1)));
