@@ -127,7 +127,7 @@ variables {
         46: Current_Target
         47: Target_Position
         48: Old_Target
-        49: Boolean_Eval
+        49: Eval
 }
 subroutines {
     0: MoveSpeed160
@@ -1378,7 +1378,7 @@ rule ("Active Mods 8 - Blind") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        Create Beam Effect(All Players(All Teams), Bad Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Team 1), Visible To Position and Radius);
+        Create Beam Effect(All Players(All Teams), Bad Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Black), Visible To Position and Radius);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 0, Last Created Entity);
         Set Player Variable((Event Player).Mod_Effect_Target, Is_Blind, True);
         Stop Camera((Event Player).Mod_Effect_Target);
@@ -2100,16 +2100,21 @@ rule ("Optional - Debugging") {
         Event Player == Host Player;
     }
     actions {
-        Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        If(Compare((Event Player).Eval, !=, Custom String("true", Null, Null, Null)));
+            Set Player Variable(Event Player, Eval, Custom String("true", Null, Null, Null));
+            Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        End;
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         Create Dummy Bot(Hero(Roadhog), Color(Team 2), 10, Position Of(Event Player), Up);
         Wait(2, Ignore Condition);
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         If(Compare(Players In Slot(10, Team 2), !=, 0));
             Destroy Dummy Bot(Team 2, 10);
+        End;
+        Loop;
     }
 }
 
@@ -2626,7 +2631,7 @@ rule ("Mechanics - Hero Swap") {
         Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == False;
     }
     actions {
-        Wait(1.25, Abort When False);
+        Wait(1, Abort When False);
         Kill(Event Player, Null);
     }
 }
