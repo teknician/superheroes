@@ -2948,8 +2948,8 @@ rule ("Active Mods 28 - ORA ORA!") {
         Start Forcing Player Position(Event Player, (Event Player).Player_Position, False);
         Start Forcing Player Position(Victim, (Event Player).Target_Position, False);
         Set Ability Cooldown(Event Player, Button(Melee), 0);
-        Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Add(Eye Position(Victim), Vector(0, 1, 0))), 2000, To World, Direction and Turn Rate);
-        Start Facing(Victim, Direction Towards(Eye Position(Victim), Add(Eye Position(Event Player), Vector(0, 1, 0))), 2000, To World, Direction and Turn Rate);
+        Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Eye Position(Victim)), 2000, To World, Direction and Turn Rate);
+        Start Facing(Victim, Direction Towards(Eye Position(Victim), Eye Position(Event Player)), 2000, To World, Direction and Turn Rate);
         Create Effect(All Players(All Teams), Cloud, Color(Gray), (Event Player).Player_Position, 4, Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.3, Ignore Condition);
@@ -2961,6 +2961,7 @@ rule ("Active Mods 28 - ORA ORA!") {
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
+            Heal(Victim, Null, 7.5);
             Set Status(Victim, Attacker, Stunned, 0.1);
             If(Is Dead(Victim));
                 Break;
