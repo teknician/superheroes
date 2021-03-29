@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.3. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.4. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -511,8 +511,9 @@ rule ("Passive Mods 9 - Rejuvenation") {
     actions {
         If(Is Alive(Event Player));
             Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.1));
-            Wait Until(Is Dead(Event Player), 99999);
-            Stop All Heal Over Time(Event Player);
+        End;
+        Wait Until(Is Dead(Event Player), 99999);
+        Stop All Heal Over Time(Event Player);
     }
 }
 
@@ -1204,6 +1205,7 @@ rule ("Active Mods 1 - Blink") {
         (Event Player).Active_Mod == 2;
         Is Button Held(Event Player, Button(Melee)) == True;
         (Event Player).OraOra == False;
+        (Event Player).Passive_Mod != 30;
     }
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Event Player, 3);
@@ -1456,6 +1458,7 @@ rule ("Active Mods 10 - Shadowstep") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 11;
         (Event Player).CastMelee_Mod_Conditions == 1;
+        (Event Player).Passive_Mod != 30;
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
@@ -1480,7 +1483,7 @@ rule ("Active Mods 11 - Goomba Stomp") {
         Is In Air(Event Player) == True;
     }
     actions {
-        Damage(Remove From Array(Players Within Radius(World Vector Of(Vector(0, -1, 0), Event Player, Rotation And Translation), 1.25, Opposite Team Of(Team Of(Event Player)), Off), Event Player), Event Player, Divide(Max Health(Event Player), 2));
+        Damage(Remove From Array(Players Within Radius(World Vector Of(Vector(0, -1, 0), Event Player, Rotation And Translation), 1.25, Opposite Team Of(Team Of(Event Player)), Off), Event Player), Event Player, Divide(Health(Event Player), 2));
         Set Status(Remove From Array(Players Within Radius(World Vector Of(Vector(0, -1, 0), Event Player, Rotation And Translation), 1.25, Opposite Team Of(Team Of(Event Player)), Off), Event Player), Event Player, Stunned, 1);
         Apply Impulse(Event Player, Up, 10, To World, Cancel Contrary Motion);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Position Of(Event Player), 3);
@@ -2388,7 +2391,7 @@ rule ("Mechanics - Close Mod Menu") {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Wait(0.5, Ignore Condition);
-        If(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)));
+        If(Or(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)), And(Compare((Event Player).Passive_Mod_Index, ==, 30), Array Contains(Array(2, 11), (Event Player).Active_Mod_Index))));
             Create In-World Text(Event Player, Custom String("Incompatible mods! Choose again with Reload + Interact.", Null, Null, Null), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
             Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
             Wait(2, Ignore Condition);
