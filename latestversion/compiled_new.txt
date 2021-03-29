@@ -60,6 +60,10 @@ settings
 			{
 				Ultimate Generation Duplicate: 50%
 			}
+			Junkrat
+			{
+				Ultimate Duration: 25%
+			}
 		}
 	}
 	extensions
@@ -128,6 +132,7 @@ variables {
         47: Target_Position
         48: Old_Target
         49: Eval
+        50: Player_Health
 }
 subroutines {
     0: MoveSpeed160
@@ -778,11 +783,10 @@ rule ("Passive Mods 26 - Boots of Mobility") {
         BootsOfMobility;
     }
     actions {
-        While(Is Alive(Event Player));
-            Set Move Speed(Event Player, 200);
-            Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.05));
-            Wait(0.116, Ignore Condition);
-        End;
+        Set Move Speed(Event Player, 200);
+        Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.05));
+        Set Player Variable(Event Player, Player_Health, Health(Event Player));
+        Wait Until(Compare(Health(Event Player), <, (Event Player).Player_Health), 99999);
         Set Move Speed(Event Player, 100);
         Stop All Heal Over Time(Event Player);
     }
@@ -1688,7 +1692,6 @@ rule ("Active Mods 18 - Cleanse") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 19;
-        (Event Player).OraOra == False;
         Or(Or(Or(Has Status(Event Player, Rooted), Has Status(Event Player, Stunned)), Has Status(Event Player, Knocked Down)), Has Status(Event Player, Frozen)) == True;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
@@ -2949,7 +2952,7 @@ rule ("Active Mods 28 - ORA ORA!") {
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Heal(Victim, Null, 7.5);
+            Heal(Victim, Null, Multiply(Event Damage, 0.75));
             Set Status(Victim, Attacker, Stunned, 0.25);
             If(Or(Is Dead(Victim), Is Dead(Attacker)));
                 Break;
