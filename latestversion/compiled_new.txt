@@ -68,6 +68,7 @@ settings
 	}
 	extensions
 	{
+		Beam Effects
 		Buff Status Effects
 		Buff and Debuff Sounds
 		Kinetic Explosion Effects
@@ -1933,7 +1934,7 @@ rule ("Active Mods 25 - Railgun") {
         Set Ability 2 Enabled(Event Player, False);
         Set Primary Fire Enabled(Event Player, False);
         Set Secondary Fire Enabled(Event Player, False);
-        Set Move Speed(Event Player, 50);
+        Set Move Speed(Event Player, 35);
         Set Player Variable(Event Player, Scalar_1, 0);
         Create Effect(All Players(All Teams), Beacon Sound, Color(White), Eye Position(Event Player), Multiply((Event Player).Railgun_Charge, 2), Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
@@ -1943,7 +1944,7 @@ rule ("Active Mods 25 - Railgun") {
             If(Array Contains(Array(0, 0.5, 0.75, 1, 1.25, 1.5, 1.625, 1.75, 1.875, 2, 2.125, 2.25, 2.375, 2.5, 2.625, 2.75, 2.875, 3, 3.125, 3.250, 3.375, 3.5, 3.625, 3.75, 3.875, 4), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Team Of(Event Player), Add(Eye Position(Event Player), Vector(0, -0.5, -0.1)), 1);
                 Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(Team 2), Eye Position(Event Player), 200);
-                Play Effect(All Players(All Teams), Bad Explosion, Color(White), Subtract(Eye Position(Event Player), Vector(0, 0, 0.2)), 1);
+                Play Effect(All Players(All Teams), Bad Explosion, Color(White), Eye Position(Event Player), 1);
             End;
             Modify Player Variable(Event Player, Scalar_1, Add, 0.125);
             If(Compare((Event Player).Railgun_Charge, ==, 100));
@@ -1960,38 +1961,42 @@ rule ("Active Mods 25 - Railgun") {
         Set Move Speed(Event Player, 100);
         Stop Chasing Player Variable(Event Player, Railgun_Charge);
         Play Effect(All Players(All Teams), Zarya Particle Cannon Explosion Sound, Color(Team 1), Eye Position(Event Player), 200);
+        Wait(0.016, Ignore Condition);
         Destroy Progress Bar HUD Text((Event Player).Active_Mod_FX);
         If(Compare((Event Player).Current_Target_A, ==, Null));
             Small Message(Event Player, Custom String("No player hit!", Null, Null, Null));
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Team 1), (Event Player).Target_Position, 100);
-            Create Beam Effect(All Players(All Teams), Bad Beam, Add(Eye Position(Event Player), Vector(0.35, -0.5, 0.1)), (Event Player).Target_Position, Color(White), Position and Radius);
+            Create Beam Effect(All Players(All Teams), Echo Focusing Beam, Add(Eye Position(Event Player), Vector(0.5, -0.4, 0.05)), (Event Player).Target_Position, Color(White), Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-            Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Target_Position, 6, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
-            Set Status((Event Player).Target_Area_A, Event Player, Burning, 3);
-            Start Damage Over Time((Event Player).Target_Area_A, Event Player, 3, Add(15, Multiply((Event Player).Railgun_Charge, 0.5)));
-            Wait(1, Ignore Condition);
+            Create Beam Effect(All Players(All Teams), Winston Tesla Cannon Beam, Add(Eye Position(Event Player), Vector(0.5, -0.4, 0.05)), (Event Player).Target_Position, Color(White), Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
+            Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Target_Position, Multiply((Event Player).Railgun_Charge, 0.1), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
+            Set Status((Event Player).Target_Area_A, Event Player, Burning, Multiply((Event Player).Railgun_Charge, 0.1));
+            Start Damage Over Time((Event Player).Target_Area_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.05), Add(15, Multiply((Event Player).Railgun_Charge, 0.3)));
+            Wait(0.5, Ignore Condition);
             Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-            Destroy All Progress Bar HUD Text;
-            Wait(2, Ignore Condition);
-            Stop Damage Over Time(Last Damage Over Time ID);
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
         Else;
             Small Message(Event Player, Custom String("Player hit!", Null, Null, Null));
-            Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
-            Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Color(Team 1), (Event Player).Target_Position, 100);
+            Play Effect(All Players(All Teams), Pharah Concussive Blast Effect, Color(Team 1), (Event Player).Target_Position, 1);
+            Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Color(Team 1), (Event Player).Target_Position, 100);
             Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Team 1), (Event Player).Target_Position, 100);
-            Create Beam Effect(All Players(All Teams), Bad Beam, Add(Eye Position(Event Player), Vector(0.35, -0.5, 0.1)), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
-            Damage((Event Player).Current_Target_A, Event Player, Raise To Power(Multiply((Event Player).Railgun_Charge, 0.4), 2));
-            Set Status((Event Player).Current_Target_A, Event Player, Burning, 5);
-            Start Damage Over Time((Event Player).Current_Target_A, Event Player, 5, Add(15, Multiply((Event Player).Railgun_Charge, 0.5)));
-            Wait(1, Ignore Condition);
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
-            Wait(3, Ignore Condition);
-            Stop Damage Over Time(Last Damage Over Time ID);
+            Create Beam Effect(All Players(All Teams), Echo Focusing Beam, Add(Eye Position(Event Player), Vector(0.5, -0.4, 0.05)), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
+            Create Beam Effect(All Players(All Teams), Winston Tesla Cannon Beam, Add(Eye Position(Event Player), Vector(0.5, -0.4, 0.05)), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
+            Damage((Event Player).Current_Target_A, Event Player, Raise To Power(Multiply((Event Player).Railgun_Charge, 0.15), 2));
+            Set Status((Event Player).Current_Target_A, Event Player, Burning, Multiply((Event Player).Railgun_Charge, 0.05));
+            Start Damage Over Time((Event Player).Current_Target_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.05), Add(5, Multiply((Event Player).Railgun_Charge, 0.15)));
+            Wait(0.5, Ignore Condition);
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 3));
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 4));
         End;
+        Wait(0.016, Ignore Condition);
+        Destroy All Progress Bar HUD Text;
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Wait(5, Ignore Condition);
