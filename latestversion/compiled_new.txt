@@ -1926,7 +1926,7 @@ rule ("Active Mods 25 - Railgun") {
         Set Player Variable(Event Player, Railgun_Charge, 0);
         Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, 25, Destination and Rate);
         Create Progress Bar HUD Text(Event Player, (Event Player).Railgun_Charge, Custom String("RAILGUN CHARGE", Null, Null, Null), Top, 3, Color(White), Color(Orange), Visible To Values and Color, Default Visibility);
-        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
+        Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Set Melee Enabled(Event Player, False);
         Set Ultimate Ability Enabled(Event Player, False);
         Set Ability 1 Enabled(Event Player, False);
@@ -1934,12 +1934,13 @@ rule ("Active Mods 25 - Railgun") {
         Set Primary Fire Enabled(Event Player, False);
         Set Secondary Fire Enabled(Event Player, False);
         Set Move Speed(Event Player, 50);
+        Set Player Variable(Event Player, Scalar_1, 6);
         While(Is Button Held(Event Player, Button(Interact)));
             Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 60)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
             Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 60)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
-            If(Array Contains(Array(1, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 6.75, 7, 7.25, 7.5, 7.625, 7.75, 7.875, 8, 8.125, 8.25, 8.375, 8.5, 8.625, 8.75, 8.875, 9, 9.125, 9.250, 9.375, 9.5, 9.625, 9.75, 9.875, 10), (Event Player).Scalar_1));
-                Play Effect(All Players(All Teams), DVa Micro Missiles Explosion Effect, Team Of(Event Player), Eye Position(Event Player), 1);
-                Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 2), Eye Position(Event Player), 200);
+            If(Array Contains(Array(6, 6.5, 6.75, 7, 7.25, 7.5, 7.625, 7.75, 7.875, 8, 8.125, 8.25, 8.375, 8.5, 8.625, 8.75, 8.875, 9, 9.125, 9.250, 9.375, 9.5, 9.625, 9.75, 9.875, 10), (Event Player).Scalar_1));
+                Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Effect, Team Of(Event Player), Eye Position(Event Player), 1);
+                Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(Team 2), Eye Position(Event Player), 200);
                 Play Effect(All Players(All Teams), Bad Explosion, Color(White), Eye Position(Event Player), 1);
             End;
             Modify Player Variable(Event Player, Scalar_1, Add, 0.125);
@@ -1957,6 +1958,7 @@ rule ("Active Mods 25 - Railgun") {
         Set Move Speed(Event Player, 100);
         Stop Chasing Player Variable(Event Player, Railgun_Charge);
         Play Effect(All Players(All Teams), Zarya Particle Cannon Explosion Sound, Color(Team 1), Eye Position(Event Player), 200);
+        Destroy Progress Bar HUD Text((Event Player).Active_Mod_FX);
         If(Compare((Event Player).Current_Target_A, ==, Null));
             Small Message(Event Player, Custom String("No player hit!", Null, Null, Null));
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
@@ -1975,6 +1977,8 @@ rule ("Active Mods 25 - Railgun") {
             Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Color(Team 1), (Event Player).Target_Position, 100);
             Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), Eye Position(Event Player), 1);
+            Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
+            Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Team 1), (Event Player).Target_Position, 100);
             Create Beam Effect(All Players(All Teams), Bad Beam, Eye Position(Event Player), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
             Damage((Event Player).Current_Target_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.25));
@@ -1985,7 +1989,6 @@ rule ("Active Mods 25 - Railgun") {
             Wait(3, Ignore Condition);
             Stop Damage Over Time(Last Damage Over Time ID);
         End;
-        Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
         Wait(5, Ignore Condition);
     }
 }
