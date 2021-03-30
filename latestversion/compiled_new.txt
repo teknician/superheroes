@@ -139,7 +139,6 @@ variables {
         53: Railgun_Charge
         54: Reinhardt
         55: OraOra
-        56: Omega_Boosted
 }
 subroutines {
     0: MoveSpeed160
@@ -1059,11 +1058,12 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.2, Ignore Condition);
             Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
             If(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, !=, Null)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))));
-                Wait(0.016, Ignore Condition);
-                Set Ultimate Charge(Event Player, 0);
+                Kill(Event Player, Null);
+                Resurrect(Event Player);
                 Cancel Primary Action(Event Player);
                 Set Ultimate Ability Enabled(Event Player, False);
                 Set Secondary Fire Enabled(Event Player, False);
+                Set Ultimate Charge(Event Player, 0);
                 Create Icon(Event Player, (Event Player).Old_Target_A, Bolt, Visible To and Position, Color(Yellow), False);
                 Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
                 Create Icon(Event Player, (Event Player).Old_Target_A, Ring Thin, Visible To and Position, Color(Yellow), False);
@@ -1095,23 +1095,25 @@ rule ("Passive Mods 37 - Omega Boost") {
                     Else If(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, ==, (Event Player).Old_Target_A)), Compare((Event Player).Current_Target_A, !=, Null)));
                         Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
                         Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
-                        Play Effect(All Players(All Teams), Good Pickup Effect, Null, (Event Player).Old_Target_A, 200);
+                        Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Old_Target_A, 2);
                         Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
                         Create Effect(All Players(All Teams), Winston Primal Rage Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
-                        Create Effect(All Players(All Teams), Mercy Damage Boosted Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
+                        Create Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
-                        Create Effect(All Players(All Teams), Beacon Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+                        Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Old_Target_A, 1.5, Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
-                        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+                        Create Effect(All Players(All Teams), Good Aura, Color(Yellow), (Event Player).Old_Target_A, 0.75, Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
-                        Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+                        Create Effect(All Players(All Teams), Beacon Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 8, Last Created Entity);
-                        Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Old_Target_A, 1, Position and Radius);
+                        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 9, Last Created Entity);
-                        Create Effect(All Players(All Teams), Good Aura, Color(Yellow), (Event Player).Old_Target_A, 0.3, Position and Radius);
+                        Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
                         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 10, Last Created Entity);
+                        Create Effect(All Players(All Teams), Good Aura Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+                        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 11, Last Created Entity);
                         Set Ultimate Charge(Event Player, 0);
                         Set Ultimate Ability Enabled(Event Player, False);
                         Heal((Event Player).Old_Target_A, Event Player, 400);
@@ -1154,7 +1156,7 @@ rule ("Passive Mods 37 - Omega Boost") {
                         Break;
                     End;
                 End;
-                Wait(0.25, Ignore Condition);
+                Wait(0.016, Ignore Condition);
             End;
         End;
         Wait(0.2, Ignore Condition);
@@ -2319,10 +2321,12 @@ rule ("Optional - Debugging") {
         End;
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         Create Dummy Bot(Hero(Roadhog), Color(Team 2), 10, Position Of(Event Player), Up);
+        Create Dummy Bot(Hero(Roadhog), Color(Team 1), 10, Position Of(Event Player), Left);
         Wait(2, Ignore Condition);
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         If(Compare(Players In Slot(10, Team 2), !=, 0));
             Destroy Dummy Bot(Team 2, 10);
+            Destroy Dummy Bot(Team 1, 10);
         End;
         Wait(2, Ignore Condition);
         Loop;
