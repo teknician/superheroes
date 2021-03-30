@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.5. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.6. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -2108,7 +2108,7 @@ rule ("Active Mods 29 - Omega Boost") {
             Wait(5, Ignore Condition);
         End;
         While(And(Compare(Ultimate Charge Percent(Event Player), ==, 100), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))));
-            Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), Team Of(Event Player), Null, False));
+            Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Null, False));
             Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
             If(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, !=, Null)));
                 Cancel Primary Action(Event Player);
