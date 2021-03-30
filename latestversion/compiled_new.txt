@@ -1049,7 +1049,7 @@ rule ("Passive Mods 37 - Omega Boost") {
         OmegaBoost;
     }
     actions {
-        Allow Button(Event Player, Button(Ultimate));
+        Set Ultimate Ability Enabled(Event Player, True);
         While(Compare(Ultimate Charge Percent(Event Player), <, 100));
             Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), 2.5));
             Wait(5, Ignore Condition);
@@ -1058,7 +1058,6 @@ rule ("Passive Mods 37 - Omega Boost") {
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
         Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
         If(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, !=, Null)));
-            Disallow Button(Event Player, Button(Ultimate));
             Kill(Event Player, Null);
             Resurrect(Event Player);
             Set Ultimate Ability Enabled(Event Player, False);
@@ -1071,7 +1070,6 @@ rule ("Passive Mods 37 - Omega Boost") {
             Create Icon(Event Player, Subtract((Event Player).Old_Target_A, Vector(0, 0.15, 0)), Arrow: Up, Visible To and Position, Color(Yellow), False);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Old_Target_A, Event Player, True, Color(Orange), Default);
-            Allow Button(Event Player, Button(Ultimate));
             Small Message(Event Player, Custom String("Ultimate again to confirm target. Right click to cancel.", Null, Null, Null));
             Wait(0.2, Ignore Condition);
             While(And(Not(Is Button Held(Event Player, Button(Ultimate))), Not(Is Button Held(Event Player, Button(Secondary Fire)))));
@@ -1154,8 +1152,9 @@ rule ("Passive Mods 37 - Omega Boost") {
                 End;
                 Wait(0.116, Ignore Condition);
             End;
-        Else If(Compare((Event Player).Current_Target_A, !=, Null));
-            Disallow Button(Event Player, Button(Ultimate));
+        Else If(Compare((Event Player).Current_Target_A, ==, Null));
+            Set Ultimate Ability Enabled(Event Player, False);
+            Wait(0.5, Ignore Condition);
         End;
         Wait(0.1, Ignore Condition);
     }
