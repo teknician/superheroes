@@ -1057,7 +1057,6 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
             Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
             If(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, !=, Null)));
-                Cancel Primary Action(Event Player);
                 Kill(Event Player, Null);
                 Resurrect(Event Player);
                 Set Ultimate Ability Enabled(Event Player, False);
@@ -1163,6 +1162,7 @@ rule ("Passive Mods 37 - Omega Boost") {
                 End;
                 Wait(0.2, Ignore Condition);
             End;
+            Wait(0.2, Ignore Condition);
         End;
         Wait(0.2, Ignore Condition);
     }
