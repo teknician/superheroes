@@ -1050,25 +1050,25 @@ rule ("Passive Mods 37 - Omega Boost") {
         OmegaBoost;
     }
     actions {
-        Set Ultimate Ability Enabled(Event Player, False);
         While(Compare(Ultimate Charge Percent(Event Player), <, 100));
             Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), 2.5));
             Wait(5, Ignore Condition);
         End;
-        Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 99999);
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Null, False));
         Wait(0.2, Ignore Condition);
         Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
-        Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, !=, Null)), 99999);
+        Wait Until(And(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), Compare((Event Player).Current_Target_A, !=, Null)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 99999);
+        Cancel Primary Action(Event Player);
+        Set Ultimate Ability Enabled(Event Player, False);
         Set Secondary Fire Enabled(Event Player, False);
-        Set Ultimate Charge(Event Player, 100);
         Create Icon(Event Player, (Event Player).Current_Target_A, Bolt, Visible To and Position, Color(Yellow), False);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Icon(Event Player, Subtract((Event Player).Current_Target_A, Local Vector Of(Vector(0, -1, 0), (Event Player).Current_Target_A, Rotation And Translation)), Ring Thin, Visible To and Position, Color(Yellow), False);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Wait(0.2, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         If(Compare((Event Player).Current_Target_A, !=, (Event Player).Old_Target_A));
             Set Secondary Fire Enabled(Event Player, True);
+            Destroy Effect((Event Player).Active_Mod_FX_Array);
             Abort;
         End;
         Small Message(Event Player, Custom String("Ultimate again to confirm target. Right click to cancel.", Null, Null, Null));
@@ -1077,6 +1077,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             If(Is Button Held(Event Player, Button(Secondary Fire)));
                 Wait(0.2, Ignore Condition);
                 Set Secondary Fire Enabled(Event Player, True);
+                Destroy Effect((Event Player).Active_Mod_FX_Array);
                 Break;
             Else If(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, ==, (Event Player).Old_Target_A)));
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
