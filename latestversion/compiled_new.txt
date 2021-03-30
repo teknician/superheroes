@@ -1159,8 +1159,9 @@ rule ("Passive Mods 37 - Omega Boost") {
                         Stop Forcing Player Outlines((Event Player).Old_Target_A, Event Player);
                         Break;
                     End;
+                    Wait(0.2, Ignore Condition);
                 End;
-                Wait(0.016, Ignore Condition);
+                Wait(0.2, Ignore Condition);
             End;
         End;
         Wait(0.2, Ignore Condition);
