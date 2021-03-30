@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.5. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.5. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1948,10 +1948,16 @@ rule ("Active Mods 25 - Railgun") {
             End;
             Wait(0.2, Ignore Condition);
         End;
+        Set Melee Enabled(Event Player, True);
+        Set Ultimate Ability Enabled(Event Player, True);
+        Set Ability 1 Enabled(Event Player, True);
+        Set Ability 2 Enabled(Event Player, True);
+        Set Primary Fire Enabled(Event Player, True);
+        Set Secondary Fire Enabled(Event Player, True);
+        Set Move Speed(Event Player, 100);
         Stop Chasing Player Variable(Event Player, Railgun_Charge);
         Play Effect(All Players(All Teams), Zarya Particle Cannon Explosion Sound, Color(Team 1), Eye Position(Event Player), 200);
         If(Compare((Event Player).Current_Target_A, ==, Null));
-            Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
             Small Message(Event Player, Custom String("No player hit!", Null, Null, Null));
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Team 1), (Event Player).Target_Position, 100);
@@ -1959,24 +1965,27 @@ rule ("Active Mods 25 - Railgun") {
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
             Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Target_Position, 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
             Set Status((Event Player).Target_Area_A, Event Player, Burning, 3);
-            Start Damage Over Time((Event Player).Target_Area_A, Event Player, 3, Add(5, Multiply((Event Player).Railgun_Charge, 0.1)));
+            Start Damage Over Time((Event Player).Target_Area_A, Event Player, 3, Add(5, Multiply((Event Player).Railgun_Charge, 0.2)));
             Wait(1, Ignore Condition);
             Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
             Wait(2, Ignore Condition);
             Stop Damage Over Time(Last Damage Over Time ID);
         Else;
-            Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
+            Small Message(Event Player, Custom String("Player hit!", Null, Null, Null));
+            Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), (Event Player).Target_Position, 1);
+            Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Color(Team 1), (Event Player).Target_Position, 100);
             Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Effect, Color(Team 1), Eye Position(Event Player), 1);
             Create Beam Effect(All Players(All Teams), Bad Beam, Eye Position(Event Player), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
-            Damage((Event Player).Current_Target_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.0625));
+            Damage((Event Player).Current_Target_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.25));
             Set Status((Event Player).Current_Target_A, Event Player, Burning, 3);
-            Start Damage Over Time((Event Player).Current_Target_A, Event Player, 3, Add(5, Multiply((Event Player).Railgun_Charge, 0.1)));
+            Start Damage Over Time((Event Player).Current_Target_A, Event Player, 3, Add(15, Multiply((Event Player).Railgun_Charge, 0.2)));
             Wait(1, Ignore Condition);
             Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
             Wait(3, Ignore Condition);
             Stop Damage Over Time(Last Damage Over Time ID);
         End;
+        Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
         Wait(5, Ignore Condition);
     }
 }
