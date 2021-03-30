@@ -1057,7 +1057,7 @@ rule ("Passive Mods 37 - Omega Boost") {
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Null, False));
         Wait(0.2, Ignore Condition);
         Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
-        Wait Until(And(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), Compare((Event Player).Current_Target_A, !=, Null)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 99999);
+        Wait Until(And(And(Is Using Ultimate(Event Player), Compare((Event Player).Current_Target_A, !=, Null)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 99999);
         Cancel Primary Action(Event Player);
         Set Ultimate Ability Enabled(Event Player, False);
         Set Secondary Fire Enabled(Event Player, False);
