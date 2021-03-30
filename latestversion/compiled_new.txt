@@ -1922,8 +1922,7 @@ rule ("Active Mods 25 - Railgun") {
         Is Button Held(Event Player, Button(Interact)) == True;
     }
     actions {
-        Small Message(Event Player, Custom String("WIP. Please choose another mod!", Null, Null, Null));
-        Wait(0.5, Abort When False);
+        Wait(0.75, Abort When False);
         Set Player Variable(Event Player, Railgun_Charge, 0);
         Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, 25, Destination and Rate);
         Create Progress Bar HUD Text(Event Player, (Event Player).Railgun_Charge, Custom String("RAILGUN CHARGE", Null, Null, Null), Top, 3, Color(White), Color(Orange), Visible To Values and Color, Default Visibility);
@@ -1998,7 +1997,7 @@ rule ("Active Mods 25 - Railgun") {
         Wait(0.016, Ignore Condition);
         Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-        Wait(5, Ignore Condition);
+        Wait(8, Ignore Condition);
     }
 }
 
@@ -2169,7 +2168,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 22, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (25m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Interact to use 100% Ult and become a statue with +5000 Armor. Explode when you die. (25 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: WIP - Does nothing yet.", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area (8 sec. CD).", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
