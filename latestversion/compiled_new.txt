@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.6. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.6. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1052,7 +1052,7 @@ rule ("Passive Mods 37 - Omega Boost") {
         Wait Until(Compare(Ultimate Charge Percent(Event Player), >, 95), 99999);
         Set Ultimate Ability Enabled(Event Player, False);
         If(Not(Entity Exists((Event Player).Active_Mod_FX)));
-            Create HUD Text(Event Player, Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega boost ready.", Null, Null, Null), Top, 5, Null, Null, Color(Orange), Visible To and Sort Order, Default Visibility);
+            Create HUD Text(Event Player, Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega boost ready.", Null, Null, Null), Top, 5, Null, Null, Color(Orange), Visible To and Sort Order, Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
         End;
         Wait(0.5, Ignore Condition);
@@ -1074,7 +1074,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.2, Ignore Condition);
             While(And(Not(Is Button Held(Event Player, Button(Ultimate))), Not(Is Button Held(Event Player, Button(Secondary Fire)))));
                 Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
-                Wait(0.1, Ignore Condition);
+                Wait(0.25, Ignore Condition);
                 If(Is Button Held(Event Player, Button(Secondary Fire)));
                     Small Message(Event Player, Custom String("Canceled (2).", Null, Null, Null));
                     Wait(0.2, Ignore Condition);
@@ -1150,7 +1150,7 @@ rule ("Passive Mods 37 - Omega Boost") {
                     Stop Forcing Player Outlines((Event Player).Old_Target_A, Event Player);
                     Break;
                 End;
-                Wait(0.116, Ignore Condition);
+                Wait(0.5, Ignore Condition);
             End;
     }
 }
