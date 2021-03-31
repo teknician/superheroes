@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.6. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.6. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1052,13 +1052,15 @@ rule ("Passive Mods 37 - Omega Boost") {
         Wait Until(Compare(Ultimate Charge Percent(Event Player), >, 95), 99999);
         Set Ultimate Ability Enabled(Event Player, False);
         If(Not(Entity Exists((Event Player).Active_Mod_FX)));
-            Create HUD Text(Event Player, Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega boost ready.", Null, Null, Null), Top, 5, Null, Null, Color(Orange), Visible To and Sort Order, Default Visibility);
+            Create HUD Text(Event Player, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega boost ready.", Null, Null, Null), Null, Top, 5, Null, Color(Orange), Null, Visible To and Sort Order, Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
         End;
-        Wait(0.5, Ignore Condition);
+        Wait(0.3, Ignore Condition);
         Wait Until(Is Button Held(Event Player, Button(Ultimate)), 99999);
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
         Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
+        Wait(0.016, Ignore Condition);
+        Disallow Button(Event Player, Button(Ultimate));
         If(Compare((Event Player).Current_Target_A, ==, Null));
             Abort;
         Else;
@@ -1071,76 +1073,70 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Old_Target_A, Event Player, True, Color(Orange), Default);
             Small Message(Event Player, Custom String("Ultimate again to confirm target. Times out after 2.5 sec.", Null, Null, Null));
+            Wait(0.1, Ignore Condition);
+            Allow Button(Event Player, Button(Ultimate));
+            Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
+            Skip If(Is Button Held(Event Player, Button(Ultimate)), 50);
+            Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
+            Destroy HUD Text((Event Player).Active_Mod_FX);
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
+            Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Old_Target_A, 2);
+            Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
+            Create Effect(All Players(All Teams), Winston Primal Rage Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
+            Create Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
+            Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Old_Target_A, 1.5, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
+            Create Effect(All Players(All Teams), Good Aura, Color(Orange), (Event Player).Old_Target_A, 0.65, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
+            Create Effect(All Players(All Teams), Beacon Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 8, Last Created Entity);
+            Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 9, Last Created Entity);
+            Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 10, Last Created Entity);
+            Create Effect(All Players(All Teams), Good Aura Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 11, Last Created Entity);
+            Start Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams), True, Color(Orange), Default);
+            Heal((Event Player).Old_Target_A, Event Player, 400);
+            Set Status((Event Player).Old_Target_A, Event Player, Unkillable, 8);
+            Set Ability Cooldown((Event Player).Old_Target_A, Button(Ability 1), 0);
+            Set Ability Cooldown((Event Player).Old_Target_A, Button(Ability 2), 0);
+            Set Ability Cooldown((Event Player).Old_Target_A, Button(Secondary Fire), 0);
+            Set Ability Charge((Event Player).Old_Target_A, Button(Ability 1), 5);
+            Set Ability Charge((Event Player).Old_Target_A, Button(Ability 2), 5);
+            Set Damage Dealt((Event Player).Old_Target_A, 175);
+            Set Damage Received((Event Player).Old_Target_A, 25);
+            Set Healing Dealt((Event Player).Old_Target_A, 175);
+            Set Move Speed((Event Player).Old_Target_A, 150);
+            Set Ammo((Event Player).Old_Target_A, 0, Max Ammo((Event Player).Old_Target_A, 0));
+            Set Ammo((Event Player).Old_Target_A, 1, Max Ammo((Event Player).Old_Target_A, 1));
+            Wait(0.5, Ignore Condition);
+            Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
+            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
+            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            Wait(8, Ignore Condition);
+            Stop Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams));
+            Set Damage Dealt((Event Player).Old_Target_A, 100);
+            Set Damage Received((Event Player).Old_Target_A, 100);
+            Set Healing Dealt((Event Player).Old_Target_A, 100);
+            Set Move Speed((Event Player).Old_Target_A, 100);
+            Destroy Effect((Event Player).Active_Mod_FX_Array);
+            Set Ultimate Ability Enabled(Event Player, True);
+            Set Ultimate Charge(Event Player, 0);
+            Set Secondary Fire Enabled(Event Player, True);
+            //lbl_0:
+            Small Message(Event Player, Custom String("Target cancelled - timed out", Null, Null, Null));
             Wait(0.2, Ignore Condition);
-            While(And(Not(Is Button Held(Event Player, Button(Ultimate))), Not(Is Button Held(Event Player, Button(Secondary Fire)))));
-                Wait(0.1, Ignore Condition);
-                Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
-                Wait Until(And(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Current_Target_A, ==, (Event Player).Old_Target_A)), Compare((Event Player).Current_Target_A, !=, Null)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
-                Skip If(Is Button Held(Event Player, Button(Secondary Fire)), 51);
-                Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
-                Destroy HUD Text((Event Player).Active_Mod_FX);
-                Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
-                Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Old_Target_A, 2);
-                Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
-                Create Effect(All Players(All Teams), Winston Primal Rage Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
-                Create Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
-                Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Old_Target_A, 1.5, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
-                Create Effect(All Players(All Teams), Good Aura, Color(Orange), (Event Player).Old_Target_A, 0.65, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
-                Create Effect(All Players(All Teams), Beacon Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 8, Last Created Entity);
-                Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 9, Last Created Entity);
-                Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 10, Last Created Entity);
-                Create Effect(All Players(All Teams), Good Aura Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
-                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 11, Last Created Entity);
-                Start Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams), True, Color(Orange), Default);
-                Heal((Event Player).Old_Target_A, Event Player, 400);
-                Set Status((Event Player).Old_Target_A, Event Player, Unkillable, 8);
-                Set Ability Cooldown((Event Player).Old_Target_A, Button(Ability 1), 0);
-                Set Ability Cooldown((Event Player).Old_Target_A, Button(Ability 2), 0);
-                Set Ability Cooldown((Event Player).Old_Target_A, Button(Secondary Fire), 0);
-                Set Ability Charge((Event Player).Old_Target_A, Button(Ability 1), 5);
-                Set Ability Charge((Event Player).Old_Target_A, Button(Ability 2), 5);
-                Set Damage Dealt((Event Player).Old_Target_A, 175);
-                Set Damage Received((Event Player).Old_Target_A, 25);
-                Set Healing Dealt((Event Player).Old_Target_A, 175);
-                Set Move Speed((Event Player).Old_Target_A, 150);
-                Set Ammo((Event Player).Old_Target_A, 0, Max Ammo((Event Player).Old_Target_A, 0));
-                Set Ammo((Event Player).Old_Target_A, 1, Max Ammo((Event Player).Old_Target_A, 1));
-                Wait(0.5, Ignore Condition);
-                Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
-                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
-                Wait(8, Ignore Condition);
-                Stop Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams));
-                Set Damage Dealt((Event Player).Old_Target_A, 100);
-                Set Damage Received((Event Player).Old_Target_A, 100);
-                Set Healing Dealt((Event Player).Old_Target_A, 100);
-                Set Move Speed((Event Player).Old_Target_A, 100);
-                Destroy Effect((Event Player).Active_Mod_FX_Array);
-                Set Ultimate Ability Enabled(Event Player, True);
-                Set Ultimate Charge(Event Player, 0);
-                Set Secondary Fire Enabled(Event Player, True);
-                Break;
-                //lbl_0:
-                Small Message(Event Player, Custom String("Target cancelled - timed out", Null, Null, Null));
-                Wait(0.2, Ignore Condition);
-                Set Secondary Fire Enabled(Event Player, True);
-                Set Ultimate Ability Enabled(Event Player, True);
-                Set Ultimate Charge(Event Player, 100);
-                Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
-                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
-                Stop Forcing Player Outlines((Event Player).Old_Target_A, Event Player);
-                Break;
-                Wait(0.5, Ignore Condition);
-            End;
+            Set Secondary Fire Enabled(Event Player, True);
+            Set Ultimate Ability Enabled(Event Player, True);
+            Set Ultimate Charge(Event Player, 95);
+            Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
+            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
+            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            Stop Forcing Player Outlines((Event Player).Old_Target_A, Event Player);
     }
 }
 
