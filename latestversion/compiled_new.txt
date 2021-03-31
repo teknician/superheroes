@@ -1049,27 +1049,38 @@ rule ("Passive Mods 37 - Omega Boost") {
         OmegaBoost;
     }
     actions {
+        "manually slow down player ult gain"
         While(Compare(Ultimate Charge Percent(Event Player), <, 95));
             Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), 1));
             Wait(2, Ignore Condition);
         End;
-        Wait Until(Compare(Ultimate Charge Percent(Event Player), >, 95), 99999);
+        "disable ult before (hopefully) it can be used normally"
+        Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 95), 99999);
+        Disallow Button(Event Player, Button(Ultimate));
         Set Ultimate Ability Enabled(Event Player, False);
+        "check if HUD exists - if it does this is skipped. only evaluates false when ult target is canceled"
         If(Not(Entity Exists((Event Player).Active_Mod_FX)));
-            Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Eye Position(Event Player), Vector(0, -0.25, 0.75)), 0.25);
-            Create HUD Text(Event Player, Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega Boost\n   Ready   \n          {0}", Icon String(Bolt), Null, Null), Top, 5, Null, Null, Color(Orange), Visible To and Sort Order, Default Visibility);
+            Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Add(Eye Position(Event Player), Vector(1, -0.35, 1)), Multiply(Facing Direction Of(Event Player), 0.5)), 0.25);
+            Create HUD Text(Event Player, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n           {0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Null, Right, 1, Null, Color(Orange), Null, Visible To and Sort Order, Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
         End;
         Wait(0.1, Ignore Condition);
+        "wait for player to press Q"
+        Allow Button(Event Player, Button(Ultimate));
         Wait Until(Is Button Held(Event Player, Button(Ultimate)), 99999);
+        "determine the target of the ultimate (teammate)"
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
+        "honestly i could probably get rid of old target at this point but not rn too lazy"
         Set Player Variable(Event Player, Old_Target_A, (Event Player).Current_Target_A);
         Wait(0.016, Ignore Condition);
+        "player can't press ultimate again until more things have happened"
         Disallow Button(Event Player, Button(Ultimate));
+        "u r not looking at a player, will go back to beginning"
         If(Compare((Event Player).Current_Target_A, ==, Null));
             Abort;
+        "u r looking at a teammate"
         Else;
-            Set Secondary Fire Enabled(Event Player, False);
+            "targeting effects, visible to you only"
             Play Effect(Event Player, Bad Explosion, Color(Orange), Position Of((Event Player).Old_Target_A), 0.75);
             Create Icon(Event Player, (Event Player).Old_Target_A, Ring Thin, Visible To and Position, Color(Orange), False);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
@@ -1078,13 +1089,17 @@ rule ("Passive Mods 37 - Omega Boost") {
             Create Icon(Event Player, Subtract((Event Player).Old_Target_A, Vector(0, 0.1, 0)), Arrow: Up, Visible To and Position, Color(Yellow), False);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Old_Target_A, Event Player, True, Color(Orange), Default);
+            "you must now choose... press Q or wait for timeout"
             Small Message(Event Player, Custom String("Ultimate again to confirm target. Times out after 2.5 sec.", Null, Null, Null));
             Wait(0.5, Ignore Condition);
             Allow Button(Event Player, Button(Ultimate));
+            "u have to be conscious/not CC'd to follow through on your ult. timeout is 2.5."
             Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
-            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 51);
+            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 50);
+            "destroy 'ur ult is ready' text"
             Destroy HUD Text((Event Player).Active_Mod_FX);
             Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
+            "whole lot of effects for the target"
             Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
             Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Old_Target_A, 2);
             Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Old_Target_A, 1, Visible To Position and Radius);
@@ -1106,6 +1121,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Create Effect(All Players(All Teams), Good Aura Sound, Team Of(Event Player), (Event Player).Old_Target_A, 100, Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 11, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams), True, Color(Orange), Default);
+            "whole lot of stat changes for target"
             Heal((Event Player).Old_Target_A, Event Player, 400);
             Set Status((Event Player).Old_Target_A, Event Player, Unkillable, 8);
             Set Ability Cooldown((Event Player).Old_Target_A, Button(Ability 1), 0);
@@ -1120,29 +1136,35 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Ammo((Event Player).Old_Target_A, 0, Max Ammo((Event Player).Old_Target_A, 0));
             Set Ammo((Event Player).Old_Target_A, 1, Max Ammo((Event Player).Old_Target_A, 1));
             Wait(0.5, Ignore Condition);
+            "destroy targeting bc u have confirmed the target"
             Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            "wait for ult to be over"
             Wait(8, Ignore Condition);
+            "set target stats to normal"
             Stop Forcing Player Outlines((Event Player).Old_Target_A, All Players(All Teams));
             Set Damage Dealt((Event Player).Old_Target_A, 100);
             Set Damage Received((Event Player).Old_Target_A, 100);
             Set Healing Dealt((Event Player).Old_Target_A, 100);
             Set Move Speed((Event Player).Old_Target_A, 100);
+            "destroy all boost effects"
             Destroy Effect((Event Player).Active_Mod_FX_Array);
+            "restart ult charge"
             Set Ultimate Ability Enabled(Event Player, True);
             Set Ultimate Charge(Event Player, 0);
-            Set Secondary Fire Enabled(Event Player, True);
+            "that's it go back to beginning"
             Abort;
             //lbl_0:
             Small Message(Event Player, Custom String("Target cancelled - timed out", Null, Null, Null));
             Wait(0.2, Ignore Condition);
-            Set Secondary Fire Enabled(Event Player, True);
             Set Ultimate Ability Enabled(Event Player, True);
+            "recover ult charge"
             Set Ultimate Charge(Event Player, 95);
             Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            "idk why i can't actually see the outlines myself but w/e i'm sure it's just a bug"
             Stop Forcing Player Outlines((Event Player).Old_Target_A, Event Player);
     }
 }
