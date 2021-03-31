@@ -1052,7 +1052,6 @@ rule ("Passive Mods 37 - Omega Boost Ult Tracker") {
     }
     actions {
         "keep track of omega ult charge respective to normal ult charge (half as fast to charge)"
-        Set Player Variable(Event Player, Omega_Charge, 0);
         While(Compare((Event Player).Omega_Charge, !=, 100));
             Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 5), 99999);
             If(Compare((Event Player).Omega_Charge, !=, 100));
@@ -1060,10 +1059,8 @@ rule ("Passive Mods 37 - Omega Boost Ult Tracker") {
                 Set Ultimate Charge(Event Player, 0);
                 If(Compare((Event Player).Omega_Charge, >, 100));
                     Set Player Variable(Event Player, Omega_Charge, 100);
-                    Skip(2);
                 End;
             Else;
-                //lbl_0:
                 Set Ultimate Ability Enabled(Event Player, False);
                 Break;
             End;
@@ -1081,24 +1078,28 @@ rule ("Passive Mods 37 - Omega Boost") {
         "If it does not and you have 100%, display charged HUD\n If it does exist and you have 100, destroy previous charging HUD, display charged HUD, wait until charge is below 100, then replace with charging HUD"
         If(And(Not(Entity Exists((Event Player).Active_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)));
             Wait(0.016, Ignore Condition);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 1.5))), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 40))), 6, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
         Else If(And(Not(Entity Exists((Event Player).Active_Mod_FX)), Compare((Event Player).Omega_Charge, ==, 100)));
             Wait(0.016, Ignore Condition);
             Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Add(Eye Position(Event Player), Vector(1, -0.35, 1)), Multiply(Facing Direction Of(Event Player), 0.5)), 0.25);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 1.5))), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 40))), 6, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
-        Else If(And(Entity Exists((Event Player).Active_Mod_FX), Compare((Event Player).Omega_Charge, ==, 100)));
-            Destroy In-World Text((Event Player).Active_Mod_FX);
-            Wait(0.016, Ignore Condition);
-            Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Add(Eye Position(Event Player), Vector(1, -0.35, 1)), Multiply(Facing Direction Of(Event Player), 0.5)), 0.25);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 1.5))), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
-            Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
-            Wait Until(And(Entity Exists((Event Player).Active_Mod_FX), Compare((Event Player).Omega_Charge, !=, 100)), 99999);
-            Destroy In-World Text((Event Player).Active_Mod_FX);
-            Wait(0.016, Ignore Condition);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 1.5))), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
-            Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
+        End;
+        If(Entity Exists((Event Player).Active_Mod_FX));
+            If(Compare((Event Player).Omega_Charge, ==, 100));
+                Destroy In-World Text((Event Player).Active_Mod_FX);
+                Wait(0.016, Ignore Condition);
+                Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Add(Eye Position(Event Player), Vector(1, -0.35, 1)), Multiply(Facing Direction Of(Event Player), 0.5)), 0.25);
+                Create In-World Text(Event Player, Custom String("{0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 40))), 6, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+                Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
+            End;
+            If(Compare((Event Player).Omega_Charge, !=, 100));
+                Destroy In-World Text((Event Player).Active_Mod_FX);
+                Wait(0.016, Ignore Condition);
+                Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, 0, 0)), Multiply(Facing Direction Of(Event Player), 40))), 6, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+                Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
+            End;
         End;
         "wait for player to press Q"
         Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).Omega_Charge, ==, 100)), 99999);
@@ -1127,7 +1128,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Allow Button(Event Player, Button(Ultimate));
             "u have to be conscious/not CC'd to follow through on your ult. timeout is 2.5."
             Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
-            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 50);
+            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 52);
             "destroy 'ur ult is ready' text"
             Destroy HUD Text((Event Player).Active_Mod_FX);
             Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
@@ -1185,14 +1186,15 @@ rule ("Passive Mods 37 - Omega Boost") {
             "restart ult charge"
             Set Ultimate Ability Enabled(Event Player, True);
             Set Ultimate Charge(Event Player, 0);
+            Wait(0.016, Ignore Condition);
+            Set Player Variable(Event Player, Omega_Charge, 0);
             "that's it go back to beginning"
             Abort;
             //lbl_0:
             Small Message(Event Player, Custom String("Target cancelled - timed out", Null, Null, Null));
             Wait(0.2, Ignore Condition);
-            Set Ultimate Ability Enabled(Event Player, True);
-            "recover ult charge"
-            Set Ultimate Charge(Event Player, 95);
+            Set Player Variable(Event Player, Omega_Charge, 100);
+            Set Ultimate Ability Enabled(Event Player, False);
             Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
             Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
