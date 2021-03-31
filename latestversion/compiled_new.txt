@@ -1049,11 +1049,15 @@ rule ("Passive Mods 37 - Omega Boost") {
         OmegaBoost;
     }
     actions {
+        While(Compare(Ultimate Charge Percent(Event Player), <, 95));
+            Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), 1));
+            Wait(2, Ignore Condition);
+        End;
         Wait Until(Compare(Ultimate Charge Percent(Event Player), >, 95), 99999);
         Set Ultimate Ability Enabled(Event Player, False);
         If(Not(Entity Exists((Event Player).Active_Mod_FX)));
-            Play Effect(Event Player, Bad Explosion, Color(Orange), Subtract(Eye Position(Event Player), Vector(0, 0.25, 0)), 0.25);
-            Create In-World Text(Event Player, Custom String("Omega Boost Ready\n                {0}", Icon String(Bolt), Null, Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+            Play Effect(Event Player, Bad Explosion, Color(Orange), Subtract(Eye Position(Event Player), Vector(0, 0.25, -0.25)), 0.25);
+            Create HUD Text(Event Player, Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOmega Boost\nReady\n          {0}", Icon String(Bolt), Null, Null), Top, 5, Null, Null, Color(Orange), Visible To and Sort Order, Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
         End;
         Wait(0.1, Ignore Condition);
@@ -1078,7 +1082,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.5, Ignore Condition);
             Allow Button(Event Player, Button(Ultimate));
             Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
-            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 50);
+            Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 52);
             Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
             Destroy HUD Text((Event Player).Active_Mod_FX);
             Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Old_Target_A, 1);
@@ -1126,9 +1130,11 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Healing Dealt((Event Player).Old_Target_A, 100);
             Set Move Speed((Event Player).Old_Target_A, 100);
             Destroy Effect((Event Player).Active_Mod_FX_Array);
+            Destroy HUD Text((Event Player).Active_Mod_FX);
             Set Ultimate Ability Enabled(Event Player, True);
             Set Ultimate Charge(Event Player, 0);
             Set Secondary Fire Enabled(Event Player, True);
+            Abort;
             //lbl_0:
             Small Message(Event Player, Custom String("Target cancelled - timed out", Null, Null, Null));
             Wait(0.2, Ignore Condition);
@@ -2301,6 +2307,7 @@ rule ("Optional - Debugging") {
         End;
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
         Create Dummy Bot(Hero(Roadhog), Color(Team 2), 10, Position Of(Event Player), Up);
+        Wait(2, Ignore Condition);
         Create Dummy Bot(Hero(Roadhog), Color(Team 1), 10, Position Of(Event Player), Left);
         Wait(2, Ignore Condition);
         Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
