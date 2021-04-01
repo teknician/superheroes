@@ -1123,11 +1123,12 @@ rule ("Passive Mods 37 - Omega Boost") {
         "u have to be conscious/not CC'd to follow through on your ult. timeout is 2.5."
         Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
         "if you've timedout skip all ultimate effects and recover ult charge, destroy targeting effects"
-        Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 53);
+        Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 54);
         "destroy 'ur ult is ready' text"
         Destroy HUD Text((Event Player).Passive_Mod_FX);
         Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
         "whole lot of effects for the target"
+        Small Message((Event Player).Mod_Effect_Target, Custom String("You've been omega boosted!", Null, Null, Null));
         Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Mod_Effect_Target, 1);
         Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Mod_Effect_Target, 2);
         Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Mod_Effect_Target, 1, Visible To Position and Radius);
@@ -1900,10 +1901,11 @@ rule ("Active Mods 20 - Life Tap") {
         Hero Of(Event Player) != Hero(Echo);
     }
     actions {
-        Damage(Event Player, Null, Multiply(Max Health(Event Player), 0.3));
         If(Compare((Event Player).Passive_Mod, !=, 37));
+            Damage(Event Player, Null, Multiply(Max Health(Event Player), 0.3));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 30));
-        Else;
+        Else If(Compare((Event Player).Omega_Charge, <, 90));
+            Damage(Event Player, Null, Multiply(Max Health(Event Player), 0.3));
             Modify Player Variable(Event Player, Omega_Charge, Add, 10);
         End;
         Wait(1, Ignore Condition);
