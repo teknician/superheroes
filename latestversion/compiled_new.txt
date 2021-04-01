@@ -8,6 +8,7 @@ settings
 	{
 		Allow Players Who Are In Queue: Yes
 		Match Voice Chat: Enabled
+		Map Rotation: After A Game
 		Max Spectators: 8
 		Max Team 1 Players: 4
 		Max Team 2 Players: 4
@@ -806,6 +807,7 @@ rule ("Passive Mods 26 - Boots of Mobility") {
         Wait Until(Compare(Health(Event Player), <, (Event Player).Player_Health), 99999);
         Set Move Speed(Event Player, 100);
         Stop All Heal Over Time(Event Player);
+        Wait(3, Ignore Condition);
     }
 }
 
@@ -2008,11 +2010,7 @@ rule ("Active Mods 24 - Colossus") {
             Abort If(Is Dead(Event Player));
             Wait(0.116, Ignore Condition);
         End;
-        If(Compare(Hero Of(Event Player), ==, Hero(D.Va)));
-            Add Health Pool To Player(Event Player, Armor, 2500, False, True);
-        Else;
-            Add Health Pool To Player(Event Player, Armor, 5000, False, True);
-        End;
+        Add Health Pool To Player(Event Player, Armor, 5000, False, True);
         Set Player Variable(Event Player, Is_Colossus, True);
         Start Scaling Player(Event Player, 3, True);
         Wait(0.25, Ignore Condition);
@@ -2161,7 +2159,7 @@ rule ("Active Mods 25 - Railgun") {
         Wait(0.016, Ignore Condition);
         Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-        Wait(8, Ignore Condition);
+        Wait(7, Ignore Condition);
     }
 }
 
@@ -2243,10 +2241,10 @@ rule ("Active Mods 27 - Human Cannonball") {
             Wait(0.1, Ignore Condition);
         End;
         Wait Until(Compare(Altitude Of(Event Player), <=, 1), 10);
-        Set Status(Event Player, Null, Knocked Down, 1);
+        Set Status(Event Player, Null, Knocked Down, 1.35);
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
-        Damage(Players Within Radius(Position Of(Event Player), 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(50, (Event Player).Active_Time));
+        Damage(Players Within Radius(Position Of(Event Player), 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, (Event Player).Active_Time));
         Damage(Event Player, Null, Add(25, Divide((Event Player).Active_Time, 2)));
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
@@ -2307,7 +2305,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 30, Custom String("Boxer: Gain 500% melee damage and 25% speed, but become permanently Hacked", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero for a time. You take half damage from your hero.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.\n               1           (Works unless all pla{0}", Custom String("yer slots are filled.)", Null, Null, Null), Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.\n                           (Works unless all pla{0}", Custom String("yer slots are filled.)", Null, Null, Null), Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for 3/4 the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
@@ -2337,7 +2335,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 22, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (25m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Interact to use 100% Ult and become a statue with +5000 Armor. Explode when you die. (25 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area (8 sec. CD).", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area (7 sec. CD).", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
@@ -3228,7 +3226,7 @@ rule ("Active Mods 28 - ORA ORA!") {
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Heal(Victim, Null, Multiply(Event Damage, 0.85));
+            Heal(Victim, Null, Event Damage);
             Set Status(Victim, Attacker, Stunned, 0.25);
             If(Or(Is Dead(Victim), Is Dead(Attacker)));
                 Break;
@@ -3348,20 +3346,6 @@ rule ("Passive Mods - Frost Armor (Active)") {
     }
 }
 
-rule ("Passive Mods - Boots of Mobility (Active)") {
-    event {
-        Subroutine;
-        BootsOfMobilityDamaged;
-    }
-    actions {
-        Stop All Heal Over Time(Event Player);
-        Set Move Speed(Event Player, 100);
-        Wait(3, Ignore Condition);
-        Set Move Speed(Event Player, 200);
-        Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.05));
-    }
-}
-
 rule ("Passive Mods - Infection (Active)") {
     event {
         Subroutine;
@@ -3417,8 +3401,6 @@ rule ("Mods PlayerTookDamage Events") {
         End;
         If(And(Compare((Event Player).Passive_Mod, ==, 31), Compare(Hero Of(Attacker), ==, Hero Of(Victim))));
             Start Rule(InfectionDamaged, Do Nothing);
-        Else If(Compare((Event Player).Passive_Mod, ==, 27));
-            Start Rule(BootsOfMobilityDamaged, Do Nothing);
         Else If(And(Is Alive(Event Player), Compare(Attacker, !=, Victim)));
             If(And(Compare((Event Player).Passive_Mod, ==, 25), Compare((Event Player).Is_Colossus, ==, False)));
                 Start Rule(ThornsDamaged, Do Nothing);
