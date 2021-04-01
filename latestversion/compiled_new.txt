@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.7. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.7. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1085,19 +1085,11 @@ rule ("Passive Mods 37 - Omega Boost") {
     actions {
         "check if HUD exists:\n If it does not and you are below 100% ult charge, create charge HUD"
         Set Player Variable(Event Player, Current_Hero, Hero Of(Event Player));
-        If(Compare((Event Player).Passive_Mod, !=, 37));
-            Destroy In-World Text((Event Player).Passive_Mod_FX);
-            Set Ultimate Ability Enabled(Event Player, True);
-            Set Player Variable(Event Player, Omega_Charge, 0);
-            Wait Until(Compare((Event Player).Passive_Mod, ==, 37), 99999);
-            Skip(6);
-        End;
         If(Compare((Event Player).Current_Hero, !=, Hero Of(Event Player)));
             Destroy In-World Text((Event Player).Passive_Mod_FX);
             Loop;
         End;
         If(And(Not(Entity Exists((Event Player).Passive_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)));
-            //lbl_0:
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
             Wait Until(Compare((Event Player).Omega_Charge, ==, 100), 99999);
