@@ -2335,52 +2335,6 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
     }
 }
 
-rule ("Optional - Debugging") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Event Player == Host Player;
-    }
-    actions {
-        If(Compare((Event Player).Eval, !=, Custom String("true", Null, Null, Null)));
-            Set Player Variable(Event Player, Eval, Custom String("true", Null, Null, Null));
-            Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        End;
-        Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
-        Create Dummy Bot(Hero(Roadhog), Color(Team 2), 10, Position Of(Event Player), Up);
-        Wait(2, Ignore Condition);
-        Create Dummy Bot(Hero(Roadhog), Color(Team 1), 10, Position Of(Event Player), Left);
-        Wait(2, Ignore Condition);
-        Wait Until(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), 99999);
-        If(Compare(Players In Slot(10, Team 2), !=, 0));
-            Destroy Dummy Bot(Team 2, 10);
-            Destroy Dummy Bot(Team 1, 10);
-        End;
-        Wait(2, Ignore Condition);
-        Loop;
-    }
-}
-
-rule ("Optional - Damage Debugging") {
-    event {
-        Player Took Damage;
-        All;
-        All;
-    }
-    conditions {
-        Is Dummy Bot(Event Player) == True;
-    }
-    actions {
-        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
-    }
-}
-
 rule ("Initialization - Current Mods HUD Text (Passive)") {
     event {
         Ongoing - Each Player;
@@ -3197,7 +3151,7 @@ rule ("Active Mods 28 - ORA ORA!") {
             Stop Holding Button(Event Player, Button(Melee));
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Heal(Victim, Null, Multiply(Event Damage, 0.75));
+            Heal(Victim, Null, Multiply(Event Damage, 0.85));
             Set Status(Victim, Attacker, Stunned, 0.25);
             If(Or(Is Dead(Victim), Is Dead(Attacker)));
                 Break;
