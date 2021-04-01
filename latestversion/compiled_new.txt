@@ -1086,6 +1086,7 @@ rule ("Passive Mods 37 - Omega Boost") {
     actions {
         "check if HUD exists:\n If it does not and you are below 100% ult charge, create charge HUD"
         Set Player Variable(Event Player, Current_Hero, Hero Of(Event Player));
+        "some stuff to make the hud work if you change heroes"
         If(Compare((Event Player).Current_Hero, !=, Hero Of(Event Player)));
             Destroy In-World Text((Event Player).Passive_Mod_FX);
             Loop;
@@ -2194,7 +2195,7 @@ rule ("Active Mods 26 - Armor Field") {
         While(Compare((Event Player).Active_Time, <=, 5));
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 2.5, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.6, False, True);
+                Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.63, False, True);
             End;
             If(Array Contains(Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5), (Event Player).Scalar_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
@@ -2246,8 +2247,8 @@ rule ("Active Mods 27 - Human Cannonball") {
         Set Status(Event Player, Null, Knocked Down, 1.35);
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
-        Damage(Players Within Radius(Position Of(Event Player), 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, (Event Player).Active_Time));
-        Damage(Event Player, Null, Add(25, Divide((Event Player).Active_Time, 2)));
+        Damage(Players Within Radius(Position Of(Event Player), 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, Min((Event Player).Active_Time, 200)));
+        Damage(Event Player, Null, Add(25, Min(Divide((Event Player).Active_Time, 2), 100)));
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 4, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
             Set Status((Event Player).Active_Affected_Players, Null, Knocked Down, 1.5);
