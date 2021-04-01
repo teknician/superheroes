@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.7. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.7. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -244,7 +244,7 @@ rule ("Initialize") {
         Is Between Rounds == False;
     }
     actions {
-        Set Match Time(7);
+        Set Match Time(70);
     }
 }
 
@@ -1000,7 +1000,7 @@ rule ("Passive Mods 36 - Evil Eye") {
         EvilEye;
     }
     actions {
-        If((Event Player).LoS_Mod_Conditions);
+        If(And((Event Player).LoS_Mod_Conditions, Compare((Event Player).Passive_Mod, ==, 36)));
             Set Player Variable(Event Player, Current_Target_P, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 35)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
             If(And(Compare((Event Player).Current_Target_P, !=, Null), Is Alive((Event Player).Current_Target_P)));
                 Create Effect(Array(Event Player, (Event Player).Current_Target_P), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Current_Target_P, 1, Position and Radius);
@@ -1074,15 +1074,15 @@ rule ("Passive Mods 37 - Omega Boost") {
     }
     actions {
         "check if HUD exists:\n If it does not and you are below 100% ult charge, create charge HUD"
-        If(And(Not(Entity Exists((Event Player).Active_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)));
+        If(And(And(Not(Entity Exists((Event Player).Passive_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)), Compare((Event Player).Passive_Mod, ==, 37)));
             Wait(0.016, Ignore Condition);
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
-            Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
+            Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
             Wait Until(Compare((Event Player).Omega_Charge, ==, 100), 99999);
-            Destroy In-World Text((Event Player).Active_Mod_FX);
+            Destroy In-World Text((Event Player).Passive_Mod_FX);
             Play Effect(Event Player, Good Pickup Effect, Null, Event Player, 75);
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
-            Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
+            Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
             Wait(0.016, Ignore Condition);
         End;
         "wait for player to press Q"
@@ -1100,11 +1100,11 @@ rule ("Passive Mods 37 - Omega Boost") {
             "targeting effects, visible to you only"
             Play Effect(Event Player, Bad Explosion, Color(Orange), Position Of((Event Player).Current_Target_A), 0.75);
             Create Icon(Event Player, (Event Player).Current_Target_A, Ring Thin, Visible To and Position, Color(Orange), False);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
             Create Icon(Event Player, (Event Player).Current_Target_A, Bolt, Visible To and Position, Color(Yellow), False);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
             Create Icon(Event Player, Subtract((Event Player).Current_Target_A, Vector(0, 0.1, 0)), Arrow: Up, Visible To and Position, Color(Yellow), False);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 2, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Current_Target_A, Event Player, True, Color(Orange), Default);
             "you must now choose... press Q or wait for timeout"
             Small Message(Event Player, Custom String("Ultimate again to confirm target. Times out after 2.5 sec.", Null, Null, Null));
@@ -1114,29 +1114,29 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
             Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 53);
             "destroy 'ur ult is ready' text"
-            Destroy HUD Text((Event Player).Active_Mod_FX);
+            Destroy HUD Text((Event Player).Passive_Mod_FX);
             Small Message(Event Player, Custom String("Initiating Omega Boost...", Null, Null, Null));
             "whole lot of effects for the target"
             Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Current_Target_A, 1);
             Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Current_Target_A, 2);
             Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Effect, Team Of(Event Player), (Event Player).Current_Target_A, 1, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 3, Last Created Entity);
             Create Effect(All Players(All Teams), Winston Primal Rage Effect, Team Of(Event Player), (Event Player).Current_Target_A, 1, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 4, Last Created Entity);
             Create Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Effect, Team Of(Event Player), (Event Player).Current_Target_A, 1, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 5, Last Created Entity);
             Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Current_Target_A, 1.5, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 6, Last Created Entity);
             Create Effect(All Players(All Teams), Good Aura, Color(Orange), (Event Player).Current_Target_A, 0.65, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 7, Last Created Entity);
             Create Effect(All Players(All Teams), Beacon Sound, Team Of(Event Player), (Event Player).Current_Target_A, 100, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 8, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 8, Last Created Entity);
             Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Team Of(Event Player), (Event Player).Current_Target_A, 100, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 9, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 9, Last Created Entity);
             Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Team Of(Event Player), (Event Player).Current_Target_A, 100, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 10, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 10, Last Created Entity);
             Create Effect(All Players(All Teams), Good Aura Sound, Team Of(Event Player), (Event Player).Current_Target_A, 100, Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 11, Last Created Entity);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 11, Last Created Entity);
             Start Forcing Player Outlines((Event Player).Current_Target_A, All Players(All Teams), True, Color(Orange), Default);
             "whole lot of stat changes for target"
             Heal((Event Player).Current_Target_A, Event Player, 400);
@@ -1154,10 +1154,10 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Ammo((Event Player).Current_Target_A, 1, Max Ammo((Event Player).Current_Target_A, 1));
             Wait(0.5, Ignore Condition);
             "destroy targeting bc u have confirmed the target"
-            Destroy In-World Text((Event Player).Active_Mod_FX);
-            Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
-            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            Destroy In-World Text((Event Player).Passive_Mod_FX);
+            Destroy Icon(First Of((Event Player).Passive_Mod_FX_Array));
+            Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, 1));
+            Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, 2));
             "wait for ult to be over"
             Wait(8, Ignore Condition);
             "set target stats to normal"
@@ -1167,7 +1167,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Set Healing Dealt((Event Player).Current_Target_A, 100);
             Set Move Speed((Event Player).Current_Target_A, 100);
             "destroy all boost effects"
-            Destroy Effect((Event Player).Active_Mod_FX_Array);
+            Destroy Effect((Event Player).Passive_Mod_FX_Array);
             "restart ult charge"
             Set Ultimate Ability Enabled(Event Player, True);
             Set Ultimate Charge(Event Player, 0);
@@ -1180,9 +1180,9 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.2, Ignore Condition);
             Set Player Variable(Event Player, Omega_Charge, 100);
             Set Ultimate Ability Enabled(Event Player, False);
-            Destroy Icon(First Of((Event Player).Active_Mod_FX_Array));
-            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-            Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            Destroy Icon(First Of((Event Player).Passive_Mod_FX_Array));
+            Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, 1));
+            Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, 2));
             "idk why i can't actually see the outlines myself but w/e i'm sure it's just a bug"
             Stop Forcing Player Outlines((Event Player).Current_Target_A, Event Player);
     }
@@ -2073,7 +2073,7 @@ rule ("Active Mods 25 - Railgun") {
     actions {
         Wait(0.75, Abort When False);
         Set Player Variable(Event Player, Railgun_Charge, 0);
-        Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, 25, Destination and Rate);
+        Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, 33, Destination and Rate);
         Create Progress Bar HUD Text(Event Player, (Event Player).Railgun_Charge, Custom String("RAILGUN CHARGE", Null, Null, Null), Top, 3, Color(White), Color(Orange), Visible To Values and Color, Default Visibility);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Melee Enabled(Event Player, False);
@@ -2098,7 +2098,7 @@ rule ("Active Mods 25 - Railgun") {
             If(Compare((Event Player).Railgun_Charge, ==, 100));
                 Break;
             End;
-            Wait(0.2, Ignore Condition);
+            Wait(0.15, Ignore Condition);
         End;
         Set Melee Enabled(Event Player, True);
         Set Ultimate Ability Enabled(Event Player, True);
