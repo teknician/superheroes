@@ -1076,14 +1076,10 @@ rule ("Passive Mods 37 - Omega Boost") {
         "If it does not and you have 100%, display charged HUD\n If it does exist and you have 100, destroy previous charging HUD, display charged HUD, wait until charge is below 100, then replace with charging HUD"
         If(And(Not(Entity Exists((Event Player).Active_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)));
             Wait(0.016, Ignore Condition);
-            Create Effect(Event Player, Sphere, Color(Red), Update Every Frame(Add(Add(Eye Position(Event Player), Vector(1, -0.5, 0)), Multiply(Facing Direction Of(Event Player), 1.2))), 0.3, Visible To Position and Radius);
-            Set Player Variable(Event Player, Current_Hero_2, Last Created Entity);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame((Event Player).Current_Hero_2), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, Cross Product(Normalize(Facing Direction Of(Event Player)), Direction From Angles(Horizontal Angle From Direction(Normalize(Facing Direction Of(Event Player))), Vertical Angle From Direction(Subtract(Normalize(Facing Direction Of(Event Player)), 90))))), Multiply(-0.2, Direction From Angles(Horizontal Angle From Direction(Normalize(Facing Direction Of(Event Player))), Vertical Angle From Direction(Subtract(Normalize(Facing Direction Of(Event Player)), 90))))), Multiply(3, Normalize(Facing Direction Of(Event Player))))))), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
             Wait Until(Compare((Event Player).Omega_Charge, ==, 100), 99999);
-            Destroy In-World Text((Event Player).Active_Mod_FX);
             Play Effect(Event Player, Bad Explosion, Color(Orange), Add(Add(Eye Position(Event Player), Vector(1, -0.35, 1)), Multiply(Facing Direction Of(Event Player), 0.5)), 0.25);
-            Create In-World Text(Event Player, Custom String("{0}\nOmega Boost\n     Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame((Event Player).Current_Hero_2), 3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Wait(0.016, Ignore Condition);
             Set Player Variable(Event Player, Active_Mod_FX, Last Text ID);
             Wait Until(Compare((Event Player).Omega_Charge, !=, 100), 99999);
@@ -1095,13 +1091,12 @@ rule ("Passive Mods 37 - Omega Boost") {
         "determine the target of the ultimate (teammate)"
         Set Player Variable(Event Player, Current_Target_A, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 45)), All Players(Team Of(Event Player)), Event Player, False));
         Wait(0.016, Ignore Condition);
-        "player can't press ultimate again until more things have happened"
-        Disallow Button(Event Player, Button(Ultimate));
-        "u r not looking at a player, will go back to beginning"
+        "player can't press ultimate again until more things have happened\nu r not looking at a player, will go back to beginning"
         If(Compare((Event Player).Current_Target_A, ==, Null));
             Abort;
         "u r looking at a teammate"
         Else;
+            Disallow Button(Event Player, Button(Ultimate));
             "targeting effects, visible to you only"
             Play Effect(Event Player, Bad Explosion, Color(Orange), Position Of((Event Player).Current_Target_A), 0.75);
             Create Icon(Event Player, (Event Player).Current_Target_A, Ring Thin, Visible To and Position, Color(Orange), False);
