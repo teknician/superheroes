@@ -1089,7 +1089,7 @@ rule ("Passive Mods 37 - Omega Boost") {
             Destroy In-World Text((Event Player).Passive_Mod_FX);
             Set Ultimate Ability Enabled(Event Player, True);
             Set Player Variable(Event Player, Omega_Charge, 0);
-            Abort;
+            Wait Until(Compare((Event Player).Passive_Mod, ==, 37), 99999);
         End;
         If(Compare((Event Player).Current_Hero, !=, Hero Of(Event Player)));
             Destroy In-World Text((Event Player).Passive_Mod_FX);
