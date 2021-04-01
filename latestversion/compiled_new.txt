@@ -536,7 +536,7 @@ rule ("Passive Mods 9 - Rejuvenation") {
         If(Is Alive(Event Player));
             Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.1));
         End;
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 10), 99999);
+        Wait Until(Is Dead(Event Player), 99999);
         Stop All Heal Over Time(Event Player);
     }
 }
@@ -1124,13 +1124,12 @@ rule ("Passive Mods 37 - Omega Boost") {
         "u have to be conscious/not CC'd to follow through on your ult. timeout is 2.5."
         Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1)), And(And(And(And(And(Not(Has Status(Event Player, Asleep)), Not(Has Status(Event Player, Frozen))), Not(Has Status(Event Player, Hacked))), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Phased Out))), Not(Has Status(Event Player, Stunned)))), 2.5);
         "if you've timedout skip all ultimate effects and recover ult charge, destroy targeting effects"
-        Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 56);
+        Skip If(Not(Is Button Held(Event Player, Button(Ultimate))), 55);
         "destroy 'ur ult is ready' text"
         Destroy HUD Text((Event Player).Passive_Mod_FX);
         Small Message(Event Player, Custom String("Omega boost administered!", Null, Null, Null));
         "whole lot of effects for the target"
         Big Message((Event Player).Mod_Effect_Target, Custom String("Omega boost administered!", Null, Null, Null));
-        Big Message(All Players(All Teams), Custom String("{0} has been Omega-boosted!", (Event Player).Mod_Effect_Target, Null, Null));
         Small Message((Event Player).Mod_Effect_Target, Custom String("You're super-powered up! Get in there!", Null, Null, Null));
         Play Effect(All Players(All Teams), Bad Explosion, Color(Yellow), (Event Player).Mod_Effect_Target, 1);
         Play Effect(All Players(All Teams), Good Explosion, Color(Yellow), (Event Player).Mod_Effect_Target, 2);
