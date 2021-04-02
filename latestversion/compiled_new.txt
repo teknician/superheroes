@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.8. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ĿUCKYNUMBER. V2.3.9. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -19,6 +19,10 @@ settings
 	{
 		Control
 		{
+			disabled maps
+			{
+				Lijiang Tower Lunar New Year
+			}
 			Capture Speed Modifier: 250%
 			Scoring Speed Modifier: 90%
 		}
@@ -33,6 +37,13 @@ settings
 		}
 		Hybrid
 		{
+			disabled maps
+			{
+				Blizzard World Winter
+				Eichenwalde Halloween
+				Hollywood Halloween
+				King's Row Winter
+			}
 			Payload Speed Modifier: 90%
 		}
 		disabled Team Deathmatch
@@ -81,8 +92,11 @@ variables {
     global:
         0: Passive_Mod_Strings
         1: Active_Mod_Strings
-        2: Shield_Vertical_Position
-        3: Shield_Distance
+        2: Tdm_Setup_1
+        3: Tdm_Setup_2
+        4: Tdm_Setup_3
+        5: Shield_Vertical_Position
+        6: Shield_Distance
     player:
         0: Mod_Menu_Select
         1: Mod_Menu_Text
@@ -127,22 +141,23 @@ variables {
         40: Affected_Players
         41: Active_Affected_Players
         42: Other_Players
-        43: Current_Hero
-        44: Current_Hero_2
-        45: Distance_Num
-        46: Temp_Index
-        47: Facing_Direction
-        48: Is_Colossus
-        49: Is_Blind
-        50: Is_Visible
-        51: Target
-        52: Target_Area_A
-        53: Target_Position
-        54: Eval
-        55: Railgun_Charge
-        56: Reinhardt
-        57: OraOra
-        58: Omega_Charge
+        43: Tdm_Menu_Timer
+        44: Current_Hero
+        45: Current_Hero_2
+        46: Distance_Num
+        47: Temp_Index
+        48: Facing_Direction
+        49: Is_Colossus
+        50: Is_Blind
+        51: Is_Visible
+        52: Target
+        53: Target_Area_A
+        54: Target_Position
+        55: Eval
+        56: Railgun_Charge
+        57: Reinhardt
+        58: OraOra
+        59: Omega_Charge
 }
 subroutines {
     0: MoveSpeed160
@@ -278,28 +293,6 @@ rule ("Reset Player Parameters") {
         PlayerReset;
     }
     actions {
-        "if entityExists(eventPlayer.Passive_Mod_FX):"
-        Destroy Effect((Event Player).Passive_Mod_FX);
-        Destroy In-World Text((Event Player).Passive_Mod_FX);
-        Destroy Icon((Event Player).Passive_Mod_FX);
-        "if entityExists(eventPlayer.Active_Mod_FX):"
-        Destroy Effect((Event Player).Active_Mod_FX);
-        Destroy In-World Text((Event Player).Active_Mod_FX);
-        Destroy Icon((Event Player).Active_Mod_FX);
-        If(Entity Exists((Event Player).Passive_Mod_FX_Array));
-            For Player Variable(Event Player, Index, 0, Subtract(Count Of((Event Player).Passive_Mod_FX_Array), 1), 1);
-                Destroy Effect(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
-                Destroy In-World Text(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
-                Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
-            End;
-        End;
-        If(Entity Exists((Event Player).Active_Mod_FX_Array));
-            For Player Variable(Event Player, Index, 0, Subtract(Count Of((Event Player).Active_Mod_FX_Array), 1), 1);
-                Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
-                Destroy In-World Text(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
-                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
-            End;
-        End;
         Allow Button(Event Player, Button(Reload));
         Allow Button(Event Player, Button(Interact));
         Allow Button(Event Player, Button(Melee));
@@ -336,6 +329,26 @@ rule ("Reset Player Parameters") {
         Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Player_ATK_SPD_HP, 0);
+        Destroy Effect((Event Player).Passive_Mod_FX);
+        Destroy In-World Text((Event Player).Passive_Mod_FX);
+        Destroy Icon((Event Player).Passive_Mod_FX);
+        Destroy Effect((Event Player).Active_Mod_FX);
+        Destroy In-World Text((Event Player).Active_Mod_FX);
+        Destroy Icon((Event Player).Active_Mod_FX);
+        If(Entity Exists((Event Player).Passive_Mod_FX_Array));
+            For Player Variable(Event Player, Index, 0, Subtract(Count Of((Event Player).Passive_Mod_FX_Array), 1), 1);
+                Destroy Effect(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
+                Destroy In-World Text(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
+                Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
+            End;
+        End;
+        If(Entity Exists((Event Player).Active_Mod_FX_Array));
+            For Player Variable(Event Player, Index, 0, Subtract(Count Of((Event Player).Active_Mod_FX_Array), 1), 1);
+                Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
+                Destroy In-World Text(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
+                Destroy Icon(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
+            End;
+        End;
         Clear Status(Event Player, Frozen);
         Clear Status(Event Player, Burning);
         Clear Status(Event Player, Hacked);
@@ -723,7 +736,7 @@ rule ("Passive Mods 19 - Dark Ritual") {
     }
     actions {
         Set Max Health(Event Player, 75);
-        While(And(And(Compare(Ultimate Charge Percent(Event Player), !=, 100), Not(Is Using Ultimate(Event Player))), Compare((Event Player).Passive_Mod, ==, 20)));
+        While(And(And(And(Compare(Ultimate Charge Percent(Event Player), !=, 100), Not(Is Using Ultimate(Event Player))), Compare((Event Player).Passive_Mod, ==, 20)), Not(Is In Setup)));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
             Wait(4, Ignore Condition);
             If(Compare((Event Player).Mod_Menu_Select, ==, 1));
@@ -1099,7 +1112,6 @@ rule ("Passive Mods 37 - Omega Boost") {
             Play Effect(Event Player, Good Pickup Effect, Null, Event Player, 75);
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
-            Play Effect(Event Player, Bad Explosion, Color(Orange), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 0.25);
             Wait(0.016, Ignore Condition);
         End;
         "wait for player to press Q"
@@ -1910,7 +1922,7 @@ rule ("Active Mods 20 - Life Tap") {
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 30));
         Else If(Compare((Event Player).Omega_Charge, <, 90));
             Damage(Event Player, Null, Multiply(Max Health(Event Player), 0.3));
-            Modify Player Variable(Event Player, Omega_Charge, Add, 10);
+            Modify Player Variable(Event Player, Omega_Charge, Add, 5);
         End;
         Wait(1, Ignore Condition);
     }
@@ -2241,11 +2253,11 @@ rule ("Active Mods 27 - Human Cannonball") {
         Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 30)), All Players(All Teams), Empty Array, False));
         Wait(0.116, Ignore Condition);
         Stop Facing(Event Player);
-        While(Compare(Altitude Of(Event Player), >, 1));
+        While(Compare(Altitude Of(Event Player), >, 0.5));
             Modify Player Variable(Event Player, Active_Time, Add, 1);
             Wait(0.1, Ignore Condition);
         End;
-        Wait Until(Compare(Altitude Of(Event Player), <=, 1), 10);
+        Wait Until(Compare(Altitude Of(Event Player), <=, 0.4), 10);
         Set Status(Event Player, Null, Knocked Down, 1.35);
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
@@ -2604,7 +2616,9 @@ rule ("Mechanics - Open Mod Menu") {
         Wait(0.5, Abort When False);
         Play Effect(All Players(All Teams), Sombra Translocator Disappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
         Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
-        Teleport(Event Player, Spawn Points(Team Of(Event Player)));
+        If(Compare(Current Game Mode, !=, Game Mode(Team Deathmatch)));
+            Teleport(Event Player, Spawn Points(Team Of(Event Player)));
+        End;
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Set Player Variable(Event Player, Passive_Mod_Index, (Event Player).Passive_Mod);
@@ -2668,6 +2682,7 @@ rule ("Mechanics - Close Mod Menu") {
         Has Status(Event Player, Rooted) == True;
         Has Status(Event Player, Hacked) == True;
         Has Status(Event Player, Phased Out) == True;
+        (Event Player).Tdm_Menu_Timer != False;
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
@@ -2683,6 +2698,13 @@ rule ("Mechanics - Close Mod Menu") {
             Set Player Variable(Event Player, Active_Mod_Index, 0);
             Loop;
         Else;
+            If(And(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), Compare(Global.Tdm_Setup_1, !=, True)));
+                Small Message(Event Player, Custom String("Waiting for game to start...", Null, Null, Null));
+                Wait Until(Global.Tdm_Setup_1, 99999);
+            End;
+            If(And(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), Compare(Global.Tdm_Setup_2, ==, True)));
+                Wait(30, Ignore Condition);
+            End;
             Set Aim Speed(Event Player, 100);
             Clear Status(Event Player, Hacked);
             Clear Status(Event Player, Rooted);
@@ -2920,8 +2942,15 @@ rule ("Mechanics - Hero Swap") {
         Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == False;
     }
     actions {
-        Wait(1, Abort When False);
-        Kill(Event Player, Null);
+        If(Compare(Current Game Mode, !=, Game Mode(Team Deathmatch)));
+            Wait(1, Abort When False);
+            Kill(Event Player, Null);
+        Else;
+            Wait(1, Abort When False);
+            Set Player Allowed Heroes(Event Player, Remove From Array(All Heroes, Hero Of(Event Player)));
+            Wait(0.5, Ignore Condition);
+            Reset Player Hero Availability(Event Player);
+            Wait Until(Has Spawned(Event Player), 99999);
     }
 }
 
