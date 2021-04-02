@@ -92,11 +92,8 @@ variables {
     global:
         0: Passive_Mod_Strings
         1: Active_Mod_Strings
-        2: Tdm_Setup_1
-        3: Tdm_Setup_2
-        4: Tdm_Setup_3
-        5: Shield_Vertical_Position
-        6: Shield_Distance
+        2: Shield_Vertical_Position
+        3: Shield_Distance
     player:
         0: Mod_Menu_Select
         1: Mod_Menu_Text
@@ -141,23 +138,22 @@ variables {
         40: Affected_Players
         41: Active_Affected_Players
         42: Other_Players
-        43: Tdm_Menu_Timer
-        44: Current_Hero
-        45: Current_Hero_2
-        46: Distance_Num
-        47: Temp_Index
-        48: Facing_Direction
-        49: Is_Colossus
-        50: Is_Blind
-        51: Is_Visible
-        52: Target
-        53: Target_Area_A
-        54: Target_Position
-        55: Eval
-        56: Railgun_Charge
-        57: Reinhardt
-        58: OraOra
-        59: Omega_Charge
+        43: Current_Hero
+        44: Current_Hero_2
+        45: Distance_Num
+        46: Temp_Index
+        47: Facing_Direction
+        48: Is_Colossus
+        49: Is_Blind
+        50: Is_Visible
+        51: Target
+        52: Target_Area_A
+        53: Target_Position
+        54: Eval
+        55: Railgun_Charge
+        56: Reinhardt
+        57: OraOra
+        58: Omega_Charge
 }
 subroutines {
     0: MoveSpeed160
@@ -2682,7 +2678,6 @@ rule ("Mechanics - Close Mod Menu") {
         Has Status(Event Player, Rooted) == True;
         Has Status(Event Player, Hacked) == True;
         Has Status(Event Player, Phased Out) == True;
-        (Event Player).Tdm_Menu_Timer != False;
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
@@ -2698,13 +2693,6 @@ rule ("Mechanics - Close Mod Menu") {
             Set Player Variable(Event Player, Active_Mod_Index, 0);
             Loop;
         Else;
-            If(And(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), Compare(Global.Tdm_Setup_1, !=, True)));
-                Small Message(Event Player, Custom String("Waiting for game to start...", Null, Null, Null));
-                Wait Until(Global.Tdm_Setup_1, 99999);
-            End;
-            If(And(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), Compare(Global.Tdm_Setup_2, ==, True)));
-                Wait(30, Ignore Condition);
-            End;
             Set Aim Speed(Event Player, 100);
             Clear Status(Event Player, Hacked);
             Clear Status(Event Player, Rooted);
@@ -2974,6 +2962,9 @@ rule ("Mods - Remove FX/Etc. on Death") {
         Allow Button(Event Player, Button(Secondary Fire));
         Set Max Health(Event Player, 100);
         Remove All Health Pools From Player(Event Player);
+        If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
+            If(Compare(Attacker, ==, Victim));
+                Modify Team Score(Team Of(Event Player), 1);
     }
 }
 
