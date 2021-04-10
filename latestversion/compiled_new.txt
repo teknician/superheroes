@@ -2319,7 +2319,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 31, Custom String("Infection: Melee turns enemies into your hero for a time. You take half damage from your hero.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 32, Custom String("Forcefield: Repel enemies within a 5 metre radius.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Get Behind Me: Replace your secondary fire with a 900hp Reinhardt shield.\n                           (Works unless all pla{0}", Custom String("yer slots are filled.)", Null, Null, Null), Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for 3/4 the damage you deal.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 37, Custom String("Omega Boost: Your ultimate becomes omega boost - target a teammate and hold ultimate to supercharge them!", Null, Null, Null));
@@ -3210,7 +3210,7 @@ rule ("Passive Mods - Lifesteal") {
         Lifesteal;
     }
     actions {
-        Heal(Attacker, Attacker, Multiply(Event Damage, 0.75));
+        Heal(Attacker, Attacker, Multiply(Event Damage, 0.5));
         Create Effect(All Players(All Teams), Cloud, Color(Red), Event Player, 1, Visible To Position and Radius);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
         Wait(0.25, Ignore Condition);
