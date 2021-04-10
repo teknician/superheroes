@@ -2309,7 +2309,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 21, Custom String("Ambush: Melee attacking an enemy from behind insta-kills them", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 22, Custom String("Mana Shield: While above 15% ultimate charge, heal for any damage taken, but drain charge", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 23, Custom String("Gain 2.5% ultimate charge every second.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 24, Custom String("Revenge: Respawn instantly at your killer's location (20 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 24, Custom String("Revenge: Respawn instantly at your killer's location (24 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 25, Custom String("Thorns: Attackers take 15% of their Max HP in damage (up to 2 times per sec.)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 26, Custom String("Frost Armor: Attackers within 6 meters freeze when they damage you", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 27, Custom String("Boots of Mobility: After 3 sec. of not taking damage, gain 200% speed and 5% HP regen. per sec.", Null, Null, Null));
@@ -3003,7 +3003,7 @@ rule ("Passive Mods - Revenge (Active)") {
         Teleport(Event Player, World Vector Of(Vector(0, 0.25, -3), Attacker, Rotation And Translation));
         Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Red), Event Player, 1);
         Set Facing(Event Player, Direction Towards(Event Player, Attacker), To World);
-        Wait(20, Ignore Condition);
+        Wait(24, Ignore Condition);
     }
 }
 
