@@ -1042,7 +1042,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Set Player Variable(Event Player, Old_Target_P, (Event Player).Current_Target_P);
                 Wait Until(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
-                Wait(2, Ignore Condition);
+                Wait(3, Ignore Condition);
                 If(And(Is Alive((Event Player).Current_Target_P), Compare((Event Player).Current_Target_P, ==, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))));
                     Wait Until(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), 99999);
                 End;
