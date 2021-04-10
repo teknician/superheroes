@@ -412,8 +412,8 @@ rule ("Passive Mods 4 - Smol Mode") {
             Wait(0.75, Ignore Condition);
             Set Crouch Enabled(Event Player, True);
         End;
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 5), 99999);
-        Set Max Health(Event Player, 100);
+        If(Compare((Event Player).Passive_Mod, !=, 5));
+            Set Max Health(Event Player, 100);
     }
 }
 
