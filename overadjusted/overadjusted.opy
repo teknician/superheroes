@@ -545,7 +545,7 @@ rule ("Damage dealt by torb's lava gives nearby teammates armor") {
         All;
     }
     conditions {
-        Attacker == Hero(Torbj√∂rn);
+        Attacker == Hero(Torbjörn);
         Event Ability == Button(Ultimate);
     }
     actions {
