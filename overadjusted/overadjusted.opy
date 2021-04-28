@@ -23,14 +23,21 @@ settings
 			Hero Limit: Off
 			Respawn Time Scalar: 45%
 		}
+		Hybrid
+		{
+			enabled maps
+			{
+				King's Row
+			}
+		}
 	}
 	heroes
 	{
 		General
 		{
-			Spawn With Ultimate Ready: Off
-			Ultimate Generation: 100%
-			Ultimate Generation - Passive: 100%
+			Spawn With Ultimate Ready: On
+			Ultimate Generation: 500%
+			Ultimate Generation - Passive: 500%
 			Ashe
 			{
 				Ultimate Duration: 50%
