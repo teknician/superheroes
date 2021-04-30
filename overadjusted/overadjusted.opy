@@ -158,6 +158,23 @@ rule ("Optional - Damage Debugging") {
     }
 }
 
+rule ("Optional - Deal damage to self") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Is Button Held(Event Player, Button(Melee)) == True;
+    }
+    actions {
+        Damage(Event Player, Event Player, 50);
+        Wait(0.016, Ignore Condition);
+    }
+}
+
 rule ("D.Va Ultimate disabled") {
     event {
         Ongoing - Each Player;
@@ -250,7 +267,7 @@ rule ("Orisa Ultimate increases damage of whole team (1) on damage") {
         Global.OrisaDamageBoost1 != False;
     }
     actions {
-        Damage(Victim, Attacker, Multiply(Event Damage, 0.25));
+        Damage(Victim, Null, Multiply(Event Damage, 0.25));
     }
 }
 
@@ -264,7 +281,7 @@ rule ("Orisa Ultimate increases damage of whole team (2) on damage") {
         Global.OrisaDamageBoost2 != False;
     }
     actions {
-        Damage(Victim, Attacker, Multiply(Event Damage, 1.25));
+        Damage(Victim, Null, Multiply(Event Damage, 0.25));
     }
 }
 
@@ -280,7 +297,7 @@ rule ("Earthshatter launches enemies into the air") {
     }
     actions {
         Wait Until(Has Status(Victim, Knocked Down), 2);
-        Wait(0.05, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Apply Impulse(Victim, Vector(0, 1, 0), Divide(15, Distance Between(Attacker, Victim)), To World, Cancel Contrary Motion);
     }
 }
@@ -296,7 +313,10 @@ rule ("Whole Hog propels Roadhog slightly away from where he's aiming") {
     }
     actions {
         While(Is Using Ultimate(Event Player));
-            Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 6, To World, Incorporate Contrary Motion);
+            If(Compare(Speed Of(Event Player), >, 10));
+            Else;
+                Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 6, To World, Incorporate Contrary Motion);
+            End;
             Wait(0.15, Ignore Condition);
         End;
     }
@@ -361,8 +381,8 @@ rule ("The longer you're in Primal Rage the less angry you get") {
         Set Player Variable(Event Player, Angry_Meter, 100);
         Chase Player Variable Over Time(Event Player, Angry_Meter, 1, 10, Destination and Duration);
         While(Is Using Ultimate(Event Player));
-            Set Move Speed(Event Player, Add(100, Multiply(0.75, (Event Player).Angry_Meter)));
-            Set Damage Dealt(Event Player, Add(100, (Event Player).Angry_Meter));
+            Set Move Speed(Event Player, Add(100, Multiply(0.5, (Event Player).Angry_Meter)));
+            Set Damage Dealt(Event Player, Add(100, Multiply(0.5, (Event Player).Angry_Meter)));
             If(Is Firing Primary(Event Player));
                 Wait(Subtract(1.33, Divide((Event Player).Angry_Meter, 100)), Ignore Condition);
                 Cancel Primary Action(Event Player);
@@ -422,7 +442,7 @@ rule ("Graviton surge deals more damage") {
         Hero Of(Attacker) == Hero(Zarya);
     }
     actions {
-        Damage(Victim, Attacker, 15);
+        Damage(Victim, Attacker, 7.5);
     }
 }
 
