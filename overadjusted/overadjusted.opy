@@ -46,14 +46,6 @@ settings
 			{
 				Ultimate Generation Duplicate: 50%
 			}
-			Junkrat
-			{
-				Ultimate Duration: 25%
-			}
-			Hanzo
-			{
-				Ultimate Generation Dragonstrike: 75%
-			}
 			Reinhardt
 			{
 				Ultimate Generation Earthshatter: 115%
@@ -91,6 +83,18 @@ rule ("Initialization - Quick Assemble") {
     }
     actions {
         Set Match Time(8);
+    }
+}
+
+rule ("Initialization - Quick Start") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is In Setup == True;
+    }
+    actions {
+        Set Match Time(10);
     }
 }
 
@@ -158,7 +162,10 @@ rule ("D.Va Ultimate disabled") {
     event {
         Ongoing - Each Player;
         All;
-        D.Va;
+        All;
+    }
+    conditions {
+        Hero Of(Event Player) == Hero(D.Va);
     }
     actions {
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Not ready", Null, Null, Null));
@@ -168,6 +175,7 @@ rule ("D.Va Ultimate disabled") {
         Set Ultimate Ability Enabled(Event Player, False);
         Wait Until(Compare(Hero Of(Event Player), !=, Hero(D.Va)), 99999);
         Destroy HUD Text((Event Player).Dva_Bomb_Text);
+        Set Ultimate Ability Enabled(Event Player, True);
     }
 }
 
@@ -268,12 +276,12 @@ rule ("Earthshatter launches enemies into the air") {
     }
     conditions {
         Hero Of(Attacker) == Hero(Reinhardt);
-        Is Using Ultimate(Attacker) == True;
-        Has Status(Victim, Knocked Down) == True;
+        Event Ability == Button(Ultimate);
     }
     actions {
+        Wait Until(Has Status(Victim, Knocked Down), 2);
+        Wait(0.05, Ignore Condition);
         Apply Impulse(Victim, Vector(0, 1, 0), Divide(15, Distance Between(Attacker, Victim)), To World, Cancel Contrary Motion);
-        Wait(5, Ignore Condition);
     }
 }
 
@@ -288,8 +296,8 @@ rule ("Whole Hog propels Roadhog slightly away from where he's aiming") {
     }
     actions {
         While(Is Using Ultimate(Event Player));
-            Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 3, To World, Incorporate Contrary Motion);
-            Wait(0.25, Ignore Condition);
+            Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 6, To World, Incorporate Contrary Motion);
+            Wait(0.15, Ignore Condition);
         End;
     }
 }
@@ -314,6 +322,7 @@ rule ("Gravitic Flux increases movespeed") {
         Wait Until(Not(Is Using Ultimate(Event Player)), 999);
         Destroy Dummy Bot(Team Of((Event Player).Sigma_Bot), Slot Of((Event Player).Sigma_Bot));
         Set Move Speed(Event Player, 100);
+        Set Primary Fire Enabled(Event Player, True);
     }
 }
 
@@ -335,6 +344,7 @@ rule ("Gravitic Flux increases fire rate") {
         Kill((Event Player).Sigma_Bot, Null);
         Wait(0.25, Ignore Condition);
         Resurrect((Event Player).Sigma_Bot);
+        Wait(0.5, Ignore Condition);
     }
 }
 
@@ -392,10 +402,11 @@ rule ("Using minefield refreshes grappling hook") {
         Wrecking Ball;
     }
     conditions {
-        Is Button Held(Event Player, Button(Ultimate)) == True;
         Ultimate Charge Percent(Event Player) == 100;
     }
     actions {
+        Wait Until(Is Button Held(Event Player, Button(Ultimate)), 99999);
+        Wait(0.25, Ignore Condition);
         Set Ability Cooldown(Event Player, Button(Secondary Fire), 0);
     }
 }
@@ -464,9 +475,25 @@ rule ("McCree can move faster while in deadeye") {
         Is Using Ultimate(Event Player) == True;
     }
     actions {
-        Set Move Speed(Event Player, 125);
+        Set Move Speed(Event Player, 130);
         Wait Until(Not(Is Using Ultimate(Event Player)), 10);
         Set Move Speed(Event Player, 100);
+    }
+}
+
+rule ("Pharah can cancel ult") {
+    event {
+        Ongoing - Each Player;
+        All;
+        Pharah;
+    }
+    conditions {
+        Is Using Ultimate(Event Player) == True;
+    }
+    actions {
+        Wait(1, Ignore Condition);
+        If(And(Is Button Held(Event Player, Button(Ultimate)), Is Using Ultimate(Event Player)));
+            Cancel Primary Action(Event Player);
     }
 }
 
@@ -499,12 +526,14 @@ rule ("When S:76 ults, time slows down slightly and he gains speed so he moves n
         Is Using Ultimate(Event Player) == True;
     }
     actions {
-        Set Slow Motion(80);
-        Set Move Speed(Event Player, 120);
-        Set Projectile Speed(Event Player, 120);
+        Set Slow Motion(75);
+        Set Move Speed(Event Player, 125);
+        Set Aim Speed(Event Player, 125);
+        Set Projectile Speed(Event Player, 125);
         Wait Until(Not(Is Using Ultimate(Event Player)), 9999);
         Set Slow Motion(100);
         Set Move Speed(Event Player, 100);
+        Set Aim Speed(Event Player, 100);
         Set Projectile Speed(Event Player, 100);
     }
 }
@@ -525,6 +554,9 @@ rule ("Sombra shifts immediately after EMP and cannot unstealth until the hack i
         Start Holding Button(Event Player, Button(Ability 1));
         Wait(0.016, Ignore Condition);
         Stop Holding Button(Event Player, Button(Ability 1));
+        Set Primary Fire Enabled(Event Player, False);
+        Set Secondary Fire Enabled(Event Player, False);
+        Set Ability 2 Enabled(Event Player, False);
         Disallow Button(Event Player, Button(Ability 1));
         Disallow Button(Event Player, Button(Ability 2));
         Disallow Button(Event Player, Button(Melee));
@@ -536,7 +568,10 @@ rule ("Sombra shifts immediately after EMP and cannot unstealth until the hack i
         Wait(0.016, Ignore Condition);
         Stop Holding Button(Event Player, Button(Ability 1));
         Clear Status(Event Player, Phased Out);
-        Set Ability Cooldown(Event Player, Button(Ability 1), 6.5);
+        Set Ability Cooldown(Event Player, Button(Ability 1), 6);
+        Set Primary Fire Enabled(Event Player, True);
+        Set Secondary Fire Enabled(Event Player, True);
+        Set Ability 2 Enabled(Event Player, True);
         Allow Button(Event Player, Button(Ability 1));
         Allow Button(Event Player, Button(Ability 2));
         Allow Button(Event Player, Button(Melee));
@@ -545,7 +580,22 @@ rule ("Sombra shifts immediately after EMP and cannot unstealth until the hack i
     }
 }
 
-rule ("Damage dealt by torb's lava gives nearby teammates armor") {
+rule ("Symm's ultimate refreshes her ammo and turret charges") {
+    event {
+        Ongoing - Each Player;
+        All;
+        Symmetra;
+    }
+    conditions {
+        Is Using Ultimate(Event Player) == True;
+    }
+    actions {
+        Set Ammo(Event Player, 0, 70);
+        Set Ability Charge(Event Player, Button(Ability 1), 3);
+    }
+}
+
+rule ("Enemies get mired down in torb's lava") {
     event {
         Player Took Damage;
         All;
@@ -556,12 +606,11 @@ rule ("Damage dealt by torb's lava gives nearby teammates armor") {
         Event Ability == Button(Ultimate);
     }
     actions {
-        Set Player Variable(Event Player, Torb_Teammates, Players Within Radius(Victim, 3.5, Team Of(Attacker), Surfaces));
-        For Player Variable(Event Player, Index, 0, Count Of((Event Player).Torb_Teammates), 1);
-            Add Health Pool To Player(Value In Array((Event Player).Torb_Teammates, (Event Player).Index), Armor, Multiply(Event Damage, 0.1), False, False);
-            Wait(0.016, Ignore Condition);
-        End;
+        Set Gravity(Victim, 150);
         Wait(1, Ignore Condition);
+        Wait Until(Not(Has Status(Victim, Burning)), 15);
+        Set Gravity(Victim, 100);
+        Wait(0.5, Ignore Condition);
     }
 }
 
@@ -621,12 +670,13 @@ rule ("Infra-Sight reveals enemy ult charge") {
         For Player Variable(Event Player, Index, 0, Count Of((Event Player).Enemies), 1);
             Create In-World Text(All Players(Team Of(Event Player)), Custom String("Ult: {0}%", Ultimate Charge Percent(Value In Array((Event Player).Enemies, (Event Player).Index)), Null, Null), Value In Array((Event Player).Enemies, (Event Player).Index), 1, Do Not Clip, Visible To Position String and Color, Color(Red), Default Visibility);
             Modify Player Variable(Event Player, Enemies_Ults, Append To Array, Last Text ID);
-            Wait(0.016, Ignore Condition);
+            Wait(0.02, Ignore Condition);
         End;
-        Wait Until(Not(Is Using Ultimate(Event Player)), 15);
+        Wait Until(Is Dead(Event Player), 15);
+        "waitUntil(not eventPlayer.isUsingUltimate(), 15)"
         For Player Variable(Event Player, Index, 0, Count Of((Event Player).Enemies_Ults), 1);
             Destroy In-World Text(Value In Array((Event Player).Enemies_Ults, (Event Player).Index));
-            Wait(0.016, Ignore Condition);
+            Wait(0.02, Ignore Condition);
         End;
         Wait(2, Ignore Condition);
         Set Player Variable(Event Player, Enemies, Null);
@@ -653,10 +703,30 @@ rule ("Ana nano's herself if she holds it down") {
         Set Invisible((Event Player).Nano_Bot, All);
         Set Facing((Event Player).Nano_Bot, Direction Towards((Event Player).Nano_Bot, Event Player), To World);
         Set Ultimate Charge((Event Player).Nano_Bot, 100);
-        Wait(0.016, Ignore Condition);
+        Wait(0.25, Ignore Condition);
         Start Holding Button((Event Player).Nano_Bot, Button(Ultimate));
-        Wait(0.016, Ignore Condition);
+        Wait(0.25, Ignore Condition);
         Destroy Dummy Bot(Team Of(Event Player), Slot Of((Event Player).Nano_Bot));
+    }
+}
+
+rule ("Zenyatta zero G in transcendence") {
+    event {
+        Ongoing - Each Player;
+        All;
+        Zenyatta;
+    }
+    conditions {
+        Is Using Ultimate(Event Player) == True;
+    }
+    actions {
+        If(Or(Is Button Held(Event Player, Button(Jump)), Is Button Held(Event Player, Button(Crouch))));
+            Set Gravity(Event Player, 0);
+        Else;
+            Set Gravity(Event Player, 100);
+        End;
+        Wait(0.1, Ignore Condition);
+        Loop If Condition Is True;
     }
 }
 
@@ -672,9 +742,10 @@ rule ("Zenyatta can fly while in transcendence (up)") {
         Is Button Held(Event Player, Button(Crouch)) == False;
     }
     actions {
-        Start Throttle In Direction(Event Player, Vector(0, 1, 0), 1, To World, Replace existing throttle, Direction and Magnitude);
-        Wait Until(Not(Is Button Held(Event Player, Button(Jump))), 99999);
-        Stop Forcing Throttle(Event Player);
+        While(And(Is Button Held(Event Player, Button(Jump)), Not(Is Button Held(Event Player, Button(Crouch)))));
+            Apply Impulse(Event Player, Up, 3, To World, Cancel Contrary Motion);
+            Wait(0.1, Ignore Condition);
+        End;
     }
 }
 
@@ -690,9 +761,10 @@ rule ("Zenyatta can fly while in transcendence (down)") {
         Is Button Held(Event Player, Button(Crouch)) == True;
     }
     actions {
-        Start Throttle In Direction(Event Player, Vector(0, -1, 0), 1, To World, Replace existing throttle, Direction and Magnitude);
-        Wait Until(Not(Is Button Held(Event Player, Button(Crouch))), 99999);
-        Stop Forcing Throttle(Event Player);
+        While(And(Is Button Held(Event Player, Button(Crouch)), Not(Is Button Held(Event Player, Button(Jump)))));
+            Apply Impulse(Event Player, Down, 3, To World, Cancel Contrary Motion);
+            Wait(0.1, Ignore Condition);
+        End;
     }
 }
 
