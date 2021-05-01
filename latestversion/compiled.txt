@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- Ŀ UCKYNUMBER. V2.4.0. CODE: VHAV8"
+		Description: "Overwatch - except everyone gets to pick an Active and Passive mod that can greatly influence their team's chances of winning. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers. Teams Author -- ƒøUCKYNUMBER. V2.3.9. CODE: VHAV8"
 	}
 	lobby
 	{
@@ -1074,9 +1074,9 @@ rule ("Passive Mods 37 - Omega Boost Ult Tracker") {
     actions {
         "keep track of omega ult charge respective to normal ult charge (almost half as fast to charge)"
         While(And(Compare((Event Player).Omega_Charge, !=, 100), Compare((Event Player).Passive_Mod, ==, 37)));
-            Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 5), 99999);
+            Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 2.5), 99999);
             If(Compare((Event Player).Omega_Charge, !=, 100));
-                Modify Player Variable(Event Player, Omega_Charge, Add, 3.5);
+                Modify Player Variable(Event Player, Omega_Charge, Add, 1.9);
                 Set Ultimate Charge(Event Player, 0);
                 If(Compare((Event Player).Omega_Charge, >, 100));
                     Set Player Variable(Event Player, Omega_Charge, 100);
@@ -2354,7 +2354,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact\nJump To Start of List.{0}", Custom String(".....Ultimate\nTo Middle of List..............Ability 1\nJump To End of List.........Ability 2\nChoose Mod...................{0}", Custom String("..Left/Right Click\nConfirm Mod...................Melee", Null, Null, Null), Null, Null), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("Change Heroes................Hold Crouch + Reload\nChange Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
     }
 }
 
@@ -2446,14 +2446,6 @@ rule ("Player Welcome Message - Joined") {
         Wait(12, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("Welcome to SUPERPOWERS! Hold {0} + {1} to get started and build your hero!", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null));
-        "wait.."
-        Wait(8, Ignore Condition);
-        Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
-        Big Message(Event Player, Custom String("Use Left and right click to choose your powers, then melee to confirm.", Null, Null, Null));
-        "wait..."
-        Wait(8, Ignore Condition);
-        Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
-        Big Message(Event Player, Custom String("More commands in top left!", Null, Null, Null));
     }
 }
 
@@ -2472,14 +2464,6 @@ rule ("Player Welcome Message - Start") {
         Wait(10, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("Welcome to SUPERPOWERS! Hold R + F to get started and build your hero!", Null, Null, Null));
-        "wait.."
-        Wait(8, Ignore Condition);
-        Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
-        Big Message(Event Player, Custom String("Use Left and right click to choose your powers, then melee to confirm.", Null, Null, Null));
-        "wait..."
-        Wait(8, Ignore Condition);
-        Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
-        Big Message(Event Player, Custom String("More commands in top left!", Null, Null, Null));
     }
 }
 
@@ -2499,6 +2483,7 @@ rule ("Camera - 3rd Person Toggle") {
     actions {
         If(Compare((Event Player).Third_Person_Camera_Toggle, ==, 0));
             Wait(0.116, Ignore Condition);
+            "(-.8, .125, .8)"
             Start Camera(Event Player, Ray Cast Hit Position(Event Player, Add(Add(Add(Event Player, World Vector Of(Vector(-0.15, 0.06, 0.5), Event Player, Rotation)), Multiply(Up, 1.5)), Multiply(Facing Direction Of(Event Player), -3)), Null, Event Player, False), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), Update Every Frame(40));
             Set Player Variable(Event Player, Third_Person_Camera_Toggle, 1);
             Abort;
@@ -2638,9 +2623,9 @@ rule ("Mechanics - Open Mod Menu") {
         Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
         Create In-World Text(Event Player, (Event Player).Passive_Menu_String_Text, Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Lime Green), Default Visibility);
         Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
-        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(Aqua), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 0, Last Text ID);
-        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ability 1)), Custom String("list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String("List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String("List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.34, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(Aqua), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String(": list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.2, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 1, Last Text ID);
         Wait(0.2, Ignore Condition);
     }
