@@ -60,19 +60,20 @@ variables {
     player:
         0: Eval
         1: Index
-        2: Dva_Bomb_Ready
-        3: Dva_Bomb_Ready_Color
-        4: Dva_Bomb_Text
-        5: Self_Destruct_Hud
-        6: Sigma_Bot
-        7: Angry_Meter
-        8: Torb_Teammates
-        9: Friendly_Meis
-        10: Freeze_Bomb
-        11: Freeze_Assister
-        12: Enemies
-        13: Enemies_Ults
-        14: Nano_Bot
+        2: Dva_Boolean
+        3: Dva_Bomb_Ready
+        4: Dva_Bomb_Ready_Color
+        5: Dva_Bomb_Text
+        6: Self_Destruct_Hud
+        7: Sigma_Bot
+        8: Angry_Meter
+        9: Torb_Teammates
+        10: Friendly_Meis
+        11: Freeze_Bomb
+        12: Freeze_Assister
+        13: Enemies
+        14: Enemies_Ults
+        15: Nano_Bot
 }
 rule ("Initialization - Quick Assemble") {
     event {
@@ -185,13 +186,30 @@ rule ("D.Va Ultimate disabled") {
         Hero Of(Event Player) == Hero(D.Va);
     }
     actions {
+        Set Player Variable(Event Player, Dva_Boolean, True);
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Not ready", Null, Null, Null));
         Set Player Variable(Event Player, Dva_Bomb_Ready_Color, Color(Red));
         Create HUD Text(Event Player, Null, Custom String("Self Destruct: {0}", (Event Player).Dva_Bomb_Ready, Null, Null), Null, Top, 3, Null, (Event Player).Dva_Bomb_Ready_Color, Null, Visible To Sort Order String and Color, Default Visibility);
         Set Player Variable(Event Player, Dva_Bomb_Text, Last Text ID);
         Set Ultimate Ability Enabled(Event Player, False);
-        Wait Until(Compare(Hero Of(Event Player), !=, Hero(D.Va)), 99999);
+    }
+}
+
+rule ("D.Va stuff off") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Hero Of(Event Player) != Hero(D.Va);
+        (Event Player).Dva_Bomb_Text != Null;
+    }
+    actions {
+        Wait(0.5, Ignore Condition);
+        Set Player Variable(Event Player, Dva_Boolean, False);
         Destroy HUD Text((Event Player).Dva_Bomb_Text);
+        Set Player Variable(Event Player, Dva_Bomb_Text, Null);
         Set Ultimate Ability Enabled(Event Player, True);
     }
 }
@@ -205,6 +223,7 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
     conditions {
         Health(Event Player) <= Multiply(0.2, Max Health(Event Player));
         Is In Alternate Form(Event Player) == False;
+        (Event Player).Dva_Boolean == True;
     }
     actions {
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Ready", Null, Null, Null));
@@ -216,12 +235,16 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
         Set Damage Dealt(Event Player, 33);
         Wait(0.5, Ignore Condition);
         Set Damage Dealt(Event Player, 100);
+        Wait(0.5, Ignore Condition);
+        Set Ultimate Charge(Event Player, 0);
         Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), Is In Alternate Form(Event Player)), 99999);
         Wait(0.5, Ignore Condition);
         Set Ultimate Ability Enabled(Event Player, False);
+        Set Player Variable(Event Player, Dva_Boolean, False);
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Not ready", Null, Null, Null));
         Set Player Variable(Event Player, Dva_Bomb_Ready_Color, Color(Red));
         Wait(20, Ignore Condition);
+        Set Player Variable(Event Player, Dva_Boolean, True);
     }
 }
 
@@ -297,7 +320,7 @@ rule ("Earthshatter launches enemies into the air") {
     }
     actions {
         Wait Until(Has Status(Victim, Knocked Down), 2);
-        Wait(0.5, Ignore Condition);
+        Wait(0.75, Ignore Condition);
         Apply Impulse(Victim, Vector(0, 1, 0), Divide(15, Distance Between(Attacker, Victim)), To World, Cancel Contrary Motion);
     }
 }
@@ -313,11 +336,11 @@ rule ("Whole Hog propels Roadhog slightly away from where he's aiming") {
     }
     actions {
         While(Is Using Ultimate(Event Player));
-            If(Compare(Speed Of(Event Player), >, 10));
-            Else;
-                Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 6, To World, Incorporate Contrary Motion);
-            End;
+            Apply Impulse(Event Player, Multiply(-1, Facing Direction Of(Event Player)), 4, To World, Incorporate Contrary Motion);
             Wait(0.15, Ignore Condition);
+            If(Compare(Speed Of(Event Player), >, 8));
+                Wait(1.5, Ignore Condition);
+            End;
         End;
     }
 }
@@ -476,12 +499,13 @@ rule ("Hanzo can move while casting dragonstrike (I think)") {
         Is Using Ultimate(Event Player) == True;
     }
     actions {
+        Wait(0.5, Ignore Condition);
         Cancel Primary Action(Event Player);
         Set Ultimate Charge(Event Player, 100);
         Start Holding Button(Event Player, Button(Ultimate));
         Wait(0.1, Ignore Condition);
         Stop Holding Button(Event Player, Button(Ultimate));
-        Wait(10, Ignore Condition);
+        Wait(5, Ignore Condition);
     }
 }
 
@@ -511,8 +535,8 @@ rule ("Pharah can cancel ult") {
         Is Using Ultimate(Event Player) == True;
     }
     actions {
-        Wait(1, Ignore Condition);
-        If(And(Is Button Held(Event Player, Button(Ultimate)), Is Using Ultimate(Event Player)));
+        Wait(0.5, Abort When False);
+        If(Is Button Held(Event Player, Button(Ultimate)));
             Cancel Primary Action(Event Player);
     }
 }
@@ -723,9 +747,9 @@ rule ("Ana nano's herself if she holds it down") {
         Set Invisible((Event Player).Nano_Bot, All);
         Set Facing((Event Player).Nano_Bot, Direction Towards((Event Player).Nano_Bot, Event Player), To World);
         Set Ultimate Charge((Event Player).Nano_Bot, 100);
-        Wait(0.25, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Start Holding Button((Event Player).Nano_Bot, Button(Ultimate));
-        Wait(0.25, Ignore Condition);
+        Wait(1, Ignore Condition);
         Destroy Dummy Bot(Team Of(Event Player), Slot Of((Event Player).Nano_Bot));
     }
 }
