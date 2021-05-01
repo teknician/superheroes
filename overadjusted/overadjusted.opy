@@ -231,12 +231,15 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
         Set Ultimate Ability Enabled(Event Player, True);
         Set Ultimate Charge(Event Player, 100);
         Wait Until(Is Button Held(Event Player, Button(Ultimate)), 99999);
+        Wait(0.02, Ignore Condition);
+        Set Ultimate Charge(Event Player, 0);
         Wait(3, Ignore Condition);
         Set Damage Dealt(Event Player, 33);
         Wait(0.5, Ignore Condition);
+        Set Ultimate Ability Enabled(Event Player, False);
         Set Damage Dealt(Event Player, 100);
         Wait(0.5, Ignore Condition);
-        Set Ultimate Charge(Event Player, 0);
+        Set Ultimate Ability Enabled(Event Player, True);
         Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), Is In Alternate Form(Event Player)), 99999);
         Wait(0.5, Ignore Condition);
         Set Ultimate Ability Enabled(Event Player, False);
@@ -639,7 +642,7 @@ rule ("Symm's ultimate refreshes her ammo and turret charges") {
     }
 }
 
-rule ("Enemies get mired down in torb's lava") {
+rule ("Enemies get mired down in trb's lava") {
     event {
         Player Took Damage;
         All;
