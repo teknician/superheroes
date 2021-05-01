@@ -28,6 +28,8 @@ settings
 			enabled maps
 			{
 				King's Row
+				Numbani
+				Eichenwalde
 			}
 		}
 	}
@@ -35,9 +37,9 @@ settings
 	{
 		General
 		{
-			Spawn With Ultimate Ready: On
-			Ultimate Generation: 500%
-			Ultimate Generation - Passive: 500%
+			Spawn With Ultimate Ready: Off
+			Ultimate Generation: 100%
+			Ultimate Generation - Passive: 100%
 			Ashe
 			{
 				Ultimate Duration: 50%
@@ -235,13 +237,14 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
         Set Ultimate Charge(Event Player, 0);
         Wait(3, Ignore Condition);
         Set Damage Dealt(Event Player, 33);
-        Wait(0.5, Ignore Condition);
         Set Ultimate Ability Enabled(Event Player, False);
+        Wait(0.5, Ignore Condition);
         Set Damage Dealt(Event Player, 100);
         Wait(0.5, Ignore Condition);
+        Set Ultimate Charge(Event Player, 0);
         Set Ultimate Ability Enabled(Event Player, True);
         Wait Until(And(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), Is In Alternate Form(Event Player)), 99999);
-        Wait(0.5, Ignore Condition);
+        Wait(0.05, Ignore Condition);
         Set Ultimate Ability Enabled(Event Player, False);
         Set Player Variable(Event Player, Dva_Boolean, False);
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Not ready", Null, Null, Null));
