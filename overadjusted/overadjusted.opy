@@ -223,7 +223,7 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
         D.Va;
     }
     conditions {
-        Health(Event Player) <= Multiply(0.2, Max Health(Event Player));
+        Health(Event Player) <= Multiply(0.35, Max Health(Event Player));
         Is In Alternate Form(Event Player) == False;
         (Event Player).Dva_Boolean == True;
     }
@@ -242,12 +242,12 @@ rule ("D.Va Ultimate enabled when below 20% health in mech") {
         Wait(0.5, Ignore Condition);
         Set Ultimate Charge(Event Player, 0);
         Set Ultimate Ability Enabled(Event Player, True);
-        Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), 99999);
-        Wait(0.05, Ignore Condition);
-        Set Ultimate Ability Enabled(Event Player, False);
         Set Player Variable(Event Player, Dva_Boolean, False);
         Set Player Variable(Event Player, Dva_Bomb_Ready, Custom String("Not ready", Null, Null, Null));
         Set Player Variable(Event Player, Dva_Bomb_Ready_Color, Color(Red));
+        Wait Until(And(Is Button Held(Event Player, Button(Ultimate)), Compare(Ultimate Charge Percent(Event Player), ==, 100)), 99999);
+        Wait(0.05, Ignore Condition);
+        Set Ultimate Ability Enabled(Event Player, False);
         Wait(20, Ignore Condition);
         Set Player Variable(Event Player, Dva_Boolean, True);
     }
