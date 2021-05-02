@@ -2334,7 +2334,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Set Global Variable(Start_Intermission, 0);
         Else;
             Wait(50, Ignore Condition);
-            Set Global Variable(Time_To_Intermission, 100);
+            Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
             Create Progress Bar HUD Text(All Players(All Teams), Global.Time_To_Intermission, Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(White), Color(White), Visible To and Values, Default Visibility);
@@ -2366,7 +2366,11 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
         Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
-        Wait(Value In Array(Global.Intermission_Text, 3), Ignore Condition);
+        For Global Variable(Global_Index, 0, Value In Array(Global.Intermission_Text, 3), 1);
+            Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 1), Global.Team_1_Spawns, 25);
+            Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 2), Global.Team_2_Spawns, 25);
+            Wait(1, Ignore Condition);
+        End;
         For Global Variable(Global_Index, 0, 3, 1);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
@@ -2391,8 +2395,8 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         End;
         Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
         Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Text, 2, 25);
-        Set Global Variable At Index(Intermission_Text, 3, 22);
+        Set Global Variable At Index(Intermission_Text, 2, 30);
+        Set Global Variable At Index(Intermission_Text, 3, 27);
         Loop;
     }
 }
