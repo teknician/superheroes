@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.1.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.1.9, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2599,6 +2599,7 @@ rule ("Mechanics - Conditions to use Melee Cast Mods") {
         All;
     }
     conditions {
+        Global.Intermission_In_Progress == False;
         Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) == True;
         And(Compare(Hero Of(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), ==, Hero(Sombra)), Is Using Ability 1(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))) == False;
         Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Enemy Barriers Block LOS) == True;
@@ -2622,6 +2623,7 @@ rule ("Mechanics - Conditions to use Friendly Melee Cast Mods") {
         All;
     }
     conditions {
+        Global.Intermission_In_Progress == False;
         Is Alive(Player Closest To Reticle(Event Player, Team Of(Event Player))) == True;
         Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Team Of(Event Player)), Enemy Barriers Block LOS) == True;
         Has Status(Player Closest To Reticle(Event Player, Team Of(Event Player)), Phased Out) == False;
@@ -2643,6 +2645,7 @@ rule ("Mechanics - Conditions to use Ultimate Cast Mods") {
         All;
     }
     conditions {
+        Global.Intermission_In_Progress == False;
         Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Team Of(Event Player)), 30) == True;
     }
     actions {
@@ -2663,6 +2666,7 @@ rule ("Mechanics - Conditions to use LoS Mods") {
         All;
     }
     conditions {
+        Global.Intermission_In_Progress == False;
         Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 12) == True;
     }
     actions {
@@ -2757,7 +2761,6 @@ rule ("Mechanics - Open Mod Menu 2") {
         (Event Player).Mod_Menu_Select == 1;
     }
     actions {
-        Wait Until(Is Button Held(Event Player, Button(Melee)), 9999);
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Wait(0.5, Ignore Condition);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
@@ -2766,8 +2769,9 @@ rule ("Mechanics - Open Mod Menu 2") {
         Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Disallow Button(Event Player, Button(Melee));
-        Wait(0.2, Ignore Condition);
+        Wait(0.1, Ignore Condition);
         Allow Button(Event Player, Button(Melee));
+        Wait(0.02, Ignore Condition);
     }
 }
 
@@ -2783,10 +2787,11 @@ rule ("Mechanics - Close Mod Menu") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
+        Wait(0.1, Ignore Condition);
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
         Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
-        Wait(0.1, Ignore Condition);
+        Wait(0.05, Ignore Condition);
         If(Or(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)), And(Compare((Event Player).Passive_Mod_Index, ==, 30), Array Contains(Array(2, 11), (Event Player).Active_Mod_Index))));
             Create In-World Text(Event Player, Custom String("Incompatible mods! Choose again.", Null, Null, Null), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
             Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
