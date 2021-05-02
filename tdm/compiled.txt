@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.2.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.2.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1294,6 +1294,7 @@ rule ("Active Mods 1 - Blink") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 2;
+        Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Melee)) == True;
         (Event Player).OraOra == False;
         (Event Player).Passive_Mod != 30;
@@ -1366,6 +1367,7 @@ rule ("Active Mods 4 - Zero Gravity") {
     }
     conditions {
         (Event Player).Mod_Menu_Select == 3;
+        Global.Intermission_In_Progress == False;
         (Event Player).Active_Mod == 5;
         Is Button Held(Event Player, Button(Crouch)) == True;
         Is In Air(Event Player) == True;
@@ -1620,6 +1622,7 @@ rule ("Active Mods 12 - Save Disc Teleport") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 13;
+        Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Reload)) == True;
         Or(Is Meleeing(Event Player), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
         (Event Player).Active_Mod_Skill_Toggle == 1;
@@ -1666,6 +1669,7 @@ rule ("Active Mods 14 - Feign Death") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 15;
+        Global.Intermission_In_Progress == False;
         (Event Player).Passive_Mod != 5;
         (Event Player).Active_Mod_Skill_Toggle == 0;
         Is Button Held(Event Player, Button(Reload)) == True;
@@ -1779,6 +1783,7 @@ rule ("Active Mods 18 - Cleanse") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 19;
+        Global.Intermission_In_Progress == False;
         Or(Or(Or(Has Status(Event Player, Rooted), Has Status(Event Player, Stunned)), Has Status(Event Player, Knocked Down)), Has Status(Event Player, Frozen)) == True;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
@@ -1812,6 +1817,7 @@ rule ("Active Mods 20 - Life Tap") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 21;
+        Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Ultimate)) == True;
         Ultimate Charge Percent(Event Player) < 100;
         Normalized Health(Event Player) > 0.3;
@@ -1916,6 +1922,7 @@ rule ("Active Mods 24 - Colossus") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 24;
+        Global.Intermission_In_Progress == False;
         Ultimate Charge Percent(Event Player) == 100;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Moving(Event Player) == False;
@@ -2144,6 +2151,7 @@ rule ("Active Mods 27 - Human Cannonball") {
     conditions {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 27;
+        Global.Intermission_In_Progress == False;
         Altitude Of(Event Player) <= 1;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
@@ -2173,116 +2181,6 @@ rule ("Active Mods 27 - Human Cannonball") {
             Wait(0.016, Ignore Condition);
         End;
         Wait(6, Ignore Condition);
-    }
-}
-
-rule ("Initialization - Quick Assemble") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Is Assembling Heroes == True;
-    }
-    actions {
-        Set Match Time(8);
-    }
-}
-
-rule ("Begin Match... and start a time-out every 3 minutes.") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Is Game In Progress == True;
-    }
-    actions {
-        If(Global.Start_Intermission);
-            "180"
-            Wait(5, Ignore Condition);
-            Set Global Variable(Start_Intermission, 0);
-        Else;
-            Wait(60, Ignore Condition);
-        End;
-        Set Global Variable(Intermission_In_Progress, True);
-        Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Text), Null, Null));
-        For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Text, 2));
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, Value In Array(Global.Intermission_Text, 2));
-            Wait(0.016, Ignore Condition);
-        End;
-        For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
-            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-            Wait(0.05, Ignore Condition);
-        End;
-        For Global Variable(Global_Index, 0, Number Of Players(Team 2), 1);
-            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-            Wait(0.05, Ignore Condition);
-        End;
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
-        Wait(Value In Array(Global.Intermission_Text, 3), Ignore Condition);
-        For Global Variable(Global_Index, 0, 3, 1);
-            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
-            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
-            Wait(1, Ignore Condition);
-        End;
-        For Global Variable(Global_Index, 0, 8, 1);
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 20);
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 20);
-            Wait(0.075, Ignore Condition);
-        End;
-        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
-        Set Global Variable(Intermission_In_Progress, False);
-        Wait(0.05, Ignore Condition);
-        For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-            If(Or(Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 0), Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 3)));
-                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Hacked);
-                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Rooted);
-                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Phased Out);
-            End;
-            Wait(0.05, Ignore Condition);
-        End;
-        Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Text, 2, 25);
-        Set Global Variable At Index(Intermission_Text, 3, 22);
-        Loop;
-    }
-}
-
-rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Global.Intermission_In_Progress != False;
-    }
-    actions {
-        Wait Until(Has Spawned(Event Player), 99999);
-        If(Global.Intermission_In_Progress);
-            Wait(1, Abort When False);
-            If(Compare(Team Of(Event Player), ==, Team 1));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-            End;
-            If(Compare(Team Of(Event Player), ==, Team 2));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-            End;
-            Set Status(Event Player, Null, Rooted, 99999);
-            Set Status(Event Player, Null, Phased Out, 99999);
-            Wait(1, Ignore Condition);
-            Small Message(Event Player, Custom String("Match is in progress... Choose your mods!", Null, Null, Null));
-            Wait Until(Not(Global.Intermission_In_Progress), 99999);
-            If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
-                Clear Status(Event Player, Rooted);
-                Clear Status(Event Player, Phased Out);
-            End;
-        Else;
-            Abort;
     }
 }
 
@@ -2426,6 +2324,116 @@ rule ("Spawnpoints - Petra") {
     actions {
         Set Global Variable(Team_1_Spawns, Vector(5, -14, 45));
         Set Global Variable(Team_2_Spawns, Vector(-30, -8, -10));
+    }
+}
+
+rule ("Initialization - Quick Assemble") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Assembling Heroes == True;
+    }
+    actions {
+        Set Match Time(8);
+    }
+}
+
+rule ("Begin Match... and start a time-out every 3 minutes.") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+    }
+    actions {
+        If(Global.Start_Intermission);
+            "180"
+            Wait(5, Ignore Condition);
+            Set Global Variable(Start_Intermission, 0);
+        Else;
+            Wait(60, Ignore Condition);
+        End;
+        Set Global Variable(Intermission_In_Progress, True);
+        Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Text), Null, Null));
+        For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Text, 2));
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, Value In Array(Global.Intermission_Text, 2));
+            Wait(0.016, Ignore Condition);
+        End;
+        For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
+            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            Wait(0.05, Ignore Condition);
+        End;
+        For Global Variable(Global_Index, 0, Number Of Players(Team 2), 1);
+            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            Wait(0.05, Ignore Condition);
+        End;
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
+        Wait(Value In Array(Global.Intermission_Text, 3), Ignore Condition);
+        For Global Variable(Global_Index, 0, 3, 1);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
+            Wait(1, Ignore Condition);
+        End;
+        For Global Variable(Global_Index, 0, 8, 1);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 20);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 20);
+            Wait(0.075, Ignore Condition);
+        End;
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
+        Set Global Variable(Intermission_In_Progress, False);
+        Wait(0.05, Ignore Condition);
+        For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
+            If(Or(Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 0), Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 3)));
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Hacked);
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Rooted);
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Phased Out);
+            End;
+            Wait(0.05, Ignore Condition);
+        End;
+        Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Text, 2, 25);
+        Set Global Variable At Index(Intermission_Text, 3, 22);
+        Loop;
+    }
+}
+
+rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Intermission_In_Progress != False;
+    }
+    actions {
+        Wait Until(Has Spawned(Event Player), 99999);
+        If(And(Global.Intermission_In_Progress, Compare(Match Time, >, 7)));
+            Wait(1, Abort When False);
+            If(Compare(Team Of(Event Player), ==, Team 1));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            End;
+            If(Compare(Team Of(Event Player), ==, Team 2));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            End;
+            Set Status(Event Player, Null, Rooted, 99999);
+            Set Status(Event Player, Null, Phased Out, 99999);
+            Wait(1, Ignore Condition);
+            Small Message(Event Player, Custom String("Match is in progress... Choose your mods!", Null, Null, Null));
+            Wait Until(Not(Global.Intermission_In_Progress), 99999);
+            If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
+                Clear Status(Event Player, Rooted);
+                Clear Status(Event Player, Phased Out);
+            End;
+        Else;
+            Abort;
     }
 }
 
@@ -2817,9 +2825,9 @@ rule ("Mechanics - Open Mod Menu 2") {
         Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Disallow Button(Event Player, Button(Melee));
-        Wait(0.1, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Allow Button(Event Player, Button(Melee));
-        Wait(0.02, Ignore Condition);
+        Wait(0.3, Ignore Condition);
     }
 }
 
