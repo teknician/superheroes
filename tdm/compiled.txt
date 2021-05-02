@@ -2236,6 +2236,15 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
         Set Global Variable(Intermission_In_Progress, False);
+        Wait(0.05, Ignore Condition);
+        For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
+            If(Or(Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 0), Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 3)));
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Hacked);
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Rooted);
+                Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Phased Out);
+            End;
+            Wait(0.05, Ignore Condition);
+        End;
         Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
         Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
         Set Global Variable At Index(Intermission_Text, 2, 25);
