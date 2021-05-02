@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.2.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.2.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2415,7 +2415,7 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
     }
     actions {
         Wait Until(Has Spawned(Event Player), 99999);
-        If(And(Global.Intermission_In_Progress, Compare(Match Time, >, 7)));
+        If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 8)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
             Wait(1, Abort When False);
             If(Compare(Team Of(Event Player), ==, Team 1));
                 Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
