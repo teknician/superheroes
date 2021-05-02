@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.1.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.1.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -80,9 +80,9 @@ variables {
         2: Global_Index
         3: Team_1_Spawns
         4: Team_2_Spawns
-        5: Intermission_In_Progress
-        6: Shield_Vertical_Position
-        7: Shield_Distance
+        5: Start_Intermission
+        6: Intermission_In_Progress
+        7: Intermission_Text
     player:
         0: Is_In_Combat
         1: Health_Temp
@@ -238,16 +238,13 @@ subroutines {
     88: VictoryRush
     89: PlayerReset
 }
-rule ("Initialize") {
+rule ("Initialize intermission") {
     event {
         Ongoing - Global;
     }
-    conditions {
-        Is In Setup == True;
-        Is Between Rounds == False;
-    }
     actions {
-        Set Match Time(70);
+        Set Global Variable(Start_Intermission, 1);
+        Set Global Variable(Intermission_Text, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42));
     }
 }
 
@@ -2178,13 +2175,18 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Is Game In Progress == True;
     }
     actions {
-        "180"
-        Wait(60, Ignore Condition);
+        If(Global.Start_Intermission);
+            "180"
+            Wait(5, Ignore Condition);
+            Set Global Variable(Start_Intermission, 0);
+        Else;
+            Wait(60, Ignore Condition);
+        End;
         Set Global Variable(Intermission_In_Progress, True);
-        Big Message(All Players(All Teams), Custom String("Intermission! Maybe change mods?", Null, Null, Null));
+        Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Text), Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, 20);
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, 20);
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Text, 2));
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, Value In Array(Global.Intermission_Text, 2));
             Wait(0.016, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
@@ -2199,7 +2201,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
         Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
-        Wait(17, Ignore Condition);
+        Wait(Value In Array(Global.Intermission_Text, 3), Ignore Condition);
         For Global Variable(Global_Index, 0, 3, 1);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
@@ -2213,6 +2215,10 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
         Set Global Variable(Intermission_In_Progress, False);
+        Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Text, 2, 25);
+        Set Global Variable At Index(Intermission_Text, 3, 22);
         Loop;
     }
 }
@@ -2243,7 +2249,7 @@ rule ("Spawnpoints - Blizzard World") {
     }
 }
 
-rule ("Spawnpoints - Château Guillard") {
+rule ("Spawnpoints - Chateau Guillard") {
     event {
         Ongoing - Global;
     }
@@ -2664,7 +2670,7 @@ rule ("Mechanics - Check out of combat") {
     }
     actions {
         Set Player Variable(Event Player, Is_In_Combat, True);
-        Wait(6, Restart When True);
+        Wait(5, Restart When True);
         Set Player Variable(Event Player, Is_In_Combat, False);
     }
 }
@@ -2680,45 +2686,47 @@ rule ("Mechanics - Open Mod Menu") {
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Standing(Event Player) == True;
-        (Event Player).Is_Colossus == False;
-        (Event Player).Is_In_Combat == False;
     }
     actions {
-        Disallow Button(Event Player, Button(Interact));
-        Disallow Button(Event Player, Button(Reload));
-        Wait(0.5, Abort When False);
-        Destroy In-World Text((Event Player).Mod_Menu_Text);
-        Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
-        Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
-        Play Effect(All Players(All Teams), Sombra Translocator Disappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
-        Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
-        Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
-        Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
-        Set Player Variable(Event Player, Passive_Mod_Index, (Event Player).Passive_Mod);
-        Set Player Variable(Event Player, Passive_Mod, 0);
-        Set Player Variable(Event Player, Active_Mod_Index, (Event Player).Active_Mod);
-        Set Player Variable(Event Player, Active_Mod, 0);
-        Set Player Variable(Event Player, Mod_Menu_Select, 1);
-        Call Subroutine(PlayerReset);
-        If(Or(Compare((Event Player).Passive_Mod, ==, 20), Compare((Event Player).Active_Mod, ==, 21)));
-            Set Ultimate Charge(Event Player, 0);
-        End;
-        Wait(0.25, Ignore Condition);
-        Disallow Button(Event Player, Button(Primary Fire));
-        Disallow Button(Event Player, Button(Secondary Fire));
-        Set Status(Event Player, Null, Rooted, 9999);
-        Set Status(Event Player, Null, Hacked, 9999);
-        Set Status(Event Player, Null, Phased Out, 9999);
-        Start Facing(Event Player, Forward, 150, To Player, Direction and Turn Rate);
-        Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-        Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
-        Create In-World Text(Event Player, (Event Player).Passive_Menu_String_Text, Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Lime Green), Default Visibility);
-        Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
-        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 0, Last Text ID);
-        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String(": list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.23, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 1, Last Text ID);
-        Wait(0.2, Ignore Condition);
+        If(Compare((Event Player).Is_In_Combat, ==, True));
+            Small Message(Event Player, Custom String("You're not out of combat!", Null, Null, Null));
+            Abort;
+        Else;
+            Disallow Button(Event Player, Button(Interact));
+            Disallow Button(Event Player, Button(Reload));
+            Wait(0.5, Abort When False);
+            Destroy In-World Text((Event Player).Mod_Menu_Text);
+            Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
+            Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
+            Play Effect(All Players(All Teams), Sombra Translocator Disappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
+            Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
+            Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
+            Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
+            Set Player Variable(Event Player, Passive_Mod_Index, (Event Player).Passive_Mod);
+            Set Player Variable(Event Player, Passive_Mod, 0);
+            Set Player Variable(Event Player, Active_Mod_Index, (Event Player).Active_Mod);
+            Set Player Variable(Event Player, Active_Mod, 0);
+            Set Player Variable(Event Player, Mod_Menu_Select, 1);
+            Call Subroutine(PlayerReset);
+            If(Or(Compare((Event Player).Passive_Mod, ==, 20), Compare((Event Player).Active_Mod, ==, 21)));
+                Set Ultimate Charge(Event Player, 0);
+            End;
+            Wait(0.25, Ignore Condition);
+            Disallow Button(Event Player, Button(Primary Fire));
+            Disallow Button(Event Player, Button(Secondary Fire));
+            Set Status(Event Player, Null, Rooted, 9999);
+            Set Status(Event Player, Null, Hacked, 9999);
+            Set Status(Event Player, Null, Phased Out, 9999);
+            Start Facing(Event Player, Forward, 150, To Player, Direction and Turn Rate);
+            Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
+            Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
+            Create In-World Text(Event Player, (Event Player).Passive_Menu_String_Text, Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Lime Green), Default Visibility);
+            Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
+            Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+            Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 0, Last Text ID);
+            Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String(": list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.23, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+            Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 1, Last Text ID);
+            Wait(0.2, Ignore Condition);
     }
 }
 
@@ -2767,8 +2775,9 @@ rule ("Mechanics - Close Mod Menu") {
         If(Or(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)), And(Compare((Event Player).Passive_Mod_Index, ==, 30), Array Contains(Array(2, 11), (Event Player).Active_Mod_Index))));
             Create In-World Text(Event Player, Custom String("Incompatible mods! Choose again.", Null, Null, Null), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
             Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
-            Wait(2, Ignore Condition);
+            Wait(1.5, Ignore Condition);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
+            Wait(0.1, Ignore Condition);
             Allow Button(Event Player, Button(Reload));
             Allow Button(Event Player, Button(Interact));
             Start Holding Button(Event Player, Button(Reload));
@@ -2778,18 +2787,15 @@ rule ("Mechanics - Close Mod Menu") {
             Wait(1, Ignore Condition);
             Stop Holding Button(Event Player, Button(Reload));
             Stop Holding Button(Event Player, Button(Interact));
-            Wait(0.05, Ignore Condition);
+            Wait(0.1, Ignore Condition);
             Disallow Button(Event Player, Button(Interact));
             Disallow Button(Event Player, Button(Reload));
         Else;
             If(Global.Intermission_In_Progress);
-                Small Message(Event Player, Custom String("Intermission's not over... You can choose again though!", Null, Null, Null));
+                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Text, 1), Null, Null));
             End;
             Wait Until(Compare(Global.Intermission_In_Progress, ==, False), 99999);
             Stop Facing(Event Player);
-            Clear Status(Event Player, Hacked);
-            Clear Status(Event Player, Rooted);
-            Clear Status(Event Player, Phased Out);
             Set Player Variable(Event Player, Passive_Mod, (Event Player).Passive_Mod_Index);
             Set Player Variable(Event Player, Active_Mod, (Event Player).Active_Mod_Index);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
@@ -2800,6 +2806,9 @@ rule ("Mechanics - Close Mod Menu") {
             Allow Button(Event Player, Button(Secondary Fire));
             Allow Button(Event Player, Button(Interact));
             Allow Button(Event Player, Button(Reload));
+            Clear Status(Event Player, Hacked);
+            Clear Status(Event Player, Rooted);
+            Clear Status(Event Player, Phased Out);
             Wait(0.5, Ignore Condition);
         End;
         Destroy In-World Text((Event Player).Mod_Menu_Text);
