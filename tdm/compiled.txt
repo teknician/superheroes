@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.3.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.4.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -247,7 +247,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null));
     }
 }
 
@@ -2317,7 +2317,7 @@ rule ("Initialization - Quick Assemble") {
         Is Assembling Heroes == True;
     }
     actions {
-        Set Match Time(8);
+        Set Match Time(15);
     }
 }
 
@@ -2334,7 +2334,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(3, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(180, Ignore Condition);
+            Wait(150, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
@@ -2348,7 +2348,6 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Set Global Variable At Index(Intermission_Array, 5, Null);
             Wait(0.032, Ignore Condition);
         End;
-        Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Set Global Variable(Intermission_In_Progress, True);
         Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Array), Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
@@ -2368,6 +2367,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
         Wait(0.5, Ignore Condition);
         "countdown until can move again"
+        Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Null), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
@@ -2378,7 +2378,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         For Global Variable(Global_Index, 0, Value In Array(Global.Intermission_Array, 3), 1);
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 12.5);
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 12.5);
-            If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 2), 3)));
+            If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 2), 2)));
                 Stop Chasing Global Variable(Intermission_Duration);
                 Destroy HUD Text(Value In Array(Global.Intermission_Array, 5));
             End;
@@ -2410,10 +2410,34 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             End;
             Wait(0.016, Ignore Condition);
         End;
+        Create Icon(All Players(Team 1), Add(Global.Team_2_Spawns, Vector(0, 1.25, 0)), Skull, Visible To and Position, Color(Red), True);
+        Set Global Variable At Index(Intermission_Array, 6, Last Created Entity);
+        Create In-World Text(All Players(Team 1), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_2_Spawns, Vector(0, 0.5, 0)), 1.5, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
+        Set Global Variable At Index(Intermission_Array, 7, Last Text ID);
+        Play Effect(All Players(Team 1), Sombra EMP Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 200);
+        "‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî"
+        Create Icon(All Players(Team 2), Add(Global.Team_1_Spawns, Vector(0, 1.25, 0)), Skull, Visible To and Position, Color(Red), True);
+        Set Global Variable At Index(Intermission_Array, 8, Last Created Entity);
+        Create In-World Text(All Players(Team 2), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_1_Spawns, Vector(0, 0.5, 0)), 1.5, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
+        Set Global Variable At Index(Intermission_Array, 9, Last Text ID);
+        Play Effect(All Players(Team 2), Sombra EMP Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 200);
+        "....."
+        Wait(3, Ignore Condition);
+        Destroy Icon(Value In Array(Global.Intermission_Array, 6));
+        Destroy Icon(Value In Array(Global.Intermission_Array, 8));
+        Destroy In-World Text(Value In Array(Global.Intermission_Array, 7));
+        Destroy In-World Text(Value In Array(Global.Intermission_Array, 8));
+        Play Effect(All Players(Team 1), Moira Fade Disappear Sound, Color(Team 2), Global.Team_2_Spawns, 200);
+        Play Effect(All Players(Team 2), Moira Fade Disappear Sound, Color(Team 1), Global.Team_1_Spawns, 200);
+        Wait(0.016, Ignore Condition);
         Set Global Variable At Index(Intermission_Array, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
         Set Global Variable At Index(Intermission_Array, 2, 35);
         Set Global Variable At Index(Intermission_Array, 3, 32);
         Set Global Variable At Index(Intermission_Array, 4, Custom String("Intermission ends", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Array, 6, Null);
+        Set Global Variable At Index(Intermission_Array, 7, Null);
+        Set Global Variable At Index(Intermission_Array, 8, Null);
+        Set Global Variable At Index(Intermission_Array, 9, Null);
         Loop;
     }
 }
@@ -2450,7 +2474,6 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
             Wait(1, Ignore Condition);
-            Small Message(Event Player, Custom String("Match is in setup... Choose your mods!", Null, Null, Null));
             Wait Until(Not(Global.Intermission_In_Progress), 99999);
             If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
                 Clear Status(Event Player, Rooted);
