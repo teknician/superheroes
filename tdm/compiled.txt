@@ -2230,7 +2230,7 @@ rule ("Spawnpoints - Chateau Guillard") {
         Ongoing - Global;
     }
     conditions {
-        Current Map == Map(Ch√¢teau Guillard);
+        Current Map == Map(Château Guillard);
     }
     actions {
         Set Global Variable(Team_1_Spawns, Vector(195, 8, 100));
