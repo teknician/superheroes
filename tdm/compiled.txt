@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.0.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.0.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -39,7 +39,7 @@ settings
 		{
 			Game Mode Start: Immediately
 			Hero Limit: Off
-			Respawn Time Scalar: 45%
+			Respawn Time Scalar: 100%
 		}
 	}
 	heroes
@@ -80,8 +80,9 @@ variables {
         2: Global_Index
         3: Team_1_Spawns
         4: Team_2_Spawns
-        5: Shield_Vertical_Position
-        6: Shield_Distance
+        5: Timeout_In_Progress
+        6: Shield_Vertical_Position
+        7: Shield_Distance
     player:
         0: Is_In_Combat
         1: Health_Temp
@@ -2180,11 +2181,12 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
     actions {
         "180"
         Wait(60, Ignore Condition);
+        Set Global Variable(Timeout_In_Progress, True);
         Big Message(All Players(All Teams), Custom String("Timeout! Maybe change mods?", Null, Null, Null));
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Null, Global.Team_1_Spawns, 100);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Null, Global.Team_2_Spawns, 100);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, 20);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, 20);
@@ -2199,17 +2201,18 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(0.05, Ignore Condition);
         End;
         Wait(17, Ignore Condition);
-        For Global Variable(Global_Index, 0, 2, 1);
-            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 200);
-            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 200);
+        For Global Variable(Global_Index, 0, 3, 1);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
             Wait(1, Ignore Condition);
         End;
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
-        For Global Variable(Global_Index, 0, 10, 1);
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 12);
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 12);
-            Wait(0.05, Ignore Condition);
+        Set Global Variable(Timeout_In_Progress, False);
+        For Global Variable(Global_Index, 0, 8, 1);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 20);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 20);
+            Wait(0.15, Ignore Condition);
         End;
         Loop;
     }
@@ -2714,7 +2717,7 @@ rule ("Mechanics - Open Mod Menu") {
         Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
         Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 0, Last Text ID);
-        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String(": list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.2, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Ultimate)), Custom String(": list start  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List Middle  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Custom String(": List end", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.23, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Instructions, 1, Last Text ID);
         Wait(0.2, Ignore Condition);
     }
@@ -2774,6 +2777,7 @@ rule ("Mechanics - Close Mod Menu") {
             Set Player Variable(Event Player, Active_Mod_Index, 0);
             Loop;
         Else;
+            Wait Until(Compare(Global.Timeout_In_Progress, ==, False), 99999);
             Stop Facing(Event Player);
             Clear Status(Event Player, Hacked);
             Clear Status(Event Player, Rooted);
