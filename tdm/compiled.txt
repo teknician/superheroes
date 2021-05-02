@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.1.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.1.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2243,7 +2243,7 @@ rule ("Spawnpoints - Blizzard World") {
     }
 }
 
-rule ("Spawnpoints - Chateau Guillard") {
+rule ("Spawnpoints - Château Guillard") {
     event {
         Ongoing - Global;
     }
@@ -2756,25 +2756,31 @@ rule ("Mechanics - Close Mod Menu") {
     conditions {
         Is Button Held(Event Player, Button(Melee)) == True;
         (Event Player).Mod_Menu_Select == 2;
-        Has Status(Event Player, Rooted) == True;
         Has Status(Event Player, Hacked) == True;
-        Has Status(Event Player, Phased Out) == True;
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
         Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
-        Wait(0.5, Ignore Condition);
+        Wait(0.1, Ignore Condition);
         If(Or(And(Compare((Event Player).Passive_Mod_Index, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod_Index)), And(Compare((Event Player).Passive_Mod_Index, ==, 30), Array Contains(Array(2, 11), (Event Player).Active_Mod_Index))));
-            Create In-World Text(Event Player, Custom String("Incompatible mods! Choose again with Reload + Interact.", Null, Null, Null), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
+            Create In-World Text(Event Player, Custom String("Incompatible mods! Choose again.", Null, Null, Null), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
             Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
             Wait(2, Ignore Condition);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
-            Clear Status(Event Player, Hacked);
+            Allow Button(Event Player, Button(Reload));
+            Allow Button(Event Player, Button(Interact));
+            Start Holding Button(Event Player, Button(Reload));
+            Start Holding Button(Event Player, Button(Interact));
             Set Player Variable(Event Player, Passive_Mod_Index, 0);
             Set Player Variable(Event Player, Active_Mod_Index, 0);
-            Loop;
+            Wait(1, Ignore Condition);
+            Stop Holding Button(Event Player, Button(Reload));
+            Stop Holding Button(Event Player, Button(Interact));
+            Wait(0.05, Ignore Condition);
+            Disallow Button(Event Player, Button(Interact));
+            Disallow Button(Event Player, Button(Reload));
         Else;
             If(Global.Intermission_In_Progress);
                 Small Message(Event Player, Custom String("Intermission's not over... You can choose again though!", Null, Null, Null));
