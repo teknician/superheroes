@@ -37,9 +37,10 @@ settings
 		}
 		General
 		{
-			Game Mode Start: Immediately
+			Game Mode Start: Manual
 			Hero Limit: Off
 			Respawn Time Scalar: 100%
+			Score To Win: 50
 		}
 	}
 	heroes
@@ -1283,7 +1284,7 @@ rule ("Active Mods 1 - Blink") {
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Event Player, 3);
         Wait(0.25, Ignore Condition);
-        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
+        Teleport(Event Player, Nearest Walkable Position(Add(Event Player, Multiply(Facing Direction Of(Event Player), 7.5))));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Event Player, 200);
         If(Not(Is Moving(Event Player)));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
@@ -1291,7 +1292,7 @@ rule ("Active Mods 1 - Blink") {
             ".getPosition() # + eventPlayer.getFacingDirection() * 1.2, 1)"
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
         End;
-        Wait(2.25, Ignore Condition);
+        Wait(2, Ignore Condition);
     }
 }
 
@@ -2330,14 +2331,14 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
     actions {
         If(Global.Start_Intermission);
             "180"
-            Wait(5, Ignore Condition);
+            Wait(3, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(50, Ignore Condition);
+            Wait(180, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
-            Create Progress Bar HUD Text(All Players(All Teams), Multiply(Round To Integer(Global.Time_To_Intermission, Down), 10), Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(Lime Green), Color(Orange), Visible To and Values, Default Visibility);
+            Create Progress Bar HUD Text(All Players(All Teams), Multiply(Round To Integer(Global.Time_To_Intermission, Down), 10), Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(White), Color(White), Visible To and Values, Default Visibility);
             Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
             Wait(0.032, Ignore Condition);
             Wait Until(Compare(Global.Time_To_Intermission, ==, 0), 10);
@@ -2375,9 +2376,9 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 30);
         "this is the wait"
         For Global Variable(Global_Index, 0, Value In Array(Global.Intermission_Array, 3), 1);
-            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 30);
-            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 30);
-            If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 3), 3)));
+            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 12.5);
+            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 12.5);
+            If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 2), 3)));
                 Stop Chasing Global Variable(Intermission_Duration);
                 Destroy HUD Text(Value In Array(Global.Intermission_Array, 5));
             End;
@@ -2393,13 +2394,13 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         End;
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
-        For Global Variable(Global_Index, 0, 8, 1);
+        For Global Variable(Global_Index, 0, 6, 1);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 20);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 20);
-            Wait(0.075, Ignore Condition);
+            Wait(0.085, Ignore Condition);
         End;
         Set Global Variable(Intermission_In_Progress, False);
-        Wait(0.03, Ignore Condition);
+        Wait(0.022, Ignore Condition);
         Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             If(Or(Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 0), Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 3)));
@@ -2407,11 +2408,11 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
                 Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Rooted);
                 Clear Status(Value In Array(All Players(All Teams), Global.Global_Index), Phased Out);
             End;
-            Wait(0.02, Ignore Condition);
+            Wait(0.016, Ignore Condition);
         End;
         Set Global Variable At Index(Intermission_Array, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Array, 2, 30);
-        Set Global Variable At Index(Intermission_Array, 3, 27);
+        Set Global Variable At Index(Intermission_Array, 2, 35);
+        Set Global Variable At Index(Intermission_Array, 3, 32);
         Set Global Variable At Index(Intermission_Array, 4, Custom String("Intermission ends", Null, Null, Null));
         Loop;
     }
@@ -2436,6 +2437,16 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             If(Compare(Team Of(Event Player), ==, Team 2));
                 Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
             End;
+            Set Status(Event Player, Null, Rooted, 99999);
+            Set Status(Event Player, Null, Phased Out, 99999);
+            Wait(1, Ignore Condition);
+            Small Message(Event Player, Custom String("Match is in setup... Choose your mods!", Null, Null, Null));
+            Wait Until(Not(Global.Intermission_In_Progress), 99999);
+            If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
+                Clear Status(Event Player, Rooted);
+                Clear Status(Event Player, Phased Out);
+            End;
+        Else If(Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), <, 12));
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
             Wait(1, Ignore Condition);
@@ -2494,7 +2505,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - target a teammate and hold ultimate to supercharge them!", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("None (Click to scroll through mods, press Melee to select one)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (2.5 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (2.25 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 5, Custom String("Zero Gravity (crouch in midair to toggle)", Null, Null, Null));
