@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.1.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.1.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -265,7 +265,9 @@ rule ("Initialize Mod Menu (Joined)") {
         Wait(3, Ignore Condition);
         Allow Button(Event Player, Button(Reload));
         Allow Button(Event Player, Button(Interact));
-        If(Global.Intermission_In_Progress);
+        If(And(Global.Intermission_In_Progress, Has Spawned(Event Player)));
+            Wait(0.1, Ignore Condition);
+            Small Message(Event Player, Custom String("We're in the middle of a round... Choose your mods!", Null, Null, Null));
             If(Compare(Team Of(Event Player), ==, Team 1));
                 Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
             End;
@@ -2778,7 +2780,6 @@ rule ("Mechanics - Close Mod Menu") {
     conditions {
         Is Button Held(Event Player, Button(Melee)) == True;
         (Event Player).Mod_Menu_Select == 2;
-        Has Status(Event Player, Hacked) == True;
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 3);
@@ -2806,22 +2807,23 @@ rule ("Mechanics - Close Mod Menu") {
             Disallow Button(Event Player, Button(Reload));
             Abort;
         Else;
-            If(Global.Intermission_In_Progress);
-                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Text, 1), Null, Null));
-            End;
-            Wait Until(Compare(Global.Intermission_In_Progress, ==, False), 99999);
             Stop Facing(Event Player);
             Set Player Variable(Event Player, Passive_Mod, (Event Player).Passive_Mod_Index);
             Set Player Variable(Event Player, Active_Mod, (Event Player).Active_Mod_Index);
+            Wait(0.2, Ignore Condition);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
             Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
             Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
-            Wait(0.5, Ignore Condition);
+            Wait(0.3, Ignore Condition);
             Allow Button(Event Player, Button(Primary Fire));
             Allow Button(Event Player, Button(Secondary Fire));
             Allow Button(Event Player, Button(Interact));
             Allow Button(Event Player, Button(Reload));
             Clear Status(Event Player, Hacked);
+            If(Global.Intermission_In_Progress);
+                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Text, 1), Null, Null));
+            End;
+            Wait Until(Compare(Global.Intermission_In_Progress, ==, False), 99999);
             Clear Status(Event Player, Rooted);
             Clear Status(Event Player, Phased Out);
             Wait(0.5, Ignore Condition);
