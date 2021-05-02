@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.2.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.2.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2241,6 +2241,39 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Set Global Variable At Index(Intermission_Text, 2, 25);
         Set Global Variable At Index(Intermission_Text, 3, 22);
         Loop;
+    }
+}
+
+rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Intermission_In_Progress != False;
+    }
+    actions {
+        Wait Until(Has Spawned(Event Player), 99999);
+        If(Global.Intermission_In_Progress);
+            Wait(1, Abort When False);
+            If(Compare(Team Of(Event Player), ==, Team 1));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            End;
+            If(Compare(Team Of(Event Player), ==, Team 2));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            End;
+            Set Status(Event Player, Null, Rooted, 99999);
+            Set Status(Event Player, Null, Phased Out, 99999);
+            Wait(1, Ignore Condition);
+            Small Message(Event Player, Custom String("Match is in progress... Choose your mods!", Null, Null, Null));
+            Wait Until(Not(Global.Intermission_In_Progress), 99999);
+            If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
+                Clear Status(Event Player, Rooted);
+                Clear Status(Event Player, Phased Out);
+            End;
+        Else;
+            Abort;
     }
 }
 
