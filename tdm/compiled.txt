@@ -24,7 +24,7 @@ settings
 				Black Forest
 				Blizzard World
 				Dorado
-				Chàteau Guillard
+				Château Guillard
 				Ecopoint: Antarctica
 				Eichenwalde
 				Hanamura
