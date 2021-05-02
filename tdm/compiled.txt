@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.2.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.3.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -81,10 +81,10 @@ variables {
         3: Team_1_Spawns
         4: Team_2_Spawns
         5: Start_Intermission
-        6: Time_To_Intermission
-        7: Intermission_Bar
+        6: Intermission_Duration
+        7: Time_To_Intermission
         8: Intermission_In_Progress
-        9: Intermission_Text
+        9: Intermission_Array
     player:
         0: Is_In_Combat
         1: Health_Temp
@@ -246,7 +246,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Text, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null));
     }
 }
 
@@ -2337,21 +2337,22 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
-            Create Progress Bar HUD Text(All Players(All Teams), Global.Time_To_Intermission, Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(White), Color(White), Visible To and Values, Default Visibility);
-            Set Global Variable(Intermission_Bar, Last Text ID);
+            Create Progress Bar HUD Text(All Players(All Teams), 100, Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(Lime Green), Color(Orange), Visible To and Values, Default Visibility);
+            Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
             Wait(0.032, Ignore Condition);
             Wait Until(Compare(Global.Time_To_Intermission, ==, 0), 10);
             Wait(0.016, Ignore Condition);
             Stop Chasing Global Variable(Time_To_Intermission);
-            Destroy Progress Bar HUD Text(Global.Intermission_Bar);
-            Set Global Variable(Intermission_Bar, Null);
+            Destroy Progress Bar HUD Text(Value In Array(Global.Intermission_Array, 5));
+            Set Global Variable At Index(Intermission_Array, 5, Null);
             Wait(0.032, Ignore Condition);
         End;
+        Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Set Global Variable(Intermission_In_Progress, True);
-        Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Text), Null, Null));
+        Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Array), Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Text, 2));
-            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, Value In Array(Global.Intermission_Text, 2));
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Array, 2));
+            Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, Value In Array(Global.Intermission_Array, 2));
             Wait(0.016, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
@@ -2363,14 +2364,24 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(0.05, Ignore Condition);
         End;
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
-        For Global Variable(Global_Index, 0, Value In Array(Global.Intermission_Text, 3), 1);
-            Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 1), Global.Team_1_Spawns, 25);
-            Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 2), Global.Team_2_Spawns, 25);
+        Wait(0.5, Ignore Condition);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 30);
+        "countdown until can move again"
+        Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Null), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
+        Wait(0.02, Ignore Condition);
+        "this is the wait"
+        For Global Variable(Global_Index, 0, Value In Array(Global.Intermission_Array, 3), 1);
+            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 40);
+            Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 40);
             Wait(1, Ignore Condition);
         End;
+        Stop Chasing Global Variable(Intermission_Duration);
+        Destroy HUD Text(Value In Array(Global.Intermission_Array, 5));
+        Set Global Variable At Index(Intermission_Array, 5, Null);
         For Global Variable(Global_Index, 0, 3, 1);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
@@ -2394,9 +2405,10 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(0.05, Ignore Condition);
         End;
         Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Text, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Text, 2, 30);
-        Set Global Variable At Index(Intermission_Text, 3, 27);
+        Set Global Variable At Index(Intermission_Array, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Array, 2, 30);
+        Set Global Variable At Index(Intermission_Array, 3, 27);
+        Set Global Variable At Index(Intermission_Array, 4, Custom String("Intermission ends", Null, Null, Null));
         Loop;
     }
 }
@@ -2413,7 +2425,7 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
     actions {
         Wait Until(Has Spawned(Event Player), 99999);
         Wait(2.5, Abort When False);
-        If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 15)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
+        If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 12)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
             If(Compare(Team Of(Event Player), ==, Team 1));
                 Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
             End;
@@ -2879,7 +2891,7 @@ rule ("Mechanics - Close Mod Menu") {
             Allow Button(Event Player, Button(Reload));
             Clear Status(Event Player, Hacked);
             If(Global.Intermission_In_Progress);
-                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Text, 1), Null, Null));
+                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Array, 1), Null, Null));
             Else;
                 Clear Status(Event Player, Rooted);
                 Clear Status(Event Player, Phased Out);
