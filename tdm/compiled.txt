@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.0.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.0.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2181,6 +2181,10 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "180"
         Wait(60, Ignore Condition);
         Big Message(All Players(All Teams), Custom String("Timeout! Maybe change mods?", Null, Null, Null));
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Null, Global.Team_1_Spawns, 100);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Null, Global.Team_2_Spawns, 100);
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, 20);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, 20);
@@ -2194,7 +2198,19 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
             Wait(0.05, Ignore Condition);
         End;
-        Wait(20, Ignore Condition);
+        Wait(17, Ignore Condition);
+        For Global Variable(Global_Index, 0, 2, 1);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 200);
+            Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 200);
+            Wait(1, Ignore Condition);
+        End;
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
+        For Global Variable(Global_Index, 0, 10, 1);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 12);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 12);
+            Wait(0.05, Ignore Condition);
+        End;
         Loop;
     }
 }
@@ -2462,6 +2478,22 @@ rule ("Optional - Damage Debugging") {
     }
     actions {
         Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
+    }
+}
+
+rule ("Optional - Host Self Damage") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Is Button Held(Event Player, Button(Ultimate)) == True;
+        Is Button Held(Event Player, Button(Crouch)) == True;
+    }
+    actions {
+        Damage(Event Player, Closest Player To(Position Of(Event Player), Opposite Team Of(Team Of(Event Player))), 1);
     }
 }
 
