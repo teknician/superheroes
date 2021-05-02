@@ -82,71 +82,71 @@ variables {
         4: Team_2_Spawns
         5: Start_Intermission
         6: Time_To_Intermission
-        7: Intermission_In_Progress
-        8: Intermission_Text
+        7: Intermission_Bar
+        8: Intermission_In_Progress
+        9: Intermission_Text
     player:
-        0: Intermission_Bar
-        1: Is_In_Combat
-        2: Health_Temp
-        3: Mod_Menu_Select
-        4: Mod_Menu_Text
-        5: Mod_Menu_Instructions
-        6: Passive_Mod
-        7: Passive_Mod_Index
-        8: Passive_Mod_FX
-        9: Passive_Mod_FX_Array
-        10: Passive_Mod_Skill_Toggle
-        11: Passive_Menu_String_Text
-        12: Passive_Time
-        13: Passive_Index
-        14: Current_Target_P
-        15: Old_Target_P
-        16: Active_Mod
-        17: Active_Mod_Index
-        18: Active_Mod_FX
-        19: Active_Mod_FX_Array
-        20: Active_Mod_Skill_Toggle
-        21: Active_Menu_String_Text
-        22: Active_Index
-        23: Active_Index_2
-        24: Active_Time
-        25: Current_Target_A
-        26: Old_Target_A
-        27: Index
-        28: Scalar_1
-        29: Scalar_2
-        30: Radius
-        31: Mod_Effect_Caster
-        32: Mod_Effect_Target
-        33: CastMelee_Mod_Conditions
-        34: CastMelee_Mod_Conditions_Ally
-        35: Melee_Mod_Conditions_Ally
-        36: CastUltimate_Mod_Conditions_Ally
-        37: LoS_Mod_Conditions
-        38: Third_Person_Camera_Toggle
-        39: Player_ATK_SPD_HP
-        40: Player_Position
-        41: Player_Foot_Position
-        42: Player_Health
-        43: Vertical_Speed
-        44: Affected_Players
-        45: Active_Affected_Players
-        46: Other_Players
-        47: Current_Hero
-        48: Current_Hero_2
-        49: Distance_Num
-        50: Temp_Index
-        51: Facing_Direction
-        52: Is_Colossus
-        53: Is_Blind
-        54: Is_Visible
-        55: Target
-        56: Target_Area_A
-        57: Target_Position
-        58: Eval
-        59: Railgun_Charge
-        60: OraOra
-        61: Omega_Charge
+        0: Is_In_Combat
+        1: Health_Temp
+        2: Mod_Menu_Select
+        3: Mod_Menu_Text
+        4: Mod_Menu_Instructions
+        5: Passive_Mod
+        6: Passive_Mod_Index
+        7: Passive_Mod_FX
+        8: Passive_Mod_FX_Array
+        9: Passive_Mod_Skill_Toggle
+        10: Passive_Menu_String_Text
+        11: Passive_Time
+        12: Passive_Index
+        13: Current_Target_P
+        14: Old_Target_P
+        15: Active_Mod
+        16: Active_Mod_Index
+        17: Active_Mod_FX
+        18: Active_Mod_FX_Array
+        19: Active_Mod_Skill_Toggle
+        20: Active_Menu_String_Text
+        21: Active_Index
+        22: Active_Index_2
+        23: Active_Time
+        24: Current_Target_A
+        25: Old_Target_A
+        26: Index
+        27: Scalar_1
+        28: Scalar_2
+        29: Radius
+        30: Mod_Effect_Caster
+        31: Mod_Effect_Target
+        32: CastMelee_Mod_Conditions
+        33: CastMelee_Mod_Conditions_Ally
+        34: Melee_Mod_Conditions_Ally
+        35: CastUltimate_Mod_Conditions_Ally
+        36: LoS_Mod_Conditions
+        37: Third_Person_Camera_Toggle
+        38: Player_ATK_SPD_HP
+        39: Player_Position
+        40: Player_Foot_Position
+        41: Player_Health
+        42: Vertical_Speed
+        43: Affected_Players
+        44: Active_Affected_Players
+        45: Other_Players
+        46: Current_Hero
+        47: Current_Hero_2
+        48: Distance_Num
+        49: Temp_Index
+        50: Facing_Direction
+        51: Is_Colossus
+        52: Is_Blind
+        53: Is_Visible
+        54: Target
+        55: Target_Area_A
+        56: Target_Position
+        57: Eval
+        58: Railgun_Charge
+        59: OraOra
+        60: Omega_Charge
 }
 subroutines {
     0: MoveSpeed160
@@ -267,27 +267,6 @@ rule ("Initialize Mod Menu (Joined)") {
         Wait(3, Ignore Condition);
         Allow Button(Event Player, Button(Reload));
         Allow Button(Event Player, Button(Interact));
-        If(Global.Intermission_In_Progress);
-            Wait Until(Has Spawned(Event Player), 99999);
-            If(Global.Intermission_In_Progress);
-                Wait(0.1, Ignore Condition);
-                If(Compare(Team Of(Event Player), ==, Team 1));
-                    Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-                End;
-                If(Compare(Team Of(Event Player), ==, Team 2));
-                    Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
-                End;
-                Set Status(Event Player, Null, Rooted, 99999);
-                Set Status(Event Player, Null, Phased Out, 99999);
-                Wait(1, Ignore Condition);
-                Small Message(Event Player, Custom String("We're in the middle of a round... Choose your mods!", Null, Null, Null));
-                Wait Until(Not(Global.Intermission_In_Progress), 99999);
-                If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
-                    Clear Status(Event Player, Rooted);
-                    Clear Status(Event Player, Phased Out);
-                End;
-            Else;
-                Abort;
     }
 }
 
@@ -1251,7 +1230,7 @@ rule ("Choose/Check Passive Mod") {
             //__label_switch_2_default__:
             End;
         End;
-        Wait(0.5, Ignore Condition);
+        Wait(0.75, Ignore Condition);
         Loop If Condition Is True;
         Loop;
         "pass"
@@ -2356,19 +2335,17 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Else;
             Wait(50, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 100);
+            Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
-            For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-                Create Progress Bar HUD Text(Value In Array(All Players(All Teams), Global.Global_Index), Global.Time_To_Intermission, Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(White), Color(White), Visible To and Values, Default Visibility);
-                Set Player Variable(Value In Array(All Players(All Teams), Global.Global_Index), Intermission_Bar, Last Text ID);
-                Wait(0.032, Ignore Condition);
-            End;
+            Create Progress Bar HUD Text(All Players(All Teams), Global.Time_To_Intermission, Custom String("Intermission in {0}...", Round To Integer(Global.Time_To_Intermission, Down), Null, Null), Top, 3, Color(White), Color(White), Visible To and Values, Default Visibility);
+            Set Global Variable(Intermission_Bar, Last Text ID);
+            Wait(0.032, Ignore Condition);
             Wait Until(Compare(Global.Time_To_Intermission, ==, 0), 10);
+            Wait(0.016, Ignore Condition);
             Stop Chasing Global Variable(Time_To_Intermission);
-            For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
-                Destroy Progress Bar HUD Text((Value In Array(All Players(All Teams), Global.Global_Index)).Intermission_Bar);
-                Set Player Variable(Value In Array(All Players(All Teams), Global.Global_Index), Intermission_Bar, Null);
-                Wait(0.032, Ignore Condition);
-            End;
+            Destroy Progress Bar HUD Text(Global.Intermission_Bar);
+            Set Global Variable(Intermission_Bar, Null);
+            Wait(0.032, Ignore Condition);
         End;
         Set Global Variable(Intermission_In_Progress, True);
         Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Text), Null, Null));
@@ -2442,7 +2419,7 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
             Wait(1, Ignore Condition);
-            Small Message(Event Player, Custom String("Match is in progress... Choose your mods!", Null, Null, Null));
+            Small Message(Event Player, Custom String("Match is in setup... Choose your mods!", Null, Null, Null));
             Wait Until(Not(Global.Intermission_In_Progress), 99999);
             If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
                 Clear Status(Event Player, Rooted);
