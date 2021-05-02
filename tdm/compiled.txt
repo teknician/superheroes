@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.0.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.1.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -80,7 +80,7 @@ variables {
         2: Global_Index
         3: Team_1_Spawns
         4: Team_2_Spawns
-        5: Timeout_In_Progress
+        5: Intermission_In_Progress
         6: Shield_Vertical_Position
         7: Shield_Distance
     player:
@@ -147,97 +147,96 @@ variables {
         60: Omega_Charge
 }
 subroutines {
-    0: TimeOut
-    1: MoveSpeed160
-    2: Health150
-    3: SmolMode
-    4: SmolModeFX
-    5: ImmolationAura
-    6: Spellslinger1
-    7: Spellslinger2
-    8: Spellslinger3
-    9: Spellslinger4
-    10: Rejuvenation
-    11: RejuvenationFX
-    12: Archmage1
-    13: Archmage2
-    14: Archmage3
-    15: Archmage4
-    16: LevelUp
-    17: Aimbot
-    18: CheatDeath
-    19: RaidBoss
-    20: DarkRitual
-    21: ManaShield
-    22: UltimatePerSec2
-    23: ThornsFX
-    24: FrostArmorFX
-    25: BootsOfMobility
-    26: MaxMight
-    27: Boxer
-    28: Forcefield
-    29: ForcefieldFX
-    30: SuperheroLanding
-    31: EvilEye
-    32: OmegaBoostUlt
-    33: OmegaBoostFX
-    34: OmegaBoost
-    35: Blink
-    36: DeathGrip
-    37: Preparation
-    38: ZeroG
-    39: Corruption
-    40: Translocate
-    41: EntanglingRoots
-    42: Blind
-    43: Fear
-    44: Shadowstep
-    45: GoombaStomp
-    46: SaveDisc
-    47: SaveDiscTeleport
-    48: Telekinesis
-    49: FeignDeath
-    50: Sneak
-    51: Hex
-    52: Taunt
-    53: Cleanse
-    54: LifeTap
-    55: LightningBolt
-    56: HealthingHand
-    57: Colossus_Reset
-    58: Colossus
-    59: ColossusFX
-    60: Railgun
-    61: ArmorField
-    62: Immolation
-    63: Ambush
-    64: Knockout
-    65: BoxerDealtDmg
-    66: Devour
-    67: Infection
-    68: BoxerBrig
-    69: BoxerRein
-    70: SneakDealtDmg
-    71: Disruption
-    72: Lifesteal
-    73: OraOra
-    74: ManaShieldDamaged
-    75: ThornsDamaged
-    76: FrostArmorDamaged
-    77: BootsOfMobilityDamaged
-    78: InfectionDamaged
-    79: SneakDamaged
-    80: ColossusHookDamaged
-    81: RemoveFXOnDeath
-    82: SmolModeDeath
-    83: CorpseExplosion
-    84: Revenge
-    85: GetBehindMeDeath
-    86: ZeroGDeath
-    87: ColossusDeath
-    88: LevelUpDing
-    89: VictoryRush
-    90: PlayerReset
+    0: MoveSpeed160
+    1: Health150
+    2: SmolMode
+    3: SmolModeFX
+    4: ImmolationAura
+    5: Spellslinger1
+    6: Spellslinger2
+    7: Spellslinger3
+    8: Spellslinger4
+    9: Rejuvenation
+    10: RejuvenationFX
+    11: Archmage1
+    12: Archmage2
+    13: Archmage3
+    14: Archmage4
+    15: LevelUp
+    16: Aimbot
+    17: CheatDeath
+    18: RaidBoss
+    19: DarkRitual
+    20: ManaShield
+    21: UltimatePerSec2
+    22: ThornsFX
+    23: FrostArmorFX
+    24: BootsOfMobility
+    25: MaxMight
+    26: Boxer
+    27: Forcefield
+    28: ForcefieldFX
+    29: SuperheroLanding
+    30: EvilEye
+    31: OmegaBoostUlt
+    32: OmegaBoostFX
+    33: OmegaBoost
+    34: Blink
+    35: DeathGrip
+    36: Preparation
+    37: ZeroG
+    38: Corruption
+    39: Translocate
+    40: EntanglingRoots
+    41: Blind
+    42: Fear
+    43: Shadowstep
+    44: GoombaStomp
+    45: SaveDisc
+    46: SaveDiscTeleport
+    47: Telekinesis
+    48: FeignDeath
+    49: Sneak
+    50: Hex
+    51: Taunt
+    52: Cleanse
+    53: LifeTap
+    54: LightningBolt
+    55: HealthingHand
+    56: Colossus_Reset
+    57: Colossus
+    58: ColossusFX
+    59: Railgun
+    60: ArmorField
+    61: Immolation
+    62: Ambush
+    63: Knockout
+    64: BoxerDealtDmg
+    65: Devour
+    66: Infection
+    67: BoxerBrig
+    68: BoxerRein
+    69: SneakDealtDmg
+    70: Disruption
+    71: Lifesteal
+    72: OraOra
+    73: ManaShieldDamaged
+    74: ThornsDamaged
+    75: FrostArmorDamaged
+    76: BootsOfMobilityDamaged
+    77: InfectionDamaged
+    78: SneakDamaged
+    79: ColossusHookDamaged
+    80: RemoveFXOnDeath
+    81: SmolModeDeath
+    82: CorpseExplosion
+    83: Revenge
+    84: GetBehindMeDeath
+    85: ZeroGDeath
+    86: ColossusDeath
+    87: LevelUpDing
+    88: VictoryRush
+    89: PlayerReset
 }
 rule ("Initialize") {
     event {
@@ -2181,12 +2180,8 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
     actions {
         "180"
         Wait(60, Ignore Condition);
-        Set Global Variable(Timeout_In_Progress, True);
-        Big Message(All Players(All Teams), Custom String("Timeout! Maybe change mods?", Null, Null, Null));
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
-        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
-        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
+        Set Global Variable(Intermission_In_Progress, True);
+        Big Message(All Players(All Teams), Custom String("Intermission! Maybe change mods?", Null, Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, 20);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Phased Out, 20);
@@ -2200,20 +2195,24 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
             Wait(0.05, Ignore Condition);
         End;
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 15);
+        Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_2_Spawns, 200);
+        Play Effect(All Players(All Teams), Good Explosion, Color(Orange), Global.Team_2_Spawns, 15);
         Wait(17, Ignore Condition);
         For Global Variable(Global_Index, 0, 3, 1);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_1_Spawns, 500);
             Play Effect(All Players(All Teams), Explosion Sound, Null, Global.Team_2_Spawns, 500);
             Wait(1, Ignore Condition);
         End;
-        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
-        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
-        Set Global Variable(Timeout_In_Progress, False);
         For Global Variable(Global_Index, 0, 8, 1);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Global.Team_1_Spawns, 20);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), Global.Team_2_Spawns, 20);
-            Wait(0.15, Ignore Condition);
+            Wait(0.075, Ignore Condition);
         End;
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Global.Team_2_Spawns, 200);
+        Set Global Variable(Intermission_In_Progress, False);
         Loop;
     }
 }
@@ -2688,11 +2687,11 @@ rule ("Mechanics - Open Mod Menu") {
         Disallow Button(Event Player, Button(Interact));
         Disallow Button(Event Player, Button(Reload));
         Wait(0.5, Abort When False);
+        Destroy In-World Text((Event Player).Mod_Menu_Text);
+        Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
+        Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
         Play Effect(All Players(All Teams), Sombra Translocator Disappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
         Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
-        If(Not(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch))));
-            Teleport(Event Player, Spawn Points(Team Of(Event Player)));
-        End;
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Set Player Variable(Event Player, Passive_Mod_Index, (Event Player).Passive_Mod);
@@ -2777,7 +2776,10 @@ rule ("Mechanics - Close Mod Menu") {
             Set Player Variable(Event Player, Active_Mod_Index, 0);
             Loop;
         Else;
-            Wait Until(Compare(Global.Timeout_In_Progress, ==, False), 99999);
+            If(Global.Intermission_In_Progress);
+                Small Message(Event Player, Custom String("Intermission's not over... You can choose again though!", Null, Null, Null));
+            End;
+            Wait Until(Compare(Global.Intermission_In_Progress, ==, False), 99999);
             Stop Facing(Event Player);
             Clear Status(Event Player, Hacked);
             Clear Status(Event Player, Rooted);
@@ -2785,6 +2787,8 @@ rule ("Mechanics - Close Mod Menu") {
             Set Player Variable(Event Player, Passive_Mod, (Event Player).Passive_Mod_Index);
             Set Player Variable(Event Player, Active_Mod, (Event Player).Active_Mod_Index);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
+            Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
+            Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
             Wait(0.5, Ignore Condition);
             Allow Button(Event Player, Button(Primary Fire));
             Allow Button(Event Player, Button(Secondary Fire));
