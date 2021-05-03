@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1107,6 +1107,22 @@ rule ("Passive Mods 37 - Omega Boost") {
         Destroy Icon(Value In Array((Event Player).Passive_Mod_FX_Array, 2));
         "idk why i can't actually see the outlines myself but w/e i'm sure it's just a bug"
         Stop Forcing Player Outlines((Event Player).Mod_Effect_Target, Event Player);
+    }
+}
+
+rule ("Relay Omega Boost status") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Passive_Mod == 36;
+        Is Communicating Any Spray(Event Player) == True;
+    }
+    actions {
+        Small Message(All Players(Team Of(Event Player)), Custom String("{0}'s Ultimate (Omega Boost) is {1}% charged!", Event Player, (Event Player).Omega_Charge, Null));
+        Wait(3, Ignore Condition);
     }
 }
 
@@ -2349,7 +2365,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(3, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(180, Ignore Condition);
+            Wait(200, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
@@ -2386,7 +2402,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("  {0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu\n  Hold {2} To change heroes.", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Input Binding String(Button(Jump)))), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String(" {0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu\n  Hold {2} To change heroes.", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Input Binding String(Button(Jump)))), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
@@ -2565,7 +2581,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 33, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - target a teammate and hold ultimate to supercharge them!", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - supercharge a teammate! (Spray to display ult status)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("None (Click to scroll through mods, press Melee to select one)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2.25 sec. CD)", Null, Null, Null));
