@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -40,7 +40,7 @@ settings
 			Game Mode Start: All Slots Filled
 			Hero Limit: Off
 			Respawn Time Scalar: 100%
-			Score To Win: 35
+			Score To Win: 50
 		}
 	}
 	heroes
@@ -1284,7 +1284,7 @@ rule ("Active Mods 1 - Blink") {
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Event Player, 3);
         Wait(0.2, Ignore Condition);
-        Teleport(Event Player, Nearest Walkable Position(Add(Event Player, Multiply(Facing Direction Of(Event Player), 6.5))));
+        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 6.5)));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Event Player, 200);
         If(Not(Is Moving(Event Player)));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
@@ -2370,7 +2370,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} + {1} to open mod menu", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null)), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("  {0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null)), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
@@ -2415,21 +2415,21 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         End;
         Create Icon(All Players(Team 1), Add(Global.Team_2_Spawns, Vector(0, 2.5, 0)), Skull, Visible To and Position, Color(Red), True);
         Set Global Variable At Index(Intermission_Array, 6, Last Created Entity);
-        Create In-World Text(All Players(Team 1), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_2_Spawns, Vector(0, 1, 0)), 2.5, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
+        Create In-World Text(All Players(Team 1), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_2_Spawns, Vector(0, 1, 0)), 2.25, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
         Set Global Variable At Index(Intermission_Array, 7, Last Text ID);
         Play Effect(All Players(Team 1), Sombra EMP Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 200);
         "‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî‚Äî"
         Create Icon(All Players(Team 2), Add(Global.Team_1_Spawns, Vector(0, 2.5, 0)), Skull, Visible To and Position, Color(Red), True);
         Set Global Variable At Index(Intermission_Array, 8, Last Created Entity);
-        Create In-World Text(All Players(Team 2), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_1_Spawns, Vector(0, 1, 0)), 2.5, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
+        Create In-World Text(All Players(Team 2), Custom String("ENEMY", Null, Null, Null), Add(Global.Team_1_Spawns, Vector(0, 1, 0)), 2.25, Do Not Clip, Visible To and Position, Color(Red), Default Visibility);
         Set Global Variable At Index(Intermission_Array, 9, Last Text ID);
         Play Effect(All Players(Team 2), Sombra EMP Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 200);
         "....."
-        Wait(6.5, Ignore Condition);
+        Wait(4.5, Ignore Condition);
         Destroy Icon(Value In Array(Global.Intermission_Array, 6));
         Destroy Icon(Value In Array(Global.Intermission_Array, 8));
         Destroy In-World Text(Value In Array(Global.Intermission_Array, 7));
-        Destroy In-World Text(Value In Array(Global.Intermission_Array, 8));
+        Destroy In-World Text(Value In Array(Global.Intermission_Array, 9));
         Play Effect(All Players(Team 1), Moira Fade Disappear Sound, Color(Team 2), Global.Team_2_Spawns, 200);
         Play Effect(All Players(Team 2), Moira Fade Disappear Sound, Color(Team 1), Global.Team_1_Spawns, 200);
         Wait(0.016, Ignore Condition);
