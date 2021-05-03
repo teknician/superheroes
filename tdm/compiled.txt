@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2993,7 +2993,7 @@ rule ("Don't stay in mod menu too long") {
         Wait(15, Abort When False);
         Small Message(Event Player, Custom String("Stay in menu too long while not in intermission and you'll lose points.", Null, Null, Null));
         While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
-            Wait(10, Abort When False);
+            Wait(20, Abort When False);
             Set Team Score(Team Of(Event Player), Subtract(Team Score(Team Of(Event Player)), 1));
         End;
     }
