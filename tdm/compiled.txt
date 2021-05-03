@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -247,7 +247,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("Game hasn't started yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null));
     }
 }
 
@@ -2321,6 +2321,18 @@ rule ("Initialization - Quick Assemble") {
     }
 }
 
+rule ("Game time reset") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Match Time < 10;
+    }
+    actions {
+        Set Match Time(900);
+    }
+}
+
 rule ("Begin Match... and start a time-out every 3 minutes.") {
     event {
         Ongoing - Global;
@@ -2334,7 +2346,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(3, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(150, Ignore Condition);
+            Wait(180, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
@@ -2350,6 +2362,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         End;
         Set Global Variable(Intermission_In_Progress, True);
         Pause Match Time;
+        Heal(All Players(All Teams), Null, 1000);
         Big Message(All Players(All Teams), Custom String("{0}", First Of(Global.Intermission_Array), Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             Set Status(Value In Array(All Players(All Teams), Global.Global_Index), Null, Rooted, Value In Array(Global.Intermission_Array, 2));
@@ -2370,7 +2383,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("  {0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null)), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String(" {0} in {1} seconds.\n  Hold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu\n  {2} To change heroes.", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Input Binding String(Button(Jump)))), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
@@ -2380,7 +2393,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 14);
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 14);
             If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 2), 4)));
-                Wait(0.5, Ignore Condition);
+                Wait(0.25, Ignore Condition);
                 Stop Chasing Global Variable(Intermission_Duration);
                 Destroy HUD Text(Value In Array(Global.Intermission_Array, 5));
             End;
@@ -2434,8 +2447,8 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Play Effect(All Players(Team 2), Moira Fade Disappear Sound, Color(Team 1), Global.Team_1_Spawns, 200);
         Wait(0.016, Ignore Condition);
         Set Global Variable At Index(Intermission_Array, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Array, 2, 35);
-        Set Global Variable At Index(Intermission_Array, 3, 32);
+        Set Global Variable At Index(Intermission_Array, 2, 25);
+        Set Global Variable At Index(Intermission_Array, 3, 22);
         Set Global Variable At Index(Intermission_Array, 4, Custom String("Intermission ends", Null, Null, Null));
         Set Global Variable At Index(Intermission_Array, 6, Null);
         Set Global Variable At Index(Intermission_Array, 7, Null);
@@ -2484,6 +2497,25 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             End;
         Else;
             Abort;
+    }
+}
+
+rule ("Change heroes in intermission/setup") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Crouch)) == True;
+        Global.Intermission_In_Progress != False;
+    }
+    actions {
+        Wait(1.5, Abort When False);
+        Set Player Allowed Heroes(Event Player, Remove From Array(All Heroes, Hero Of(Event Player)));
+        Wait(1, Ignore Condition);
+        Reset Player Hero Availability(Event Player);
+        Kill(Event Player, Null);
     }
 }
 
@@ -2940,6 +2972,26 @@ rule ("Mechanics - Close Mod Menu") {
             Wait(0.5, Ignore Condition);
         End;
         Wait(0.116, Ignore Condition);
+    }
+}
+
+rule ("Don't stay in mod menu too long") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Intermission_In_Progress == False;
+        Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)) == True;
+    }
+    actions {
+        Wait(10, Abort When False);
+        Small Message(Event Player, Custom String("Take too long to choose while not in intermission and you'll lose points.", Null, Null, Null));
+        While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
+            Wait(10, Abort When False);
+            Set Team Score(Team Of(Event Player), Subtract(Team Score(Team Of(Event Player)), 1));
+        End;
     }
 }
 
@@ -3623,6 +3675,9 @@ rule ("Mods PlayerTookDamage Events") {
         Else If(And(Is Alive(Event Player), Compare(Attacker, !=, Victim)));
             If(And(Compare((Event Player).Passive_Mod, ==, 25), Compare((Event Player).Is_Colossus, ==, False)));
                 Start Rule(ThornsDamaged, Do Nothing);
+            End;
+            If(Compare((Event Player).Passive_Mod, ==, 22));
+                Start Rule(ManaShieldDamaged, Do Nothing);
             Else If(And(And(Compare((Event Player).Passive_Mod, ==, 26), Compare(Distance Between(Attacker, Event Player), <=, 6)), Is In Line of Sight(Attacker, Event Player, Enemy Barriers Block LOS)));
                 Start Rule(FrostArmorDamaged, Do Nothing);
     }
