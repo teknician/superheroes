@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -247,7 +247,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null, Custom String("Match hasn't started", Null, Null, Null), Custom String("Match setup", Null, Null, Null)));
     }
 }
 
@@ -2327,6 +2327,8 @@ rule ("Game time reset") {
     }
     conditions {
         Match Time < 10;
+        Is Assembling Heroes == False;
+        Is In Setup == False;
     }
     actions {
         Set Match Time(900);
@@ -2383,7 +2385,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String(" {0} in {1} seconds.\n  Hold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu\n  {2} To change heroes.", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Input Binding String(Button(Jump)))), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} and {1} to open mod menu\nHold {2} To change heroes.", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Input Binding String(Button(Jump)))), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
@@ -2454,6 +2456,8 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Set Global Variable At Index(Intermission_Array, 7, Null);
         Set Global Variable At Index(Intermission_Array, 8, Null);
         Set Global Variable At Index(Intermission_Array, 9, Null);
+        Set Global Variable At Index(Intermission_Array, 10, Custom String("Intermission isn't over", Null, Null, Null));
+        Set Global Variable At Index(Intermission_Array, 11, Custom String("Intermission", Null, Null, Null));
         Loop;
     }
 }
@@ -2480,7 +2484,7 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
             Wait(1, Ignore Condition);
-            Small Message(Event Player, Custom String("Match is in setup... Choose your mods!", Null, Null, Null));
+            Small Message(Event Player, Custom String("Welcome! {0} isn't over yet. Choose your mods!", Value In Array(Global.Intermission_Array, 11), Null, Null));
             Wait Until(Not(Global.Intermission_In_Progress), 99999);
             If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
                 Clear Status(Event Player, Rooted);
@@ -2964,7 +2968,7 @@ rule ("Mechanics - Close Mod Menu") {
             Allow Button(Event Player, Button(Reload));
             Clear Status(Event Player, Hacked);
             If(Global.Intermission_In_Progress);
-                Small Message(Event Player, Custom String("{0}", Value In Array(Global.Intermission_Array, 1), Null, Null));
+                Small Message(Event Player, Custom String("{0} {1}", Value In Array(Global.Intermission_Array, 10), Value In Array(Global.Intermission_Array, 1), Null));
             Else;
                 Clear Status(Event Player, Rooted);
                 Clear Status(Event Player, Phased Out);
