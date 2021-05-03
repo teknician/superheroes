@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2370,7 +2370,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Null), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} in {1} seconds.\nHold {2}", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Custom String("{0} + {1} to open mod menu", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null)), Top, 3, Null, Null, Color(Lime Green), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
