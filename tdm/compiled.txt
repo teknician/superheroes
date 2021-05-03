@@ -40,7 +40,7 @@ settings
 			Game Mode Start: All Slots Filled
 			Hero Limit: Off
 			Respawn Time Scalar: 100%
-			Score To Win: 50
+			Score To Win: 35
 		}
 	}
 	heroes
