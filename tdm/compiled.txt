@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.5.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -47,16 +47,9 @@ settings
 	{
 		General
 		{
-			Spawn With Ultimate Ready: Off
-			Ultimate Generation: 100%
-			Ultimate Generation - Passive: 100%
 			Ashe
 			{
 				Ultimate Duration: 50%
-			}
-			Echo
-			{
-				Ultimate Generation Duplicate: 50%
 			}
 			Junkrat
 			{
@@ -247,7 +240,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("Game starts", Null, Null, Null), Null, Null, Null, Null, Null, Custom String("Match hasn't started", Null, Null, Null), Custom String("Match setup", Null, Null, Null)));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("   Game starts", Null, Null, Null), Null, Null, Null, Null, Null, Custom String("Match hasn't started", Null, Null, Null), Custom String("Match setup", Null, Null, Null)));
     }
 }
 
@@ -918,7 +911,7 @@ rule ("Passive Mods 36 - Evil Eye") {
         EvilEye;
     }
     actions {
-        If(And((Event Player).LoS_Mod_Conditions, Compare((Event Player).Passive_Mod, ==, 36)));
+        If(And((Event Player).LoS_Mod_Conditions, Compare((Event Player).Passive_Mod, ==, 35)));
             Set Player Variable(Event Player, Current_Target_P, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 35)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
             If(And(Compare((Event Player).Current_Target_P, !=, Null), Is Alive((Event Player).Current_Target_P)));
                 Create Effect(Array(Event Player, (Event Player).Current_Target_P), Cloud, Custom Color(255, 0, 0, 64), (Event Player).Current_Target_P, 1, Position and Radius);
@@ -1261,6 +1254,7 @@ rule ("Passive Mods - Level Up (Active)") {
         LevelUpDing;
     }
     actions {
+        Abort If(Compare(Divide((Event Player).Player_ATK_SPD_HP, 4), ==, 20));
         Modify Player Variable(Event Player, Player_ATK_SPD_HP, Add, 4);
         Set Damage Dealt(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Set Move Speed(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
@@ -2016,7 +2010,7 @@ rule ("Active Mods 25 - Railgun") {
         Create Progress Bar HUD Text(Event Player, (Event Player).Railgun_Charge, Custom String("RAILGUN CHARGE", Null, Null, Null), Top, 3, Color(White), Color(Orange), Visible To Values and Color, Default Visibility);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Melee Enabled(Event Player, False);
-        Set Ultimate Ability Enabled(Event Player, False);
+        Disallow Button(Event Player, Button(Ultimate));
         Set Ability 1 Enabled(Event Player, False);
         Set Ability 2 Enabled(Event Player, False);
         Set Primary Fire Enabled(Event Player, False);
@@ -2040,7 +2034,7 @@ rule ("Active Mods 25 - Railgun") {
             Wait(0.15, Ignore Condition);
         End;
         Set Melee Enabled(Event Player, True);
-        Set Ultimate Ability Enabled(Event Player, True);
+        Allow Button(Event Player, Button(Ultimate));
         Set Ability 1 Enabled(Event Player, True);
         Set Ability 2 Enabled(Event Player, True);
         Set Primary Fire Enabled(Event Player, True);
@@ -2389,11 +2383,11 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(0.016, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
-            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
             Wait(0.05, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 2), 1);
-            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
             Wait(0.05, Ignore Condition);
         End;
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Null, Global.Team_1_Spawns, 200);
@@ -2493,10 +2487,10 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
         Wait(2.5, Abort When False);
         If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 12)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
             If(Compare(Team Of(Event Player), ==, Team 1));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
             End;
             If(Compare(Team Of(Event Player), ==, Team 2));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-5, 5), 0, Random Real(-5, 5)))));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
             End;
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
@@ -2871,6 +2865,9 @@ rule ("Mechanics - Open Mod Menu") {
             Small Message(Event Player, Custom String("You're not out of combat!", Null, Null, Null));
             Abort;
         Else;
+            If(Compare((Event Player).Passive_Mod, ==, 36));
+            End;
+            Set Ultimate Ability Enabled(Event Player, True);
             Disallow Button(Event Player, Button(Interact));
             Disallow Button(Event Player, Button(Reload));
             Wait(0.5, Abort When False);
@@ -3011,6 +3008,7 @@ rule ("Don't stay in mod menu too long") {
         Small Message(Event Player, Custom String("Stay in menu too long while not in intermission and you'll lose points.", Null, Null, Null));
         While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
             Wait(20, Abort When False);
+            Small Message(Event Player, Custom String("Menu penalty: Team score -1.", Null, Null, Null));
             Set Team Score(Team Of(Event Player), Subtract(Team Score(Team Of(Event Player)), 1));
         End;
     }
@@ -3634,7 +3632,7 @@ rule ("Passive Mods - Frost Armor (Active)") {
     }
     actions {
         Set Status(Attacker, Event Player, Frozen, 1.25);
-        Wait(1, Ignore Condition);
+        Wait(3, Ignore Condition);
     }
 }
 
