@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.5.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -964,7 +964,8 @@ rule ("Passive Mods 37 - Omega Boost Ult Tracker") {
     actions {
         "keep track of omega ult charge respective to normal ult charge (almost half as fast to charge)"
         While(And(Compare((Event Player).Omega_Charge, !=, 100), Compare((Event Player).Passive_Mod, ==, 36)));
-            Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 2.5), 99999);
+            Wait Until(Or(Compare(Ultimate Charge Percent(Event Player), >=, 2.5), Compare((Event Player).Passive_Mod, !=, 36)), 99999);
+            Abort If(Compare((Event Player).Passive_Mod, !=, 36));
             If(Compare((Event Player).Omega_Charge, !=, 100));
                 Modify Player Variable(Event Player, Omega_Charge, Add, 1.9);
                 Set Ultimate Charge(Event Player, 0);
@@ -1002,7 +1003,8 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.016, Ignore Condition);
         End;
         "wait for player to press Q"
-        Wait Until(And(And(Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1), Is Button Held(Event Player, Button(Ultimate))), Compare((Event Player).Omega_Charge, ==, 100)), 99999);
+        Wait Until(Or(And(And(Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1), Is Button Held(Event Player, Button(Ultimate))), Compare((Event Player).Omega_Charge, ==, 100)), Compare((Event Player).Passive_Mod, !=, 36)), 99999);
+        Abort If(Compare((Event Player).Passive_Mod, !=, 36));
         "determine the target of the ultimate (teammate)"
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Wait(0.016, Ignore Condition);
@@ -2430,6 +2432,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Set Global Variable(Intermission_In_Progress, False);
         Unpause Match Time;
         Wait(0.022, Ignore Condition);
+        Heal(All Players(All Teams), Null, 1000);
         Big Message(All Players(All Teams), Custom String("Fight!", Null, Null, Null));
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             If(Or(Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 0), Compare((Value In Array(All Players(All Teams), Global.Global_Index)).Mod_Menu_Select, ==, 3)));
