@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1142,13 +1142,11 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(73, 0, 1, 4, 6, 8, 10, 13, 16, 18, 24, 28, 31, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 66, 68, 70), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(71, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 64, 66, 68), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
-            Set Player Variable(Event Player, Passive_Mod, Random Integer(2, 36));
-            Wait(0.2, Ignore Condition);
-            Loop;
+            Else;
             //__label_switch_2_2__:
             Call Subroutine(MoveSpeed160);
             Else;
@@ -1282,22 +1280,6 @@ rule ("Mods PlayerDealtFinalBlow Events") {
     actions {
         If(And(Compare((Event Player).Passive_Mod, ==, 12), Compare(Attacker, !=, Victim)));
             Call Subroutine(LevelUpDing);
-    }
-}
-
-rule ("Active Mods 0 - Random") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Active_Mod == 1;
-    }
-    actions {
-        Wait(1, Ignore Condition);
-        Set Player Variable(Event Player, Active_Mod, Random Integer(2, 28));
     }
 }
 
@@ -2964,6 +2946,9 @@ rule ("Mechanics - Open Mod Menu 2") {
         (Event Player).Mod_Menu_Select == 1;
     }
     actions {
+        If(Compare((Event Player).Passive_Mod_Index, ==, 1));
+            Set Player Variable(Event Player, Passive_Mod_Index, Random Integer(2, 36));
+        End;
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Wait(0.5, Ignore Condition);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
@@ -2974,6 +2959,10 @@ rule ("Mechanics - Open Mod Menu 2") {
         Disallow Button(Event Player, Button(Melee));
         Wait(0.5, Ignore Condition);
         Allow Button(Event Player, Button(Melee));
+        Wait Until(Is Button Held(Event Player, Button(Melee)), 9999);
+        If(Compare((Event Player).Active_Mod_Index, ==, 1));
+            Set Player Variable(Event Player, Active_Mod_Index, Random Integer(2, 28));
+        End;
         Wait(0.3, Ignore Condition);
     }
 }
