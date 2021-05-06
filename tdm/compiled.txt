@@ -2714,7 +2714,7 @@ rule ("Initialization - Current Mods HUD Text (Passive)") {
         (Event Player).Passive_Menu_String_Text != 0;
     }
     actions {
-        Create HUD Text(Event Player, Null, (Event Player).Passive_Menu_String_Text, Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame((Event Player).Passive_Menu_String_Text), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -2728,7 +2728,7 @@ rule ("Initialization - Current Mods HUD Text (Active)") {
         (Event Player).Active_Menu_String_Text != 0;
     }
     actions {
-        Create HUD Text(Event Player, Null, (Event Player).Active_Menu_String_Text, Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame((Event Player).Active_Menu_String_Text), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
     }
 }
 
