@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -40,7 +40,7 @@ settings
 			Game Mode Start: All Slots Filled
 			Hero Limit: Off
 			Respawn Time Scalar: 100%
-			Score To Win: 40
+			Score To Win: 30
 		}
 	}
 	heroes
@@ -69,16 +69,17 @@ settings
 }
 variables {
     global:
-        0: Passive_Mod_Strings
-        1: Active_Mod_Strings
-        2: Global_Index
-        3: Team_1_Spawns
-        4: Team_2_Spawns
-        5: Start_Intermission
-        6: Intermission_Duration
-        7: Time_To_Intermission
-        8: Intermission_In_Progress
-        9: Intermission_Array
+        0: Debug
+        1: Passive_Mod_Strings
+        2: Active_Mod_Strings
+        3: Global_Index
+        4: Team_1_Spawns
+        5: Team_2_Spawns
+        6: Start_Intermission
+        7: Intermission_Duration
+        8: Time_To_Intermission
+        9: Intermission_In_Progress
+        10: Intermission_Array
     player:
         0: Is_In_Combat
         1: Health_Temp
@@ -418,8 +419,10 @@ rule ("Passive Mods 6 - Immolation Aura") {
     actions {
         While(Compare((Event Player).Mod_Menu_Select, ==, 3));
             Set Status(Event Player, Null, Burning, 1.25);
-            Damage(Remove From Array(Players Within Radius(Event Player, 6, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, 50);
-            Set Status(Remove From Array(Players Within Radius(Event Player, 6, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Burning, 1.25);
+            If(Is Alive(Event Player));
+                Damage(Remove From Array(Players Within Radius(Event Player, 6, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, 50);
+                Set Status(Remove From Array(Players Within Radius(Event Player, 6, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player), Event Player, Burning, 1.25);
+            End;
             Wait(1, Ignore Condition);
         End;
     }
@@ -1139,11 +1142,13 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(71, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 64, 66, 68), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(73, 0, 1, 4, 6, 8, 10, 13, 16, 18, 24, 28, 31, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 66, 68, 70), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
-            Else;
+            Set Player Variable(Event Player, Passive_Mod, Random Integer(2, 36));
+            Wait(0.2, Ignore Condition);
+            Loop;
             //__label_switch_2_2__:
             Call Subroutine(MoveSpeed160);
             Else;
@@ -1280,6 +1285,22 @@ rule ("Mods PlayerDealtFinalBlow Events") {
     }
 }
 
+rule ("Active Mods 0 - Random") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Active_Mod == 1;
+    }
+    actions {
+        Wait(1, Ignore Condition);
+        Set Player Variable(Event Player, Active_Mod, Random Integer(2, 28));
+    }
+}
+
 rule ("Active Mods 1 - Blink") {
     event {
         Ongoing - Each Player;
@@ -1305,7 +1326,7 @@ rule ("Active Mods 1 - Blink") {
             ".getPosition() # + eventPlayer.getFacingDirection() * 1.2, 1)"
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
         End;
-        Wait(2, Ignore Condition);
+        Wait(2.5, Ignore Condition);
     }
 }
 
@@ -2180,6 +2201,16 @@ rule ("Active Mods 27 - Human Cannonball") {
     }
 }
 
+rule ("Workshop settings") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable At Index(Debug, 0, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Server load visible", Null, Null, Null), False, 0));
+        Set Global Variable At Index(Debug, 1, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Other debug on", Null, Null, Null), False, 0));
+    }
+}
+
 rule ("Spawnpoints - Black Forest") {
     event {
         Ongoing - Global;
@@ -2544,7 +2575,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
     }
     actions {
         Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("None (Press Melee to select a mod)", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("Random", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("160% Movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("140% Damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
@@ -2581,8 +2612,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - supercharge a teammate! (Spray to display ult status)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("None (Click to scroll through mods, press Melee to select one)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2.25 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2.75 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 5, Custom String("Zero Gravity (crouch in midair to toggle)", Null, Null, Null));
@@ -2623,16 +2654,30 @@ rule ("Optional - Debugging") {
     }
     conditions {
         Event Player == Host Player;
+        First Of(Global.Debug) == True;
     }
     actions {
-        If(Compare((Event Player).Eval, !=, Custom String("true", Null, Null, Null)));
-            Set Player Variable(Event Player, Eval, Custom String("true", Null, Null, Null));
-            Create HUD Text(All Players(All Teams), Custom String("Speed: {0}", (Event Player).Vertical_Speed, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        End;
-        Wait Until(And(And(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), Is Button Held(Event Player, Button(Secondary Fire))), Is Button Held(Event Player, Button(Primary Fire))), 99999);
+        Create HUD Text(Host Player, Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Optional - Debugging 2") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Value In Array(Global.Debug, 1) == True;
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Is Button Held(Event Player, Button(Secondary Fire)) == True;
+        Is Button Held(Event Player, Button(Primary Fire)) == True;
+    }
+    actions {
         Create Dummy Bot(Hero(Roadhog), Color(Team 2), 10, Position Of(Event Player), Up);
         Wait(2, Ignore Condition);
         Create Dummy Bot(Hero(Roadhog), Color(Team 1), 10, Position Of(Event Player), Left);
@@ -2643,7 +2688,6 @@ rule ("Optional - Debugging") {
             Destroy Dummy Bot(Team 1, 10);
         End;
         Wait(2, Ignore Condition);
-        Loop;
     }
 }
 
@@ -2655,6 +2699,7 @@ rule ("Optional - Damage Debugging") {
     }
     conditions {
         Is Dummy Bot(Event Player) == True;
+        Value In Array(Global.Debug, 1) == True;
     }
     actions {
         Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
@@ -2869,8 +2914,6 @@ rule ("Mechanics - Open Mod Menu") {
             Small Message(Event Player, Custom String("You're not out of combat!", Null, Null, Null));
             Abort;
         Else;
-            If(Compare((Event Player).Passive_Mod, ==, 36));
-            End;
             Set Ultimate Ability Enabled(Event Player, True);
             Disallow Button(Event Player, Button(Interact));
             Disallow Button(Event Player, Button(Reload));
