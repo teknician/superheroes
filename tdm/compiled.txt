@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3608,7 +3608,7 @@ rule ("Mods PlayerDealtDamage Events") {
                     Call Subroutine(Ambush);
                 End;
             Else If(Compare((Event Player).Active_Mod, ==, 28));
-                If(Compare(Distance Between(Attacker, Victim), <, 3));
+                If(And(Compare(Distance Between(Attacker, Victim), <, 3), Compare(Attacker, !=, Victim)));
                     Start Rule(OraOra, Do Nothing);
                 End;
             Else If(Compare((Event Player).Passive_Mod, ==, 30));
