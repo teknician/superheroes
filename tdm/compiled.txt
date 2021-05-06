@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2557,7 +2557,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
     }
     actions {
         Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("Random", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("160% Movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("140% Damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
@@ -2594,7 +2594,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - supercharge a teammate! (Spray to display ult status)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2.75 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
@@ -2926,10 +2926,6 @@ rule ("Mechanics - Open Mod Menu") {
             Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
             Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
             Wait(0.15, Ignore Condition);
-            If(Compare((Event Player).Passive_Mod_Index, ==, 1));
-                Set Player Variable(Event Player, Passive_Mod_Index, Random Integer(2, 36));
-                Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
-            End;
             Create In-World Text(Event Player, (Event Player).Passive_Menu_String_Text, Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 1.6, Do Not Clip, Visible To Position and String, Color(Lime Green), Default Visibility);
             Set Player Variable(Event Player, Mod_Menu_Text, Last Text ID);
             Create In-World Text(Event Player, Custom String("{0} {1} {2}", Custom String("{0} {1}", Input Binding String(Button(Primary Fire)), Custom String("next mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Custom String("previous mod  | ", Null, Null, Null), Null), Custom String("{0} {1}", Input Binding String(Button(Melee)), Custom String("to choose", Null, Null, Null), Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.17, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
@@ -2951,6 +2947,10 @@ rule ("Mechanics - Open Mod Menu 2") {
         (Event Player).Mod_Menu_Select == 1;
     }
     actions {
+        If(Compare((Event Player).Passive_Mod_Index, ==, 1));
+            Set Player Variable(Event Player, Passive_Mod_Index, Random Integer(2, 36));
+            Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
+        End;
         Destroy In-World Text((Event Player).Mod_Menu_Text);
         Wait(0.5, Ignore Condition);
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
