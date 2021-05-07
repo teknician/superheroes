@@ -141,9 +141,9 @@ rule ("Change View angle up") {
         Is Button Held(Event Player, Button(Jump)) == True;
     }
     actions {
-        While(And(Is Button Held(Event Player, Button(Jump)), Compare(Global.View_Angle, <, 355)));
-            Modify Global Variable(View_Angle, Add, 5);
-            Wait(0.5, Ignore Condition);
+        While(And(Is Button Held(Event Player, Button(Jump)), Compare(Global.View_Angle, <, 359)));
+            Modify Global Variable(View_Angle, Add, 1);
+            Wait(0.05, Ignore Condition);
         End;
     }
 }
@@ -158,9 +158,9 @@ rule ("Change View angle down") {
         Is Button Held(Event Player, Button(Crouch)) == True;
     }
     actions {
-        While(And(Is Button Held(Event Player, Button(Crouch)), Compare(Global.View_Angle, >, 5)));
-            Modify Global Variable(View_Angle, Subtract, 5);
-            Wait(0.5, Ignore Condition);
+        While(And(Is Button Held(Event Player, Button(Crouch)), Compare(Global.View_Angle, >, 1)));
+            Modify Global Variable(View_Angle, Subtract, 1);
+            Wait(0.05, Ignore Condition);
         End;
     }
 }
@@ -171,11 +171,15 @@ rule ("FoV") {
         All;
         All;
     }
+    conditions {
+        Has Spawned(Event Player) == True;
+    }
     actions {
         Set Player Variable(Event Player, Players_Behind, Players Within Radius(Event Player, 10, All Teams, Surfaces));
         For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Players_Behind), 1);
-            If(Is In View Angle(Event Player, Value In Array((Event Player).Players_Behind, (Event Player).Passive_Index), Global.View_Angle));
+            If(Is In View Angle(Value In Array((Event Player).Players_Behind, (Event Player).Passive_Index), Event Player, Global.View_Angle));
                 Set Global Variable(View_Bool, True);
+                Small Message(Event Player, Custom String("In back view", Null, Null, Null));
             Else;
                 Set Global Variable(View_Bool, False);
             End;
