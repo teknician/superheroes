@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -81,70 +81,71 @@ variables {
         9: Intermission_In_Progress
         10: Intermission_Array
     player:
-        0: Is_In_Combat
-        1: Health_Temp
-        2: Mod_Menu_Select
-        3: Mod_Menu_Text
-        4: Mod_Menu_Instructions
-        5: Passive_Mod
-        6: Passive_Mod_Index
-        7: Passive_Mod_FX
-        8: Passive_Mod_FX_Array
-        9: Passive_Mod_Skill_Toggle
-        10: Passive_Menu_String_Text
-        11: Passive_Time
-        12: Passive_Index
-        13: Current_Target_P
-        14: Old_Target_P
-        15: Active_Mod
-        16: Active_Mod_Index
-        17: Active_Mod_FX
-        18: Active_Mod_FX_Array
-        19: Active_Mod_Skill_Toggle
-        20: Active_Menu_String_Text
-        21: Active_Index
-        22: Active_Index_2
-        23: Active_Time
-        24: Current_Target_A
-        25: Old_Target_A
-        26: Index
-        27: Scalar_1
-        28: Scalar_2
-        29: Radius
-        30: Mod_Effect_Caster
-        31: Mod_Effect_Target
-        32: CastMelee_Mod_Conditions
-        33: CastMelee_Mod_Conditions_Ally
-        34: Melee_Mod_Conditions_Ally
-        35: CastUltimate_Mod_Conditions_Ally
-        36: LoS_Mod_Conditions
-        37: Third_Person_Camera_Toggle
-        38: Player_ATK_SPD_HP
-        39: Player_Position
-        40: Player_Foot_Position
-        41: Player_Health
-        42: Vertical_Speed
-        43: Affected_Players
-        44: Active_Affected_Players
-        45: Other_Players
-        46: Current_Hero
-        47: Current_Hero_2
-        48: Distance_Num
-        49: Temp_Index
-        50: Facing_Direction
-        51: Is_Colossus
-        52: Is_Blind
-        53: Is_Visible
-        54: Target
-        55: Target_Area_A
-        56: Target_Position
-        57: Eval
-        58: Railgun_Charge
-        59: OraOra
-        60: Omega_Charge
-        61: Players_Shielded
-        62: Ray_Shields
-        63: Ray_Shields_FX
+        0: Damage_Chase
+        1: Is_In_Combat
+        2: Health_Temp
+        3: Mod_Menu_Select
+        4: Mod_Menu_Text
+        5: Mod_Menu_Instructions
+        6: Passive_Mod
+        7: Passive_Mod_Index
+        8: Passive_Mod_FX
+        9: Passive_Mod_FX_Array
+        10: Passive_Mod_Skill_Toggle
+        11: Passive_Menu_String_Text
+        12: Passive_Time
+        13: Passive_Index
+        14: Current_Target_P
+        15: Old_Target_P
+        16: Active_Mod
+        17: Active_Mod_Index
+        18: Active_Mod_FX
+        19: Active_Mod_FX_Array
+        20: Active_Mod_Skill_Toggle
+        21: Active_Menu_String_Text
+        22: Active_Index
+        23: Active_Index_2
+        24: Active_Time
+        25: Current_Target_A
+        26: Old_Target_A
+        27: Index
+        28: Scalar_1
+        29: Scalar_2
+        30: Radius
+        31: Mod_Effect_Caster
+        32: Mod_Effect_Target
+        33: CastMelee_Mod_Conditions
+        34: CastMelee_Mod_Conditions_Ally
+        35: Melee_Mod_Conditions_Ally
+        36: CastUltimate_Mod_Conditions_Ally
+        37: LoS_Mod_Conditions
+        38: Third_Person_Camera_Toggle
+        39: Player_ATK_SPD_HP
+        40: Player_Position
+        41: Player_Foot_Position
+        42: Player_Health
+        43: Vertical_Speed
+        44: Affected_Players
+        45: Active_Affected_Players
+        46: Other_Players
+        47: Current_Hero
+        48: Current_Hero_2
+        49: Distance_Num
+        50: Temp_Index
+        51: Facing_Direction
+        52: Is_Colossus
+        53: Is_Blind
+        54: Is_Visible
+        55: Target
+        56: Target_Area_A
+        57: Target_Position
+        58: Eval
+        59: Railgun_Charge
+        60: OraOra
+        61: Omega_Charge
+        62: Players_Shielded
+        63: Ray_Shields
+        64: Ray_Shields_FX
 }
 subroutines {
     0: MoveSpeed160
@@ -1321,8 +1322,8 @@ rule ("Active Mods 1 - Blink") {
     }
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Event Player, 3);
-        Wait(0.2, Ignore Condition);
-        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 6.5)));
+        Wait(0.15, Ignore Condition);
+        Teleport(Event Player, Add(Event Player, Multiply(Facing Direction Of(Event Player), 7)));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Event Player, 200);
         If(Not(Is Moving(Event Player)));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
@@ -1330,7 +1331,7 @@ rule ("Active Mods 1 - Blink") {
             ".getPosition() # + eventPlayer.getFacingDirection() * 1.2, 1)"
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
         End;
-        Wait(2.5, Ignore Condition);
+        Wait(2.85, Ignore Condition);
     }
 }
 
@@ -2213,7 +2214,9 @@ rule ("Workshop settings") {
     }
     actions {
         Set Global Variable At Index(Debug, 0, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Server load visible", Null, Null, Null), False, 0));
-        Set Global Variable At Index(Debug, 1, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Other debug on", Null, Null, Null), False, 1));
+        Set Global Variable At Index(Debug, 1, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Spawn bots", Null, Null, Null), False, 1));
+        Set Global Variable At Index(Debug, 2, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage enemy", Null, Null, Null), False, 1));
+        Set Global Variable At Index(Debug, 3, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage self", Null, Null, Null), False, 1));
     }
 }
 
@@ -2620,7 +2623,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 37, Custom String("Ray Shields: Convert incoming damage into shields for teammates behind you, while taking full damage.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 6 meters forward (2.75 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 5, Custom String("Zero Gravity (crouch in midair to toggle)", Null, Null, Null));
@@ -2696,6 +2699,45 @@ rule ("Optional - Debugging 2") {
             Destroy Dummy Bot(Team 1, 10);
         End;
         Wait(2, Ignore Condition);
+    }
+}
+
+rule ("Optional - Debugging 3") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Value In Array(Global.Debug, 2) == True;
+        Is Button Held(Event Player, Button(Interact)) == True;
+    }
+    actions {
+        Damage(Player Closest To Reticle(Event Player, All Teams), Null, 100);
+        Wait(2, Ignore Condition);
+    }
+}
+
+rule ("Optional - Debugging 4") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Value In Array(Global.Debug, 3) == True;
+        Is Button Held(Event Player, Button(Melee)) == True;
+    }
+    actions {
+        Chase Player Variable Over Time(Event Player, Damage_Chase, 400, 6, Destination and Duration);
+        Wait Until(Not(Is Button Held(Event Player, Button(Melee))), 7);
+        Stop Chasing Player Variable(Event Player, Damage_Chase);
+        Damage(Event Player, Player Closest To Reticle(Event Player, Team 2), (Event Player).Damage_Chase);
+        Small Message(All Players(All Teams), Custom String("Damage: {0}", (Event Player).Damage_Chase, Null, Null));
+        Wait(2, Ignore Condition);
+        Set Player Variable(Event Player, Damage_Chase, 0);
     }
 }
 
