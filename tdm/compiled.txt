@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2734,7 +2734,7 @@ rule ("Camera - 3rd Person Toggle") {
     }
 }
 
-rule ("Unstick yourself") {
+rule ("Get yourself unstuck") {
     event {
         Ongoing - Each Player;
         All;
@@ -3655,9 +3655,10 @@ rule ("Passive Mods - Mana Shield (Drain)") {
         ManaShieldDamaged;
     }
     actions {
-        Heal(Event Player, Null, Event Damage);
-        Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), Multiply(Event Damage, 0.25)));
-        Wait(0.2, Ignore Condition);
+        If(Compare(Ultimate Charge Percent(Event Player), >=, 15));
+            Heal(Event Player, Null, Event Damage);
+            Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), Multiply(Event Damage, 0.25)));
+            Wait(0.032, Ignore Condition);
     }
 }
 
@@ -3679,7 +3680,7 @@ rule ("Passive Mods - Frost Armor (Active)") {
     }
     actions {
         Set Status(Attacker, Event Player, Frozen, 1.25);
-        Wait(3, Ignore Condition);
+        Wait(2.5, Ignore Condition);
     }
 }
 
