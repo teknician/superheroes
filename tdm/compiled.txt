@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.6.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.6.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -382,7 +382,7 @@ rule ("Passive Mods 4 - Smol Mode") {
             Set Crouch Enabled(Event Player, False);
             Wait(0.75, Ignore Condition);
             Set Crouch Enabled(Event Player, True);
-            Wait Until(Is Button Held(Event Player, Button(Crouch)), 99999);
+            Wait Until(Or(Is Button Held(Event Player, Button(Crouch)), Is Dead(Event Player)), 99999);
             Wait(0.2, Ignore Condition);
             Set Crouch Enabled(Event Player, False);
             Start Scaling Player(Event Player, 1, True);
@@ -661,7 +661,7 @@ rule ("Passive Mods 13 - Aimbot") {
     }
     actions {
         While(And(And(And(And(And(And(Compare(Normalized Health(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), <, 0.5), Is In View Angle(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), 25)), Is In Line of Sight(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Enemy Barriers Block LOS)), Not(Has Status(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Phased Out))), Not(Has Status(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Invincible))), Is Alive(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))), Has Spawned(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))))));
-            Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Add(Eye Position(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), Vector(0, 0.1, 0))), 2000, To World, Direction and Turn Rate);
+            Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Update Every Frame(Add(Eye Position(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))), Vector(0, 0.1, 0)))), 2000, To World, Direction and Turn Rate);
             Wait(0.25, Ignore Condition);
         End;
         Stop Facing(Event Player);
@@ -1557,7 +1557,7 @@ rule ("Active Mods 10 - Shadowstep") {
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
         Teleport(Event Player, Nearest Walkable Position(World Vector Of(Vector(0, 0, -3.5), (Event Player).Mod_Effect_Target, Rotation And Translation)));
         Set Facing(Event Player, Direction Towards(Event Player, (Event Player).Mod_Effect_Target), To World);
-        Wait(7, Ignore Condition);
+        Wait(8, Ignore Condition);
     }
 }
 
@@ -1686,6 +1686,8 @@ rule ("Active Mods 14 - Feign Death") {
         Wait Until(And(Is Dead(Event Player), Or(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Melee))), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload))))), 6);
         Enable Built-In Game Mode Respawning(Event Player);
         Resurrect(Event Player);
+        Play Effect(All Players(All Teams), Reaper Wraith Form Sound, Color(Team 2), Event Player, 25);
+        Play Effect(All Players(All Teams), Moira Fade Reappear Effect, Color(Team 2), Event Player, 1);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 2);
         Wait(18, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
@@ -2604,7 +2606,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 8, Custom String("Entangling Roots: Melee roots an enemy for 1.5 sec. (25m range, 9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 9, Custom String("Blind: Target an enemy and press melee to blind them (13 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 10, Custom String("Fear: Melee forces a target enemy to run away from you (25m range, 10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target  enemy (25m range, 7 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target  enemy (25m range, 8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 12, Custom String("Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 13, Custom String("Save Disc: Press Reload + Melee to set a point you can return to by pressing them again (4 sec. CD) (resets on death)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Telekinesis: Melee to push an enemy towards your cursor after 0.75 sec. (25m range, 4 sec. CD)", Null, Null, Null));
@@ -2625,6 +2627,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("If you're stuck............Hold Reload only", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
     }
 }
 
@@ -2673,61 +2676,16 @@ rule ("Optional - Debugging 2") {
     }
 }
 
-rule ("Optional - Damage Debugging") {
-    event {
-        Player Took Damage;
-        All;
-        All;
-    }
-    conditions {
-        Is Dummy Bot(Event Player) == True;
-        Value In Array(Global.Debug, 1) == True;
-    }
-    actions {
-        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
-    }
-}
-
-rule ("Optional - Host Self Damage") {
+rule ("Initialization - Current Mods HUD Text") {
     event {
         Ongoing - Each Player;
         All;
         All;
     }
-    conditions {
-        Event Player == Host Player;
-        Is Button Held(Event Player, Button(Ultimate)) == True;
-        Is Button Held(Event Player, Button(Crouch)) == True;
-    }
     actions {
-        Damage(Event Player, Closest Player To(Position Of(Event Player), Opposite Team Of(Team Of(Event Player))), 1);
-    }
-}
-
-rule ("Initialization - Current Mods HUD Text (Passive)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Passive_Menu_String_Text != 0;
-    }
-    actions {
+        Wait Until(Compare((Event Player).Passive_Menu_String_Text, !=, 0), 99999);
         Create HUD Text(Event Player, Null, Update Every Frame((Event Player).Passive_Menu_String_Text), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
-    }
-}
-
-rule ("Initialization - Current Mods HUD Text (Active)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Active_Menu_String_Text != 0;
-    }
-    actions {
+        Wait Until(Compare((Event Player).Active_Menu_String_Text, !=, 0), 99999);
         Create HUD Text(Event Player, Null, Update Every Frame((Event Player).Active_Menu_String_Text), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
     }
 }
@@ -2773,6 +2731,43 @@ rule ("Camera - 3rd Person Toggle") {
             Wait(0.116, Ignore Condition);
             Stop Camera(Event Player);
             Set Player Variable(Event Player, Third_Person_Camera_Toggle, 0);
+    }
+}
+
+rule ("Unstick yourself") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Intermission_In_Progress == False;
+        (Event Player).Is_In_Combat == False;
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Interact)) == False;
+        Is Button Held(Event Player, Button(Crouch)) == False;
+    }
+    actions {
+        Wait(2, Abort When False);
+        If(Compare(Team Of(Event Player), ==, Team 1));
+            Teleport(Event Player, Global.Team_1_Spawns);
+        Else If(Compare(Team Of(Event Player), ==, Team 2));
+            Teleport(Event Player, Global.Team_2_Spawns);
+    }
+}
+
+rule ("Nerf Echo") {
+    event {
+        Ongoing - Each Player;
+        All;
+        Echo;
+    }
+    conditions {
+        Hero Of(Event Player) == Hero(Echo);
+    }
+    actions {
+        Set Ultimate Ability Enabled(Event Player, False);
+        Wait(1, Ignore Condition);
     }
 }
 
@@ -2868,6 +2863,19 @@ rule ("Mechanics - Conditions to use LoS Mods") {
 rule ("Mechanics - Check out of combat") {
     event {
         Player Took Damage;
+        All;
+        All;
+    }
+    actions {
+        Set Player Variable(Event Player, Is_In_Combat, True);
+        Wait(5, Restart When True);
+        Set Player Variable(Event Player, Is_In_Combat, False);
+    }
+}
+
+rule ("Mechanics - Check out of combat") {
+    event {
+        Player Dealt Damage;
         All;
         All;
     }
