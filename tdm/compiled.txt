@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -147,6 +147,7 @@ variables {
         63: Ray_Shields
         64: Ray_Shields_FX
         65: Shield_Amount
+        66: Shield_Index
 }
 subroutines {
     0: MoveSpeed160
@@ -3810,9 +3811,10 @@ rule ("Passive Mods - Ray Shields (activated)") {
         RayShieldsDamaged;
     }
     actions {
-        For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Players_Shielded), 1);
+        For Player Variable(Event Player, Passive_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Players_Shielded), >, 0), Count Of((Event Player).Players_Shielded), 0), 1);
             Add Health Pool To Player(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Health, Divide(Event Damage, Count Of((Event Player).Players_Shielded)), False, True);
-            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Amount, Last Created Health Pool);
+            Set Player Variable At Index(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Amount, (Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Shield_Index, Last Created Health Pool);
+            Modify Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, Add, 1);
             Wait(0.016, Ignore Condition);
             If(Compare(Count Of((Event Player).Players_Shielded), >, 0));
                 Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
@@ -3822,7 +3824,8 @@ rule ("Passive Mods - Ray Shields (activated)") {
             End;
             Wait(0.032, Ignore Condition);
         End;
-        For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Players_Shielded), 1);
+        Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
+        For Player Variable(Event Player, Passive_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Players_Shielded), >, 0), Count Of((Event Player).Players_Shielded), 0), 1);
             Wait(0.5, Ignore Condition);
             Destroy Effect((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX);
         End;
