@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -146,6 +146,7 @@ variables {
         62: Players_Shielded
         63: Ray_Shields
         64: Ray_Shields_FX
+        65: Shield_Amount
 }
 subroutines {
     0: MoveSpeed160
@@ -183,53 +184,53 @@ subroutines {
     32: OmegaBoostFX
     33: OmegaBoost
     34: RayShields
-    35: RayShieldsDamaged
-    36: Blink
-    37: DeathGrip
-    38: Preparation
-    39: ZeroG
-    40: Corruption
-    41: Translocate
-    42: EntanglingRoots
-    43: Blind
-    44: Fear
-    45: Shadowstep
-    46: GoombaStomp
-    47: SaveDisc
-    48: SaveDiscTeleport
-    49: Telekinesis
-    50: FeignDeath
-    51: Sneak
-    52: Hex
-    53: Taunt
-    54: Cleanse
-    55: LifeTap
-    56: LightningBolt
-    57: HealthingHand
-    58: Colossus_Reset
-    59: Colossus
-    60: ColossusFX
-    61: Railgun
-    62: ArmorField
-    63: Immolation
-    64: Ambush
-    65: Knockout
-    66: BoxerDealtDmg
-    67: Devour
-    68: Infection
-    69: BoxerBrig
-    70: BoxerRein
-    71: SneakDealtDmg
-    72: Disruption
-    73: Lifesteal
-    74: OraOra
-    75: ManaShieldDamaged
-    76: ThornsDamaged
-    77: FrostArmorDamaged
-    78: BootsOfMobilityDamaged
-    79: InfectionDamaged
-    80: SneakDamaged
-    81: ColossusHookDamaged
+    35: Blink
+    36: DeathGrip
+    37: Preparation
+    38: ZeroG
+    39: Corruption
+    40: Translocate
+    41: EntanglingRoots
+    42: Blind
+    43: Fear
+    44: Shadowstep
+    45: GoombaStomp
+    46: SaveDisc
+    47: SaveDiscTeleport
+    48: Telekinesis
+    49: FeignDeath
+    50: Sneak
+    51: Hex
+    52: Taunt
+    53: Cleanse
+    54: LifeTap
+    55: LightningBolt
+    56: HealthingHand
+    57: Colossus_Reset
+    58: Colossus
+    59: ColossusFX
+    60: Railgun
+    61: ArmorField
+    62: Immolation
+    63: Ambush
+    64: Knockout
+    65: BoxerDealtDmg
+    66: Devour
+    67: Infection
+    68: BoxerBrig
+    69: BoxerRein
+    70: SneakDealtDmg
+    71: Disruption
+    72: Lifesteal
+    73: OraOra
+    74: ManaShieldDamaged
+    75: ThornsDamaged
+    76: FrostArmorDamaged
+    77: BootsOfMobilityDamaged
+    78: InfectionDamaged
+    79: SneakDamaged
+    80: ColossusHookDamaged
+    81: RayShieldsDamaged
     82: RemoveFXOnDeath
     83: SmolModeDeath
     84: CorpseExplosion
@@ -1137,11 +1138,33 @@ rule ("Passive Mods 38 - Ray Shields") {
         RayShields;
     }
     actions {
-        If(Compare(Count Of(Players Within Radius(Event Player, 10, Team Of(Event Player), Surfaces)), >, 0));
-            Set Player Variable(Event Player, Players_Shielded, Filtered Array(Players Within Radius(Event Player, 10, Team Of(Event Player), Surfaces), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
+        If(Compare(Count Of(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces)), >, 0));
+            Set Player Variable(Event Player, Players_Shielded, Filtered Array(Remove From Array(Players Within Radius(Event Player, 10, Team Of(Event Player), Surfaces), Event Player), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
         End;
         Wait(1, Ignore Condition);
         Loop;
+    }
+}
+
+rule ("Passive Mods 38 - Ray Shields Decay") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Shield_Amount != Null;
+    }
+    actions {
+        Set Player Variable(Event Player, Health_Temp, Health(Event Player));
+        Wait(3, Ignore Condition);
+        If(Compare((Event Player).Health_Temp, >, Health(Event Player)));
+            Loop;
+        Else;
+            Remove Health Pool From Player((Event Player).Shield_Amount);
+            Set Player Variable(Event Player, Shield_Amount, Null);
+        End;
+        Wait(0.1, Ignore Condition);
     }
 }
 
@@ -3789,17 +3812,21 @@ rule ("Passive Mods - Ray Shields (activated)") {
     actions {
         For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Players_Shielded), 1);
             Add Health Pool To Player(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Health, Divide(Event Damage, Count Of((Event Player).Players_Shielded)), False, True);
+            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Amount, Last Created Health Pool);
             Wait(0.016, Ignore Condition);
-            Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
+            If(Compare(Count Of((Event Player).Players_Shielded), >, 0));
+                Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
+            End;
             If(Not(Entity Exists((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX)));
                 Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Ray_Shields_FX, Last Created Entity);
             End;
             Wait(0.032, Ignore Condition);
         End;
         For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Players_Shielded), 1);
-            Wait Until(Compare(Distance Between(Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)), >, 10), 1.5);
+            Wait(0.5, Ignore Condition);
             Destroy Effect((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX);
         End;
+        Wait(0.5, Ignore Condition);
     }
 }
 
