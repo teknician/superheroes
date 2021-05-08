@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1140,7 +1140,7 @@ rule ("Passive Mods 38 - Ray Shields") {
     }
     actions {
         If(Compare(Count Of(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces)), >, 0));
-            Set Player Variable(Event Player, Players_Shielded, Filtered Array(Remove From Array(Players Within Radius(Event Player, 10, Team Of(Event Player), Surfaces), Event Player), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
+            Set Player Variable(Event Player, Players_Shielded, Filtered Array(Remove From Array(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces), Event Player), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
         End;
         Wait(1, Ignore Condition);
         Loop;
@@ -1158,14 +1158,19 @@ rule ("Passive Mods 38 - Ray Shields Decay") {
     }
     actions {
         Set Player Variable(Event Player, Health_Temp, Health(Event Player));
-        Wait(3, Ignore Condition);
+        Wait(4.5, Ignore Condition);
         If(Compare((Event Player).Health_Temp, >, Health(Event Player)));
             Loop;
         Else;
-            Remove Health Pool From Player((Event Player).Shield_Amount);
+            For Player Variable(Event Player, Shield_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Shield_Amount), >, 0), Count Of((Event Player).Shield_Amount), 0), 1);
+                Remove Health Pool From Player(Value In Array((Event Player).Shield_Amount, Value In Array((Event Player).Shield_Amount, (Event Player).Shield_Index)));
+            End;
             Set Player Variable(Event Player, Shield_Amount, Null);
         End;
-        Wait(0.1, Ignore Condition);
+        Wait(0.25, Ignore Condition);
+        If(Compare((Event Player).Shield_Amount, !=, Null));
+            Remove Health Pool From Player((Event Player).Shield_Amount);
+            Set Player Variable(Event Player, Shield_Amount, Null);
     }
 }
 
@@ -3824,8 +3829,10 @@ rule ("Passive Mods - Ray Shields (activated)") {
             End;
             Wait(0.032, Ignore Condition);
         End;
-        Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
-        For Player Variable(Event Player, Passive_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Players_Shielded), >, 0), Count Of((Event Player).Players_Shielded), 0), 1);
+        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
+            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
+        End;
+        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
             Wait(0.5, Ignore Condition);
             Destroy Effect((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX);
         End;
