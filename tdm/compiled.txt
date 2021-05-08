@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1142,7 +1142,7 @@ rule ("Passive Mods 38 - Ray Shields") {
         If(Compare(Count Of(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces)), >, 0));
             Set Player Variable(Event Player, Players_Shielded, Filtered Array(Remove From Array(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces), Event Player), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
         End;
-        Wait(1, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Loop;
     }
 }
@@ -1157,20 +1157,12 @@ rule ("Passive Mods 38 - Ray Shields Decay") {
         (Event Player).Shield_Amount != Null;
     }
     actions {
-        Set Player Variable(Event Player, Health_Temp, Health(Event Player));
-        Wait(4.5, Ignore Condition);
-        If(Compare((Event Player).Health_Temp, >, Health(Event Player)));
-            Loop;
-        Else;
-            For Player Variable(Event Player, Shield_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Shield_Amount), >, 0), Count Of((Event Player).Shield_Amount), 0), 1);
-                Remove Health Pool From Player(Value In Array((Event Player).Shield_Amount, Value In Array((Event Player).Shield_Amount, (Event Player).Shield_Index)));
-            End;
-            Set Player Variable(Event Player, Shield_Amount, Null);
+        Wait(4, Ignore Condition);
+        For Player Variable(Event Player, Shield_Index, 0, Add(Count Of((Event Player).Shield_Amount), 1), 1);
+            Remove Health Pool From Player(Value In Array((Event Player).Shield_Amount, Value In Array((Event Player).Shield_Amount, (Event Player).Shield_Index)));
         End;
+        Set Player Variable(Event Player, Shield_Amount, Null);
         Wait(0.25, Ignore Condition);
-        If(Compare((Event Player).Shield_Amount, !=, Null));
-            Remove Health Pool From Player((Event Player).Shield_Amount);
-            Set Player Variable(Event Player, Shield_Amount, Null);
     }
 }
 
@@ -2244,8 +2236,9 @@ rule ("Workshop settings") {
     actions {
         Set Global Variable At Index(Debug, 0, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Server load visible", Null, Null, Null), False, 0));
         Set Global Variable At Index(Debug, 1, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Spawn bots", Null, Null, Null), False, 1));
-        Set Global Variable At Index(Debug, 2, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage enemy", Null, Null, Null), False, 1));
-        Set Global Variable At Index(Debug, 3, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage self", Null, Null, Null), False, 1));
+        Set Global Variable At Index(Debug, 2, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage enemy", Null, Null, Null), False, 2));
+        Set Global Variable At Index(Debug, 3, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage self", Null, Null, Null), False, 3));
+        Set Global Variable At Index(Debug, 4, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Spawn more bots", Null, Null, Null), False, 4));
     }
 }
 
@@ -2723,10 +2716,7 @@ rule ("Optional - Debugging 2") {
         Create Dummy Bot(Hero(Roadhog), Color(Team 1), 10, Position Of(Event Player), Left);
         Wait(2, Ignore Condition);
         Wait Until(And(And(And(Is Button Held(Event Player, Button(Reload)), Is Button Held(Event Player, Button(Jump))), Is Button Held(Event Player, Button(Secondary Fire))), Is Button Held(Event Player, Button(Primary Fire))), 99999);
-        If(Compare(Players In Slot(10, Team 2), !=, 0));
-            Destroy Dummy Bot(Team 2, 10);
-            Destroy Dummy Bot(Team 1, 10);
-        End;
+        Destroy All Dummy Bots;
         Wait(2, Ignore Condition);
     }
 }
@@ -2767,6 +2757,25 @@ rule ("Optional - Debugging 4") {
         Small Message(All Players(All Teams), Custom String("Damage: {0}", (Event Player).Damage_Chase, Null, Null));
         Wait(2, Ignore Condition);
         Set Player Variable(Event Player, Damage_Chase, 0);
+    }
+}
+
+rule ("Optional - Debugging 5") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Value In Array(Global.Debug, 4) == True;
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Is Button Held(Event Player, Button(Melee)) == True;
+    }
+    actions {
+        Create Dummy Bot(Hero(Roadhog), Team Of(Event Player), -1, Position Of(Event Player), Up);
+        Wait(2, Ignore Condition);
     }
 }
 
@@ -3816,27 +3825,21 @@ rule ("Passive Mods - Ray Shields (activated)") {
         RayShieldsDamaged;
     }
     actions {
+        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
+            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
+            Wait(0.016, Ignore Condition);
+        End;
         For Player Variable(Event Player, Passive_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Players_Shielded), >, 0), Count Of((Event Player).Players_Shielded), 0), 1);
             Add Health Pool To Player(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Health, Divide(Event Damage, Count Of((Event Player).Players_Shielded)), False, True);
             Set Player Variable At Index(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Amount, (Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Shield_Index, Last Created Health Pool);
             Modify Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, Add, 1);
-            Wait(0.016, Ignore Condition);
-            If(Compare(Count Of((Event Player).Players_Shielded), >, 0));
-                Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
-            End;
-            If(Not(Entity Exists((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX)));
-                Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Ray_Shields_FX, Last Created Entity);
-            End;
-            Wait(0.032, Ignore Condition);
-        End;
-        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
-            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
-        End;
-        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
-            Wait(0.5, Ignore Condition);
+            Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
+            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Ray_Shields_FX, Last Created Entity);
+            Wait(1, Ignore Condition);
             Destroy Effect((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX);
+            Wait(0.5, Ignore Condition);
         End;
-        Wait(0.5, Ignore Condition);
+        Wait(1, Ignore Condition);
     }
 }
 
