@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.7.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -143,11 +143,9 @@ variables {
         59: Railgun_Charge
         60: OraOra
         61: Omega_Charge
-        62: Players_Shielded
-        63: Ray_Shields
-        64: Ray_Shields_FX
-        65: Shield_Amount
-        66: Shield_Index
+        62: Blade_Chase
+        63: Blade_Damage
+        64: Blade_Victim
 }
 subroutines {
     0: MoveSpeed160
@@ -184,46 +182,46 @@ subroutines {
     31: OmegaBoostUlt
     32: OmegaBoostFX
     33: OmegaBoost
-    34: RayShields
-    35: Blink
-    36: DeathGrip
-    37: Preparation
-    38: ZeroG
-    39: Corruption
-    40: Translocate
-    41: EntanglingRoots
-    42: Blind
-    43: Fear
-    44: Shadowstep
-    45: GoombaStomp
-    46: SaveDisc
-    47: SaveDiscTeleport
-    48: Telekinesis
-    49: FeignDeath
-    50: Sneak
-    51: Hex
-    52: Taunt
-    53: Cleanse
-    54: LifeTap
-    55: LightningBolt
-    56: HealthingHand
-    57: Colossus_Reset
-    58: Colossus
-    59: ColossusFX
-    60: Railgun
-    61: ArmorField
-    62: Immolation
-    63: Ambush
-    64: Knockout
-    65: BoxerDealtDmg
-    66: Devour
-    67: Infection
-    68: BoxerBrig
-    69: BoxerRein
-    70: SneakDealtDmg
-    71: Disruption
-    72: Lifesteal
-    73: OraOra
+    34: Blink
+    35: DeathGrip
+    36: Preparation
+    37: ZeroG
+    38: Corruption
+    39: Translocate
+    40: EntanglingRoots
+    41: Blind
+    42: Fear
+    43: Shadowstep
+    44: GoombaStomp
+    45: SaveDisc
+    46: SaveDiscTeleport
+    47: Telekinesis
+    48: FeignDeath
+    49: Sneak
+    50: Hex
+    51: Taunt
+    52: Cleanse
+    53: LifeTap
+    54: LightningBolt
+    55: HealthingHand
+    56: Colossus_Reset
+    57: Colossus
+    58: ColossusFX
+    59: Railgun
+    60: ArmorField
+    61: Immolation
+    62: Ambush
+    63: Knockout
+    64: BoxerDealtDmg
+    65: Devour
+    66: Infection
+    67: BoxerBrig
+    68: BoxerRein
+    69: SneakDealtDmg
+    70: Disruption
+    71: Lifesteal
+    72: OraOra
+    73: BouncingBlade
     74: ManaShieldDamaged
     75: ThornsDamaged
     76: FrostArmorDamaged
@@ -231,17 +229,16 @@ subroutines {
     78: InfectionDamaged
     79: SneakDamaged
     80: ColossusHookDamaged
-    81: RayShieldsDamaged
-    82: RemoveFXOnDeath
-    83: SmolModeDeath
-    84: CorpseExplosion
-    85: Revenge
-    86: GetBehindMeDeath
-    87: ZeroGDeath
-    88: ColossusDeath
-    89: LevelUpDing
-    90: VictoryRush
-    91: PlayerReset
+    81: RemoveFXOnDeath
+    82: SmolModeDeath
+    83: CorpseExplosion
+    84: Revenge
+    85: GetBehindMeDeath
+    86: ZeroGDeath
+    87: ColossusDeath
+    88: LevelUpDing
+    89: VictoryRush
+    90: PlayerReset
 }
 rule ("Initialize intermission") {
     event {
@@ -1133,39 +1130,6 @@ rule ("Relay Omega Boost status") {
     }
 }
 
-rule ("Passive Mods 38 - Ray Shields") {
-    event {
-        Subroutine;
-        RayShields;
-    }
-    actions {
-        If(Compare(Count Of(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces)), >, 0));
-            Set Player Variable(Event Player, Players_Shielded, Filtered Array(Remove From Array(Players Within Radius(Event Player, 10, Remove From Array(Team Of(Event Player), Event Player), Surfaces), Event Player), Compare(Angle Between Vectors(Multiply(-1, Facing Direction Of(Event Player)), Direction Towards(Eye Position(Event Player), Eye Position(Current Array Element))), <, 80)));
-        End;
-        Wait(0.5, Ignore Condition);
-        Loop;
-    }
-}
-
-rule ("Passive Mods 38 - Ray Shields Decay") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Shield_Amount != Null;
-    }
-    actions {
-        Wait(4, Ignore Condition);
-        For Player Variable(Event Player, Shield_Index, 0, Add(Count Of((Event Player).Shield_Amount), 1), 1);
-            Remove Health Pool From Player(Value In Array((Event Player).Shield_Amount, (Event Player).Shield_Index));
-        End;
-        Set Player Variable(Event Player, Shield_Amount, Null);
-        Wait(0.25, Ignore Condition);
-    }
-}
-
 rule ("Choose/Check Passive Mod") {
     event {
         Ongoing - Each Player;
@@ -1183,7 +1147,7 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(73, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 64, 66, 68, 71), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36, 37), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(71, 0, 1, 2, 4, 6, 8, 11, 14, 16, 22, 26, 29, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 64, 66, 68), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
@@ -1283,9 +1247,6 @@ rule ("Choose/Check Passive Mod") {
             //__label_switch_2_28__:
             Start Rule(OmegaBoostUlt, Do Nothing);
             Start Rule(OmegaBoost, Do Nothing);
-            Else;
-            //__label_switch_2_29__:
-            Start Rule(RayShields, Do Nothing);
             Else;
             //__label_switch_2_default__:
             End;
@@ -2229,6 +2190,30 @@ rule ("Active Mods 27 - Human Cannonball") {
     }
 }
 
+rule ("Active Mods 29 - Bouncing Blades") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Active_Mod == 29;
+        Global.Intermission_In_Progress == False;
+        Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
+    }
+    actions {
+        Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 50);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Subtract(Eye Position(Event Player), Vector(0, 0.5, 0)), 1);
+        Set Player Variable(Event Player, Blade_Chase, 100);
+        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 6, Destination and Duration);
+        Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 6);
+        Stop Chasing Player Variable(Event Player, Blade_Chase);
+        Wait Until(Compare((Event Player).Blade_Damage, <=, 5), 99999);
+        Wait(8, Ignore Condition);
+    }
+}
+
 rule ("Workshop settings") {
     event {
         Ongoing - Global;
@@ -2642,7 +2627,6 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 34, Custom String("Superhero Landing: The faster you fall, the higher the radius, damage, and knockdown is on enemies when you land.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 35, Custom String("Evil Eye: Keep an enemy in your crosshairs to gradually weaken them (-healing, -speed, -damage, +damaged).", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 36, Custom String("Omega Boost: Your ultimate becomes omega boost - supercharge a teammate! (Spray to display ult status)", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 37, Custom String("Ray Shields: Convert incoming damage into shields for teammates behind you, while taking full damage.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (3 sec. CD)", Null, Null, Null));
@@ -2672,6 +2656,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 5 seconds, damage you deal chains to other enemies. (Melee to activate) (8 sec. CD)", Null, Null, Null));
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
@@ -2774,7 +2759,7 @@ rule ("Optional - Debugging 5") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
-        Create Dummy Bot(Hero(Roadhog), Team Of(Event Player), -1, Position Of(Event Player), Up);
+        Create Dummy Bot(Hero(Roadhog), Team 2, -1, Position Of(Event Player), Up);
         Wait(2, Ignore Condition);
     }
 }
@@ -3053,7 +3038,7 @@ rule ("Mechanics - Open Mod Menu 2") {
     }
     actions {
         If(Compare((Event Player).Passive_Mod_Index, ==, 1));
-            Set Player Variable(Event Player, Passive_Mod_Index, Random Integer(2, 37));
+            Set Player Variable(Event Player, Passive_Mod_Index, Random Integer(2, 36));
             Set Player Variable(Event Player, Passive_Menu_String_Text, Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index));
         End;
         Destroy In-World Text((Event Player).Mod_Menu_Text);
@@ -3692,6 +3677,28 @@ rule ("Active Mods 28 - ORA ORA!") {
     }
 }
 
+rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
+    event {
+        Subroutine;
+        BouncingBlade;
+    }
+    actions {
+        Set Player Variable(Attacker, Blade_Damage, Event Damage);
+        Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.5);
+        Set Player Variable(Attacker, Blade_Victim, Remove From Array(Closest Player To(Victim, Opposite Team Of(Team Of(Attacker))), Victim));
+        If(And(And(Compare((Attacker).Blade_Victim, !=, Null), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 8)), Compare((Attacker).Blade_Damage, >, 5)));
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
+            Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Victim, (Attacker).Blade_Victim, Color(Red), Visible To Position and Radius);
+            Set Player Variable At Index(Attacker, Active_Mod_FX, 0, Last Created Entity);
+            Wait(0.25, Ignore Condition);
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Attacker).Blade_Victim, 1);
+            Destroy Effect(First Of((Attacker).Active_Mod_FX));
+            Damage((Attacker).Blade_Victim, Attacker, (Attacker).Blade_Damage);
+        End;
+        Wait(0.1, Ignore Condition);
+    }
+}
+
 rule ("Mods PlayerDealtDamage Events") {
     event {
         Player Dealt Damage;
@@ -3731,6 +3738,9 @@ rule ("Mods PlayerDealtDamage Events") {
             Else If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
                 Start Rule(BoxerRein, Do Nothing);
             End;
+        End;
+        If(And(Compare((Event Player).Active_Mod, ==, 29), Compare((Event Player).Blade_Chase, >, 0)));
+            Start Rule(BouncingBlade, Do Nothing);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 16), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1)));
             Call Subroutine(SneakDealtDmg);
@@ -3819,32 +3829,6 @@ rule ("Active Mods - Colossus (Hook Prevention)") {
     }
 }
 
-rule ("Passive Mods - Ray Shields (activated)") {
-    event {
-        Subroutine;
-        RayShieldsDamaged;
-    }
-    actions {
-        For Player Variable(Event Player, Passive_Index, 0, Add(Count Of((Event Player).Players_Shielded), 1), 1);
-            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, 0);
-            Wait(0.016, Ignore Condition);
-        End;
-        For Player Variable(Event Player, Passive_Index, 0, If-Then-Else(Compare(Count Of((Event Player).Players_Shielded), >, 0), Count Of((Event Player).Players_Shielded), 0), 1);
-            Add Health Pool To Player(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Health, Divide(Event Damage, Count Of((Event Player).Players_Shielded)), False, True);
-            Set Player Variable At Index(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Amount, (Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Shield_Index, Last Created Health Pool);
-            Modify Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Shield_Index, Add, 1);
-            If(Compare(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), !=, Null));
-                Create Beam Effect(All Players(All Teams), Orisa Amplifier Beam, Event Player, Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Color(Blue), Visible To Position and Radius);
-            End;
-            Set Player Variable(Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index), Ray_Shields_FX, Last Created Entity);
-            Wait(1, Ignore Condition);
-            Destroy Effect((Value In Array((Event Player).Players_Shielded, (Event Player).Passive_Index)).Ray_Shields_FX);
-            Wait(0.25, Ignore Condition);
-        End;
-        Wait(1, Ignore Condition);
-    }
-}
-
 rule ("Mods PlayerTookDamage Events") {
     event {
         Player Took Damage;
@@ -3870,8 +3854,6 @@ rule ("Mods PlayerTookDamage Events") {
                 Start Rule(ManaShieldDamaged, Do Nothing);
             Else If(And(And(Compare((Event Player).Passive_Mod, ==, 26), Compare(Distance Between(Attacker, Event Player), <=, 6)), Is In Line of Sight(Attacker, Event Player, Enemy Barriers Block LOS)));
                 Start Rule(FrostArmorDamaged, Do Nothing);
-            Else If(Compare((Event Player).Passive_Mod, ==, 37));
-                Start Rule(RayShieldsDamaged, Do Nothing);
     }
 }
 
