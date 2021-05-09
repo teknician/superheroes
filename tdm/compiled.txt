@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.8.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.8.1, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2208,9 +2208,9 @@ rule ("Active Mods 29 - Bouncing Blades") {
         Set Player Variable(Event Player, Blade_Chase, 100);
         Wait(0.016, Ignore Condition);
         Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 7, Destination and Duration);
-        Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 7);
+        Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 99999);
         Stop Chasing Player Variable(Event Player, Blade_Chase);
-        Wait(9, Ignore Condition);
+        Wait(8, Ignore Condition);
     }
 }
 
@@ -3683,10 +3683,11 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         BouncingBlade;
     }
     actions {
+        Wait(0.075, Ignore Condition);
         Set Player Variable(Attacker, Blade_Damage, Event Damage);
-        Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.5);
+        Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.75);
         Set Player Variable(Attacker, Blade_Victim, Remove From Array(Closest Player To(Victim, Opposite Team Of(Team Of(Attacker))), Victim));
-        If(And(Compare((Attacker).Blade_Victim, !=, Null), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 8)));
+        If(And(And(And(Compare((Attacker).Blade_Victim, !=, Null), Is Alive((Attacker).Blade_Victim)), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 12)), Is In Line of Sight(Victim, (Attacker).Blade_Victim, Barriers Do Not Block LOS)));
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
             Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Victim, (Attacker).Blade_Victim, Color(Red), Visible To Position and Radius);
             Set Player Variable At Index(Attacker, Active_Mod_FX, 0, Last Created Entity);
@@ -3694,8 +3695,6 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Attacker).Blade_Victim, 1);
             Destroy Effect(First Of((Attacker).Active_Mod_FX));
             Damage((Attacker).Blade_Victim, Attacker, (Attacker).Blade_Damage);
-        End;
-        Wait(0.2, Ignore Condition);
     }
 }
 
@@ -3709,6 +3708,9 @@ rule ("Mods PlayerDealtDamage Events") {
         (Event Player).Mod_Menu_Select == 3;
     }
     actions {
+        If(And(Compare((Event Player).Active_Mod, ==, 29), Compare((Event Player).Blade_Chase, >, 0)));
+            Start Rule(BouncingBlade, Do Nothing);
+        End;
         If(Is Meleeing(Event Player));
             If(And(And(Compare((Event Player).Active_Mod, ==, 20), Compare(Hero Of(Event Player), !=, Hero(Sombra))), Compare((Victim).OraOra, ==, False)));
                 Start Rule(Devour, Do Nothing);
@@ -3738,9 +3740,6 @@ rule ("Mods PlayerDealtDamage Events") {
             Else If(Compare(Hero Of(Event Player), ==, Hero(Reinhardt)));
                 Start Rule(BoxerRein, Do Nothing);
             End;
-        End;
-        If(And(Compare((Event Player).Active_Mod, ==, 29), Compare((Event Player).Blade_Chase, >, 0)));
-            Start Rule(BouncingBlade, Do Nothing);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 16), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1)));
             Call Subroutine(SneakDealtDmg);
