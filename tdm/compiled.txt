@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.8.3, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.8.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -146,7 +146,8 @@ variables {
         62: Blade_Chase
         63: Blade_Damage
         64: Blade_Victim
-        65: Previous_Victim
+        65: Victim_Chain
+        66: Victim_Chain_Sorted
 }
 subroutines {
     0: MoveSpeed160
@@ -308,6 +309,7 @@ rule ("Reset Player Parameters") {
         Stop All Heal Over Time(Event Player);
         Stop All Damage Over Time(Event Player);
         Remove All Health Pools From Player(Event Player);
+        Set Player Variable(Event Player, Active_Index, 0);
         Set Player Variable(Event Player, Omega_Charge, 0);
         Set Player Variable(Event Player, Affected_Players, 0);
         Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
@@ -2204,11 +2206,11 @@ rule ("Active Mods 29 - Bouncing Blades") {
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 100);
+        Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 150);
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Subtract(Eye Position(Event Player), Vector(0, 0.5, 0)), 1);
         Set Player Variable(Event Player, Blade_Chase, 100);
         Wait(0.016, Ignore Condition);
-        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 100, Destination and Duration);
+        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 99999, Destination and Duration);
         Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 99999);
         Stop Chasing Player Variable(Event Player, Blade_Chase);
         Wait(3, Ignore Condition);
@@ -3687,17 +3689,20 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         Wait(0.7, Ignore Condition);
         Set Player Variable(Attacker, Blade_Damage, Event Damage);
         Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.75);
-        Set Player Variable(Attacker, Blade_Victim, Remove From Array(Closest Player To(Victim, Opposite Team Of(Team Of(Attacker))), Victim));
-        If(And(And(And(And(Compare((Attacker).Blade_Victim, !=, Null), Is Alive((Attacker).Blade_Victim)), Compare((Attacker).Previous_Victim, !=, Victim)), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 12)), Is In Line of Sight(Victim, (Attacker).Blade_Victim, Barriers Do Not Block LOS)));
+        Set Player Variable(Attacker, Victim_Chain, Remove From Array(Players Within Radius(Victim, 12, Team Of(Victim), Off), Victim));
+        Set Player Variable(Attacker, Victim_Chain_Sorted, Sorted Array((Attacker).Victim_Chain, Distance Between(Value In Array((Attacker).Victim_Chain, Current Array Element), Value In Array((Attacker).Victim_Chain, Add(Current Array Element, 1)))));
+        If(And(And(And(And(Is Alive(Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index)), Compare(Distance Between(Victim, Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index)), <, 12)), Is In Line of Sight(Victim, Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Barriers Do Not Block LOS)), Compare((Attacker).Blade_Chase, >, 0)), Compare(Count Of((Attacker).Victim_Chain_Sorted), >, 1)));
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
-            Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Victim, (Attacker).Blade_Victim, Color(Red), Visible To Position and Radius);
-            Set Player Variable At Index(Attacker, Active_Mod_FX, 0, Last Created Entity);
+            Damage(Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Attacker, (Attacker).Blade_Damage);
+            Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Victim, Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Color(Red), Visible To Position and Radius);
+            Set Player Variable(Attacker, Active_Mod_FX, Last Created Entity);
             Wait(0.25, Ignore Condition);
-            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Attacker).Blade_Victim, 1);
-            Destroy Effect(First Of((Attacker).Active_Mod_FX));
-            Damage((Attacker).Blade_Victim, Attacker, (Attacker).Blade_Damage);
-            Set Player Variable(Attacker, Previous_Victim, (Attacker).Blade_Victim);
-            Wait(0.25, Ignore Condition);
+            Destroy Effect((Attacker).Active_Mod_FX);
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 1);
+            Modify Player Variable(Attacker, Active_Index, Add, 1);
+        End;
+        If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), ==, Subtract(Count Of((Attacker).Victim_Chain_Sorted), 1)));
+            Set Player Variable(Attacker, Active_Index, 0);
     }
 }
 
@@ -3711,7 +3716,7 @@ rule ("Mods PlayerDealtDamage Events") {
         (Event Player).Mod_Menu_Select == 3;
     }
     actions {
-        If(And(And(Compare((Event Player).Active_Mod, ==, 29), Compare((Event Player).Previous_Victim, !=, Victim)), Compare((Event Player).Blade_Chase, >, 0)));
+        If(And(Compare((Event Player).Active_Mod, ==, 29), Compare((Event Player).Blade_Chase, >, 0)));
             Start Rule(BouncingBlade, Do Nothing);
         End;
         If(Is Meleeing(Event Player));
