@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.7.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.8.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2206,11 +2206,11 @@ rule ("Active Mods 29 - Bouncing Blades") {
         Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 50);
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Subtract(Eye Position(Event Player), Vector(0, 0.5, 0)), 1);
         Set Player Variable(Event Player, Blade_Chase, 100);
-        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 6, Destination and Duration);
-        Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 6);
+        Wait(0.016, Ignore Condition);
+        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 7, Destination and Duration);
+        Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 7);
         Stop Chasing Player Variable(Event Player, Blade_Chase);
-        Wait Until(Compare((Event Player).Blade_Damage, <=, 5), 99999);
-        Wait(8, Ignore Condition);
+        Wait(9, Ignore Condition);
     }
 }
 
@@ -2656,7 +2656,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Armor Field: Melee to drop a 2.5m field that gives teammates 75 armor over 5 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 5 seconds, damage you deal chains to other enemies. (Melee to activate) (8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 7 seconds, damage you deal chains to other enemies. (Melee to activate) (8 sec. CD)", Null, Null, Null));
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
@@ -3686,7 +3686,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         Set Player Variable(Attacker, Blade_Damage, Event Damage);
         Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.5);
         Set Player Variable(Attacker, Blade_Victim, Remove From Array(Closest Player To(Victim, Opposite Team Of(Team Of(Attacker))), Victim));
-        If(And(And(Compare((Attacker).Blade_Victim, !=, Null), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 8)), Compare((Attacker).Blade_Damage, >, 5)));
+        If(And(Compare((Attacker).Blade_Victim, !=, Null), Compare(Distance Between(Victim, (Attacker).Blade_Victim), <, 8)));
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
             Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Victim, (Attacker).Blade_Victim, Color(Red), Visible To Position and Radius);
             Set Player Variable At Index(Attacker, Active_Mod_FX, 0, Last Created Entity);
@@ -3695,7 +3695,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
             Destroy Effect(First Of((Attacker).Active_Mod_FX));
             Damage((Attacker).Blade_Victim, Attacker, (Attacker).Blade_Damage);
         End;
-        Wait(0.1, Ignore Condition);
+        Wait(0.2, Ignore Condition);
     }
 }
 
