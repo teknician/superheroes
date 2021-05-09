@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.8.0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.8.3, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2204,14 +2204,14 @@ rule ("Active Mods 29 - Bouncing Blades") {
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
-        Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 50);
+        Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Color(Team 2), Event Player, 100);
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Subtract(Eye Position(Event Player), Vector(0, 0.5, 0)), 1);
         Set Player Variable(Event Player, Blade_Chase, 100);
         Wait(0.016, Ignore Condition);
-        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 7, Destination and Duration);
+        Chase Player Variable Over Time(Event Player, Blade_Chase, 0, 100, Destination and Duration);
         Wait Until(Compare((Event Player).Blade_Chase, ==, 0), 99999);
         Stop Chasing Player Variable(Event Player, Blade_Chase);
-        Wait(8, Ignore Condition);
+        Wait(3, Ignore Condition);
     }
 }
 
@@ -3684,7 +3684,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         BouncingBlade;
     }
     actions {
-        Wait(0.075, Ignore Condition);
+        Wait(0.7, Ignore Condition);
         Set Player Variable(Attacker, Blade_Damage, Event Damage);
         Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.75);
         Set Player Variable(Attacker, Blade_Victim, Remove From Array(Closest Player To(Victim, Opposite Team Of(Team Of(Attacker))), Victim));
@@ -3697,6 +3697,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
             Destroy Effect(First Of((Attacker).Active_Mod_FX));
             Damage((Attacker).Blade_Victim, Attacker, (Attacker).Blade_Damage);
             Set Player Variable(Attacker, Previous_Victim, (Attacker).Blade_Victim);
+            Wait(0.25, Ignore Condition);
     }
 }
 
