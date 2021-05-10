@@ -2232,7 +2232,7 @@ rule ("Active Mods 30 - Med-E-Port") {
     }
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), Event Player, 3);
-        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 1), Event Player, 100);
+        Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 1), Event Player, 150);
         Wait(0.2, Ignore Condition);
         Teleport(Event Player, Random Value In Array(Remove From Array(All Players(Team Of(Event Player)), Null)));
         Wait(0.1, Ignore Condition);
@@ -2240,14 +2240,14 @@ rule ("Active Mods 30 - Med-E-Port") {
         Play Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Sound, Color(Team 1), Event Player, 100);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 8);
         Play Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), Event Player, 1);
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Event Player, 8, Team Of(Event Player), Surfaces));
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Event Player, 11, Team Of(Event Player), Surfaces));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
             Heal(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Multiply(Max Health(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index)), 0.33));
             Play Effect(All Players(All Teams), Good Explosion, Color(Green), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 3);
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 4.5);
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 11);
             Wait(0.032, Ignore Condition);
         End;
-        Wait(6, Ignore Condition);
+        Wait(7.5, Ignore Condition);
     }
 }
 
@@ -2694,7 +2694,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Human Cannonball: Melee to launch yourself at high speed, and stun yourself/enemies where you land. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying (~12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 7 seconds, damage you deal chains to other enemies. (Melee to activate) (8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 30, Custom String("Med-E-Port: Melee teleports you to a random teammate. Heal them and nearby teammates for 1/3 their max HP. (6 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 30, Custom String("Med-E-Port: Melee teleports you to a random teammate. Heal them and nearby teammates for 1/3 their max HP. (7.5 sec. CD)", Null, Null, Null));
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
@@ -3739,24 +3739,26 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
                     End;
                     Wait(0.075, Ignore Condition);
                 End;
-                Wait(0.016, Ignore Condition);
+                Wait(0.032, Ignore Condition);
+                Abort If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), ==, Null));
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 1);
+                Play Effect(All Players(All Teams), Explosion Sound, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 75);
                 Damage(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Attacker, (Attacker).Blade_Damage);
                 Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Color(Red), Visible To Position and Radius);
                 Set Player Variable(Attacker, Active_Mod_FX, Last Created Entity);
                 Wait(0.2, Ignore Condition);
-                Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.75);
+                Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.5);
                 Destroy Effect((Attacker).Active_Mod_FX);
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, 1)), 1);
                 Modify Player Variable(Attacker, Active_Index, Add, 1);
                 Set Player Variable(Attacker, Active_Index_2, 1);
-                Wait(0.1, Ignore Condition);
+                Wait(0.05, Ignore Condition);
             End;
         End;
         Set Player Variable(Attacker, Active_Index, 0);
         Set Player Variable(Attacker, Victim_Chain, Null);
         Set Player Variable(Attacker, Victim_Chain_Sorted, Null);
-        Wait(2, Ignore Condition);
+        Wait(0.75, Ignore Condition);
     }
 }
 
