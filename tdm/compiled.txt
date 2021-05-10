@@ -3724,9 +3724,9 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         Set Player Variable(Attacker, Active_Index, 0);
         Set Player Variable(Attacker, Active_Index_2, 1);
         Set Player Variable(Attacker, Blade_Damage, Event Damage);
-        Set Player Variable(Attacker, Victim_Chain, Players Within Radius(Victim, 15, Team Of(Victim), Off));
+        Set Player Variable(Attacker, Victim_Chain, Players Within Radius(Victim, 25, Team Of(Victim), Off));
         Set Player Variable(Attacker, Victim_Chain_Sorted, Sorted Array((Attacker).Victim_Chain, Distance Between(Value In Array((Attacker).Victim_Chain, Current Array Element), Value In Array((Attacker).Victim_Chain, Add(Current Array Element, 1)))));
-        Set Player Variable(Attacker, Victim_Chain_Sorted, Remove From Array((Attacker).Victim_Chain_Sorted, Last Of((Attacker).Victim_Chain_Sorted)));
+        "attacker.Victim_Chain_Sorted = attacker.Victim_Chain_Sorted.exclude(attacker.Victim_Chain_Sorted.last())"
         Wait(0.016, Ignore Condition);
         For Player Variable(Attacker, Active_Index, 0, Count Of((Attacker).Victim_Chain_Sorted), 1);
             If(And(And(And(Compare(Count Of((Attacker).Victim_Chain_Sorted), >, 1), Compare(Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), <, Subtract(Count Of((Attacker).Victim_Chain_Sorted), 1))), Compare(Distance Between(Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2))), <=, 15)), Compare((Attacker).Blade_Chase, >, 0)));
@@ -3737,6 +3737,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
                     Else If(Is Alive(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2))));
                         Break;
                     End;
+                    Wait(0.075, Ignore Condition);
                 End;
                 Wait(0.016, Ignore Condition);
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 1);
@@ -3755,7 +3756,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
         Set Player Variable(Attacker, Active_Index, 0);
         Set Player Variable(Attacker, Victim_Chain, Null);
         Set Player Variable(Attacker, Victim_Chain_Sorted, Null);
-        Wait(1.5, Ignore Condition);
+        Wait(2, Ignore Condition);
     }
 }
 
