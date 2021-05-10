@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superheroes TDM - V1.8.5, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superheroes TDM - V1.8.6_0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3743,11 +3743,13 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
                 Abort If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), ==, Null));
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 1);
                 Play Effect(All Players(All Teams), Explosion Sound, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 75);
-                Damage(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Attacker, (Attacker).Blade_Damage);
+                Modify Player Variable(Attacker, Blade_Damage, Divide, 2);
+                If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), !=, Victim));
+                    Damage(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Attacker, (Attacker).Blade_Damage);
+                End;
                 Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Color(Red), Visible To Position and Radius);
                 Set Player Variable(Attacker, Active_Mod_FX, Last Created Entity);
                 Wait(0.2, Ignore Condition);
-                Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.5);
                 Destroy Effect((Attacker).Active_Mod_FX);
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, 1)), 1);
                 Modify Player Variable(Attacker, Active_Index, Add, 1);
