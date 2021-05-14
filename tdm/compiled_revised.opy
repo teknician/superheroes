@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1173,8 +1173,8 @@ rule ("Passive Mods 38 - Killstreak") {
     }
     actions {
         If(Not(Entity Exists((Event Player).Passive_Mod_FX_Array)));
-            Create In-World Text(Event Player, Custom String("Killstreak: {0}{1}{2}", First Of((Event Player).Num_3), Value In Array((Event Player).Num_3, 1), Value In Array((Event Player).Num_3, 2)), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
-            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Update Every Frame(Last Text ID));
+            Create In-World Text(Event Player, Custom String("Killstreak: {0} {1} {2}", First Of((Event Player).Num_3), Value In Array((Event Player).Num_3, 1), Value In Array((Event Player).Num_3, 2)), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Text ID);
         End;
         Set Max Health(Event Player, 85);
         Set Damage Dealt(Event Player, 85);
@@ -1346,34 +1346,36 @@ rule ("Passive Mods - Killstreak (Active)") {
         KillstreakFinalBlow;
     }
     actions {
-        If(Compare((Event Player).Num_2, <, 3));
+        If(Compare((Event Player).Num_2, <, 4));
             Modify Player Variable(Event Player, Num_2, Add, 1);
         End;
         Wait(0.5, Ignore Condition);
         If(Compare((Event Player).Num_2, ==, 1));
-            Set Player Variable At Index(Event Player, Num_3, 0, Custom String("X ", Null, Null, Null));
+            Set Player Variable At Index(Event Player, Num_3, 0, Icon String(Skull));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
             Set Damage Dealt(Event Player, 110);
             Set Max Health(Event Player, 110);
             Set Move Speed(Event Player, 100);
-            Heal(Event Player, Null, 400);
+            Heal(Event Player, Null, 100);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
         Else If(Compare((Event Player).Num_2, ==, 2));
-            Set Player Variable At Index(Event Player, Num_3, 1, Custom String("X ", Null, Null, Null));
+            Set Player Variable At Index(Event Player, Num_3, 1, Icon String(Skull));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
-            Set Damage Dealt(Event Player, 135);
-            Set Max Health(Event Player, 135);
+            Set Damage Dealt(Event Player, 125);
+            Set Max Health(Event Player, 125);
             Set Move Speed(Event Player, 110);
-            Heal(Event Player, Null, 400);
+            Heal(Event Player, Null, 200);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
         Else If(Compare((Event Player).Num_2, ==, 3));
-            Set Player Variable At Index(Event Player, Num_3, 2, Custom String("X", Null, Null, Null));
+            Set Player Variable At Index(Event Player, Num_3, 2, Icon String(Skull));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
-            Set Damage Dealt(Event Player, 150);
-            Set Max Health(Event Player, 150);
+            Set Damage Dealt(Event Player, 140);
+            Set Max Health(Event Player, 140);
             Set Move Speed(Event Player, 120);
-            Heal(Event Player, Null, 400);
+            Heal(Event Player, Null, 300);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
+        Else If(Compare((Event Player).Num_2, ==, 4));
+            Abort;
     }
 }
 
@@ -1390,7 +1392,7 @@ rule ("Mods PlayerDealtFinalBlow Events") {
         If(Compare(Attacker, !=, Victim));
             If(Compare((Event Player).Passive_Mod, ==, 12));
                 Call Subroutine(LevelUpDing);
-            Else If(Compare((Event Player).Passive_Mod, ==, 38));
+            Else If(Compare((Event Player).Passive_Mod, ==, 39));
                 Call Subroutine(KillstreakFinalBlow);
     }
 }
@@ -2705,16 +2707,22 @@ rule ("Active Mods 39 - Vs. Goliath") {
         Is Button Held(Event Player, Button(Melee)) == True;
     }
     actions {
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 1), Event Player, 1);
         Play Effect(Event Player, Debuff Impact Sound, Null, Event Player, 75);
         Small Message(Event Player, Custom String("Damage taken {0}", Icon String(Arrow: Down), Null, Null));
+        Create Effect(Event Player, Bad Aura, Color(Green), Event Player, 1, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Wait(1, Ignore Condition);
         Wait Until(Or(Is Button Held(Event Player, Button(Melee)), Compare((Event Player).Active_Mod, !=, 40)), 99999);
+        Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), Event Player, 1);
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
         Small Message(Event Player, Custom String("Damage dealt {0}", Icon String(Arrow: Up), Null, Null));
+        Create Effect(Event Player, Bad Aura, Color(Rose), Event Player, 1, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(1, Ignore Condition);
     }
 }
@@ -3219,11 +3227,8 @@ rule ("Optional - Debugging 6") {
         Is Dummy Bot(Victim) == True;
     }
     actions {
-        If(Compare(Value In Array(Global.Debug, 6), ==, Null));
-            Create HUD Text(Host Player, Custom String("Event Damage: {0}", Event Damage, Null, Null), Null, Null, Left, 3, Color(Red), Null, Null, Visible To and String, Default Visibility);
-            Set Global Variable At Index(Debug, 6, Last Text ID);
-        End;
-        Small Message(Host Player, Custom String("Damage: {0}", (Event Player).Damage_Chase, Null, Null));
+        "hudHeader(hostPlayer, \"Event Damage: {0}\".format(eventDamage), HudPosition.LEFT, 3, Color.RED, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)"
+        Small Message(Host Player, Custom String("Damage: {0}", Event Damage, Null, Null));
     }
 }
 
@@ -3946,6 +3951,8 @@ rule ("Mods PlayerDied Events") {
             Call Subroutine(CorpseExplosion);
         Else If(And(And(Compare((Event Player).Passive_Mod, ==, 24), Compare(Attacker, !=, Victim)), Compare(Filtered Array(All Players(All Teams), Compare(Current Array Element, ==, Attacker)), ==, True)));
             Start Rule(Revenge, Do Nothing);
+        Else If(Compare((Event Player).Passive_Mod, ==, 39));
+            Start Rule(KillstreakDeath, Do Nothing);
         End;
         Wait(1, Ignore Condition);
         Call Subroutine(RemoveFXOnDeath);
@@ -4280,7 +4287,7 @@ rule ("Active Mods 39 - Vs. Goliath (Dealt Damage)") {
     }
     actions {
         If(Compare(Health(Victim), >, Health(Attacker)));
-            Damage(Victim, Null, Multiply(Event Damage, 0.25));
+            Damage(Victim, Null, Multiply(Event Damage, 0.33));
             Wait(0.016, Ignore Condition);
     }
 }
@@ -4474,7 +4481,7 @@ rule ("Active Mods 39 - Vs. Goliath (Took Damage)") {
     }
     actions {
         If(And(Compare(Attacker, !=, Null), Compare(Health(Victim), <, Health(Attacker))));
-            Heal(Victim, Null, Multiply(Event Damage, 0.25));
+            Heal(Victim, Null, Multiply(Event Damage, 0.33));
             Wait(0.016, Ignore Condition);
     }
 }
