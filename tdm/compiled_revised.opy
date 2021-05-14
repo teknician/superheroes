@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_9, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2541,26 +2541,25 @@ rule ("Active Mods 34 - Power Glove") {
         Global.Intermission_In_Progress == False;
     }
     actions {
-        If(Not((Event Player).Boolean));
+        Wait(0.5, Ignore Condition);
+        If(Not(Entity Exists(First Of((Event Player).Active_Mod_FX_Array))));
+            Set Player Variable(Event Player, Boolean, False);
+            Set Player Variable(Event Player, Active_String_2, Icon String(Checkmark));
+            Set Player Variable(Event Player, Num_1, Color(Green));
             Create In-World Text(Event Player, Custom String("{0} READY: {1}", Ability Icon String(Hero(Ana), Button(Melee)), (Event Player).Active_String_2, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, (Event Player).Num_1, Default Visibility);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         End;
+        Wait(0.02, Ignore Condition);
         Wait Until(Or(Is Button Held(Event Player, Button(Reload)), Compare((Event Player).Active_Mod, !=, 35)), 99999);
+        Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
+        Play Effect(All Players(All Teams), Good Pickup Effect, Color(Green), Event Player, 1);
+        Wait(0.1, Ignore Condition);
         If(Compare((Event Player).Active_Mod, !=, 35));
             Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
             Abort;
         End;
         Set Player Variable(Event Player, Boolean, True);
-        Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
         Wait(0.05, Ignore Condition);
-        Wait Until(Or(Or(Is Meleeing(Event Player), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))), Compare((Event Player).Active_Mod, !=, 35)), 99999);
-        If(Compare((Event Player).Active_Mod, !=, 35));
-            Set Player Variable(Event Player, Boolean, False);
-            Abort;
-        End;
-        Wait(0.1, Ignore Condition);
-        Set Player Variable(Event Player, Boolean, False);
-        Wait(7, Ignore Condition);
     }
 }
 
@@ -4342,18 +4341,19 @@ rule ("Active Mods 34 - Power Glove") {
     }
     actions {
         Wait(0.032, Ignore Condition);
+        Set Player Variable(Event Player, Boolean, False);
         If(Or(Compare(Event Ability, ==, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Compare(Event Ability, ==, Button(Primary Fire)))));
-            Damage(Victim, Attacker, Multiply(Event Damage, 3));
+            Damage(Victim, Null, Multiply(Event Damage, 3));
             Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.5, 0)), 35, To World, Cancel Contrary Motion);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Null, Victim, 100);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Color(Team 2), Victim, 1);
             Set Player Variable(Event Player, Active_String_2, Icon String(X));
             Set Player Variable(Event Player, Num_1, Color(Rose));
         End;
-        Wait(8, Ignore Condition);
+        Wait(7, Ignore Condition);
+        Set Player Variable(Event Player, Boolean, True);
         Set Player Variable(Event Player, Active_String_2, Icon String(Checkmark));
         Set Player Variable(Event Player, Num_1, Color(Green));
-        Abort;
     }
 }
 
