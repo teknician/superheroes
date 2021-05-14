@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_6, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2470,8 +2470,10 @@ rule ("Active Mods 32 - Duel") {
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Wait(0.032, Ignore Condition);
-        Start Facing(Event Player, Direction Towards(Eye Position((Event Player).Mod_Effect_Target), Eye Position(Event Player)), 2000, To World, Direction and Turn Rate);
-        Start Facing((Event Player).Mod_Effect_Target, Direction Towards(Eye Position(Event Player), Eye Position((Event Player).Mod_Effect_Target)), 2000, To World, Direction and Turn Rate);
+        Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position((Event Player).Mod_Effect_Target)), 5000, To World, Direction and Turn Rate);
+        Start Facing((Event Player).Mod_Effect_Target, Direction Towards(Eye Position((Event Player).Mod_Effect_Target), Eye Position(Event Player)), 5000, To World, Direction and Turn Rate);
+        Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Sound, Null, Event Player, 150);
+        Play Effect(All Players(All Teams), Wrecking Ball Piledriver Impact Sound, Null, (Event Player).Mod_Effect_Target, 150);
         Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), Event Player, 1, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), (Event Player).Mod_Effect_Target, 1, Visible To Position and Radius);
@@ -2480,6 +2482,8 @@ rule ("Active Mods 32 - Duel") {
         Set Status((Event Player).Mod_Effect_Target, Event Player, Rooted, 2.5);
         Set Damage Received(Event Player, 200);
         Set Damage Received((Event Player).Mod_Effect_Target, 200);
+        Stop Facing((Event Player).Mod_Effect_Target);
+        Stop Facing((Event Player).Mod_Effect_Target);
         Big Message(Array(Event Player, (Event Player).Mod_Effect_Target), Custom String("DUEL!", Null, Null, Null));
         Wait(2.5, Ignore Condition);
         Set Damage Received(Event Player, 100);
