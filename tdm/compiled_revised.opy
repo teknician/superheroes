@@ -2568,7 +2568,7 @@ rule ("Active Mods 35 - Elemental Charge (Initialize)") {
         Global.Intermission_In_Progress == False;
     }
     actions {
-        Set Player Variable(Attacker, Active_String, Custom String(" READY", Null, Null, Null));
+        Set Player Variable(Event Player, Active_String, Custom String(" READY", Null, Null, Null));
         Set Player Variable(Event Player, Active_String_2, Custom String("BURN", Null, Null, Null));
         Set Player Variable(Event Player, Num_4, Color(Orange));
         If(Or(Compare((Event Player).Passive_Mod, ==, 36), Compare((Event Player).Passive_Mod, ==, 39)));
