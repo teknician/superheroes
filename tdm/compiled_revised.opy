@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_8, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_9, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2490,7 +2490,7 @@ rule ("Active Mods 32 - Duel") {
         Set Damage Received((Event Player).Mod_Effect_Target, 200);
         Big Message(Array(Event Player, (Event Player).Mod_Effect_Target), Custom String("DUEL!", Null, Null, Null));
         Wait(0.05, Ignore Condition);
-        Stop Facing((Event Player).Mod_Effect_Target);
+        Stop Facing(Event Player);
         Stop Facing((Event Player).Mod_Effect_Target);
         Wait(2.5, Ignore Condition);
         Set Damage Received(Event Player, 100);
@@ -2539,20 +2539,28 @@ rule ("Active Mods 34 - Power Glove") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 35;
         Global.Intermission_In_Progress == False;
-        Is Button Held(Event Player, Button(Reload)) == True;
     }
     actions {
+        If(Not((Event Player).Boolean));
+            Create In-World Text(Event Player, Custom String("{0} READY: {1}", Ability Icon String(Hero(Ana), Button(Melee)), (Event Player).Active_String_2, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, (Event Player).Num_1, Default Visibility);
+            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
+        End;
+        Wait Until(Or(Is Button Held(Event Player, Button(Reload)), Compare((Event Player).Active_Mod, !=, 35)), 99999);
+        If(Compare((Event Player).Active_Mod, !=, 35));
+            Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
+            Abort;
+        End;
         Set Player Variable(Event Player, Boolean, True);
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
         Wait(0.05, Ignore Condition);
-        Wait Until(Or(Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))), Compare((Event Player).Active_Mod, !=, 35)), 99999);
+        Wait Until(Or(Or(Is Meleeing(Event Player), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Primary Fire)))), Compare((Event Player).Active_Mod, !=, 35)), 99999);
         If(Compare((Event Player).Active_Mod, !=, 35));
             Set Player Variable(Event Player, Boolean, False);
             Abort;
         End;
-        Wait(1, Ignore Condition);
+        Wait(0.1, Ignore Condition);
         Set Player Variable(Event Player, Boolean, False);
-        Wait(8, Ignore Condition);
+        Wait(7, Ignore Condition);
     }
 }
 
@@ -2568,19 +2576,13 @@ rule ("Active Mods 35 - Elemental Charge (Initialize)") {
         Global.Intermission_In_Progress == False;
     }
     actions {
-        Set Player Variable(Event Player, Active_String, Custom String(" READY", Null, Null, Null));
-        Set Player Variable(Event Player, Active_String_2, Custom String("BURN", Null, Null, Null));
-        Set Player Variable(Event Player, Num_4, Color(Orange));
-        If(Or(Compare((Event Player).Passive_Mod, ==, 36), Compare((Event Player).Passive_Mod, ==, 39)));
-            Set Player Variable(Event Player, Num_1, -1.1);
-        Else;
-            Set Player Variable(Event Player, Num_1, -0.9);
-        End;
-        Create In-World Text(Event Player, Custom String("ABILITY{0}: {1}", (Event Player).Active_String, (Event Player).Active_String_2, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(Subtract((Event Player).Num_1, 0.2), Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, (Event Player).Num_4, Default Visibility);
-        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Player Variable(Event Player, Active_Index, 0);
+        Create In-World Text(Event Player, Custom String("ABILITY: {0} {1}", (Event Player).Active_String, (Event Player).Active_String_2, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, (Event Player).Num_4, Default Visibility);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Player Variable(Event Player, Boolean, True);
         Wait(0.2, Ignore Condition);
+        Wait Until(Compare((Event Player).Active_Mod, !=, 36), 99999);
+        Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
     }
 }
 
@@ -2601,17 +2603,17 @@ rule ("Active Mods 35 - Elemental Charge") {
         If(True);
         Skip(Value In Array(Array(12, 0, 4, 8), Add(1, Index Of Array Value(Array(0, 1, 2), (Event Player).Active_Index))));
         //__label_switch_3_0__:
-        Set Player Variable(Event Player, Active_String_2, Custom String("BURN", Null, Null, Null));
+        Set Player Variable(Event Player, Active_String, Custom String("BURN", Null, Null, Null));
         Set Player Variable(Event Player, Num_4, Color(Rose));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Else;
         //__label_switch_3_1__:
-        Set Player Variable(Event Player, Active_String_2, Custom String("FREEZE", Null, Null, Null));
+        Set Player Variable(Event Player, Active_String, Custom String("FREEZE", Null, Null, Null));
         Set Player Variable(Event Player, Num_4, Color(Sky Blue));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Else;
         //__label_switch_3_2__:
-        Set Player Variable(Event Player, Active_String_2, Custom String("IMPULSE", Null, Null, Null));
+        Set Player Variable(Event Player, Active_String, Custom String("IMPULSE", Null, Null, Null));
         Set Player Variable(Event Player, Num_4, Color(Green));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Else;
@@ -3191,8 +3193,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Pocket Poison: Create a gas cloud at an enemy's feet. Enemies in it take 225 damage over 7 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 33, Custom String("Duel: Root yourself and an enemy for 2.5 seconds. You both take double damage. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Inner Power: Hold crouch to convert your ult charge to temporary health. (Resets when used again)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 35, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 36, Custom String("Elemental Charge: Interact to switch between your next damage burning, freeze, or pushing an enemy. (8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 35, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (7 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 36, Custom String("Elemental Charge: Interact to switch between your next damage burning, freeze, or pushing an enemy. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 37, Custom String("Dampening Field: Hold Interact to expand a field that reduces team damage taken until you release it.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 38, Custom String("Shift Burden: Melee at an enemy to set their gravity to 500% for 3 seconds. (6.5 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 39, Custom String("Ghosted: Melee in the air to phase out, become invisible, and get 200% speed for 1.5 seconds. (9 sec. CD)", Null, Null, Null));
@@ -4345,8 +4347,13 @@ rule ("Active Mods 34 - Power Glove") {
             Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.5, 0)), 35, To World, Cancel Contrary Motion);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Null, Victim, 100);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Color(Team 2), Victim, 1);
+            Set Player Variable(Event Player, Active_String_2, Icon String(X));
+            Set Player Variable(Event Player, Num_1, Color(Rose));
         End;
-        Wait(0.5, Ignore Condition);
+        Wait(8, Ignore Condition);
+        Set Player Variable(Event Player, Active_String_2, Icon String(Checkmark));
+        Set Player Variable(Event Player, Num_1, Color(Green));
+        Abort;
     }
 }
 
@@ -4356,23 +4363,23 @@ rule ("Active Mods 35 - Elemental Charge") {
         ElementalCharge;
     }
     actions {
-        If(Compare((Attacker).Active_String, ==, Custom String(" READY", Null, Null, Null)));
+        If(Compare((Attacker).Active_String_2, ==, Custom String("(READY)", Null, Null, Null)));
             Wait(0.05, Ignore Condition);
             If(Compare((Attacker).Num_4, ==, Color(Rose)));
                 Set Status(Victim, Attacker, Burning, 3);
                 Start Damage Over Time(Victim, Attacker, 3, 25);
             Else If(Compare((Attacker).Num_4, ==, Color(Sky Blue)));
-                Set Status(Victim, Attacker, Frozen, 1.25);
+                Set Status(Victim, Attacker, Frozen, 1.65);
                 Damage(Victim, Attacker, 25);
             Else If(Compare((Attacker).Num_4, ==, Color(Green)));
-                Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.3, 0)), 12, To World, Cancel Contrary Motion);
+                Apply Impulse(Victim, Vector(0, 0.7, 0), 15, To World, Cancel Contrary Motion);
                 Damage(Victim, Attacker, 35);
             End;
             Wait(0.25, Ignore Condition);
-            Set Player Variable(Attacker, Active_String, Custom String(" Not ready", Null, Null, Null));
+            Set Player Variable(Attacker, Active_String_2, Custom String("(NOT READY)", Null, Null, Null));
         End;
-        Wait(7.75, Ignore Condition);
-        Set Player Variable(Attacker, Active_String, Custom String(" READY", Null, Null, Null));
+        Wait(5.75, Ignore Condition);
+        Set Player Variable(Attacker, Active_String_2, Custom String("(READY)", Null, Null, Null));
         Play Effect(Attacker, Brigitte Whip Shot Heal Area Sound, Null, Attacker, 200);
     }
 }
