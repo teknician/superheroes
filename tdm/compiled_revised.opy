@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1174,7 +1174,7 @@ rule ("Passive Mods 38 - Killstreak") {
     actions {
         If(Not(Entity Exists((Event Player).Passive_Mod_FX_Array)));
             Create In-World Text(Event Player, Custom String("Killstreak: {0}{1}{2}", First Of((Event Player).Num_3), Value In Array((Event Player).Num_3, 1), Value In Array((Event Player).Num_3, 2)), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Red), Default Visibility);
-            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Text ID);
+            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Update Every Frame(Last Text ID));
         End;
         Set Max Health(Event Player, 85);
         Set Damage Dealt(Event Player, 85);
@@ -2759,6 +2759,7 @@ rule ("Workshop settings") {
         Set Global Variable At Index(Debug, 2, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage enemy", Null, Null, Null), False, 2));
         Set Global Variable At Index(Debug, 3, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Damage self", Null, Null, Null), False, 3));
         Set Global Variable At Index(Debug, 4, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Spawn more bots", Null, Null, Null), False, 4));
+        Set Global Variable At Index(Debug, 5, Workshop Setting Toggle(Custom String("Host Debug options", Null, Null, Null), Custom String("Show Damage", Null, Null, Null), False, 5));
     }
 }
 
@@ -3203,6 +3204,26 @@ rule ("Optional - Debugging 5") {
     actions {
         Create Dummy Bot(Hero(Roadhog), Team 2, -1, Position Of(Event Player), Up);
         Wait(2, Ignore Condition);
+    }
+}
+
+rule ("Optional - Debugging 6") {
+    event {
+        Player Dealt Damage;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Value In Array(Global.Debug, 5) == True;
+        Is Dummy Bot(Victim) == True;
+    }
+    actions {
+        If(Compare(Value In Array(Global.Debug, 6), ==, Null));
+            Create HUD Text(Host Player, Custom String("Event Damage: {0}", Event Damage, Null, Null), Null, Null, Left, 3, Color(Red), Null, Null, Visible To and String, Default Visibility);
+            Set Global Variable At Index(Debug, 6, Last Text ID);
+        End;
+        Small Message(Host Player, Custom String("Damage: {0}", (Event Player).Damage_Chase, Null, Null));
     }
 }
 
