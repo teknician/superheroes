@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_90, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_91, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2546,7 +2546,7 @@ rule ("Active Mods 34 - Power Glove") {
             Set Player Variable(Event Player, Active_String, Icon String(Checkmark));
             Set Player Variable(Event Player, Active_String_2, Custom String("OFF", Null, Null, Null));
             Set Player Variable(Event Player, Num_1, Color(Green));
-            Create In-World Text(Event Player, Custom String("{0} READY: {1} ({2})", Ability Icon String(Hero(Ana), Button(Melee)), (Event Player).Active_String, (Event Player).Active_String_2), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, (Event Player).Num_1, Default Visibility);
+            Create In-World Text(Event Player, Custom String("{0} : {1} ({2})", Ability Icon String(Hero(Ana), Button(Melee)), (Event Player).Active_String, (Event Player).Active_String_2), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, (Event Player).Num_1, Default Visibility);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         End;
         Wait(0.02, Ignore Condition);
@@ -2564,13 +2564,14 @@ rule ("Active Mods 35 - Power Glove Toggle") {
         (Event Player).Active_Mod == 35;
         Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Reload)) == True;
-        (Event Player).Boolean == False;
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0) != False;
     }
     actions {
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Set Player Variable(Event Player, Active_String_2, Custom String("ON", Null, Null, Null));
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
         Play Effect(All Players(All Teams), Good Pickup Effect, Color(Green), Event Player, 1);
+        Set Player Variable(Event Player, Boolean, True);
     }
 }
 
@@ -3712,10 +3713,10 @@ rule ("Don't stay in mod menu too long") {
         Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)) == True;
     }
     actions {
-        Wait(15, Abort When False);
+        Wait(20, Abort When False);
         Small Message(Event Player, Custom String("Stay in menu too long while not in intermission and you'll lose points.", Null, Null, Null));
         While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
-            Wait(20, Abort When False);
+            Wait(30, Abort When False);
             Small Message(Event Player, Custom String("Menu penalty: Team score -1.", Null, Null, Null));
             Set Team Score(Team Of(Event Player), Subtract(Team Score(Team Of(Event Player)), 1));
         End;
@@ -4363,7 +4364,6 @@ rule ("Active Mods 34 - Power Glove") {
             Set Player Variable(Event Player, Num_1, Color(Rose));
         End;
         Wait(7, Ignore Condition);
-        Set Player Variable(Event Player, Boolean, True);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Active_String, Icon String(Checkmark));
         Set Player Variable(Event Player, Active_String_2, Custom String("ON", Null, Null, Null));
