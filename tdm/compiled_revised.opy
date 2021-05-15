@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_95, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_96, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -28,7 +28,6 @@ settings
 				Ecopoint: Antarctica
 				Eichenwalde
 				Hanamura
-				Hollywood
 				Kanezaka
 				King's Row
 				Petra
@@ -1713,13 +1712,9 @@ rule ("Active Mods 10 - Shadowstep") {
         Wait(0.1, Abort When False);
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
         Wait(0.1, Abort When False);
-        Small Message(Event Player, Custom String("1", Null, Null, Null));
         Teleport(Event Player, Nearest Walkable Position(World Vector Of(Vector(0, 0.5, -3.5), (Event Player).Mod_Effect_Target, Rotation And Translation)));
-        Small Message(Event Player, Custom String("2", Null, Null, Null));
         Set Facing(Event Player, Direction Towards(Event Player, (Event Player).Mod_Effect_Target), To World);
-        Small Message(Event Player, Custom String("3", Null, Null, Null));
         Play Effect(All Players(All Teams), Moira Fade Reappear Sound, Color(Team 2), Position Of(Event Player), 100);
-        Small Message(Event Player, Custom String("4", Null, Null, Null));
         Wait(9, Ignore Condition);
     }
 }
@@ -2701,7 +2696,7 @@ rule ("Active Mods 35 - Elemental Charge") {
     }
 }
 
-rule ("Active Mods 36 - Desperate Measures") {
+rule ("Active Mods 36 - Get Down") {
     event {
         Ongoing - Each Player;
         All;
@@ -2713,7 +2708,7 @@ rule ("Active Mods 36 - Desperate Measures") {
         Global.Intermission_In_Progress == False;
         (Event Player).CastMelee_Mod_Conditions_Ally == 1;
         Normalized Health(Event Player) > 0.2;
-        Normalized Health(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) < 0.2;
+        Normalized Health(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) <= 0.2;
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
@@ -2732,7 +2727,7 @@ rule ("Active Mods 36 - Desperate Measures") {
         Set Player Variable(Event Player, Health_Temp, Normalized Health(Event Player));
         Set Player Health((Event Player).Mod_Effect_Target, Multiply(Max Health((Event Player).Mod_Effect_Target), (Event Player).Health_Temp));
         Set Player Health(Event Player, Multiply(Max Health(Event Player), Normalized Health((Event Player).Mod_Effect_Target)));
-        Wait(1, Ignore Condition);
+        Wait(0.2, Ignore Condition);
         Destroy Effect((Event Player).Active_Mod_FX);
         Set Player Variable(Event Player, Mod_Effect_Target, Null);
         Wait(7, Ignore Condition);
@@ -4055,6 +4050,7 @@ rule ("Passive Mods - Killstreak (Death)") {
         KillstreakDeath;
     }
     actions {
+        Wait(2, Ignore Condition);
         Set Damage Dealt(Event Player, 75);
         Set Max Health(Event Player, 75);
         Set Move Speed(Event Player, 75);
@@ -4062,6 +4058,11 @@ rule ("Passive Mods - Killstreak (Death)") {
         Set Player Variable At Index(Event Player, Num_3, 0, Custom String("0", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_3, 1, Custom String("", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_3, 2, Custom String("", Null, Null, Null));
+        Wait Until(Or(Is Alive(Event Player), Compare((Event Player).Passive_Mod, !=, 39)), 9999);
+        Abort If(Compare((Event Player).Passive_Mod, !=, 39));
+        Set Max Health(Event Player, 75);
+        Set Damage Dealt(Event Player, 75);
+        Set Healing Received(Event Player, 75);
     }
 }
 
@@ -4331,7 +4332,7 @@ rule ("Active Mod 29 - Bouncing Blades (Damage dealt)") {
                         Abort If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), ==, Null));
                         Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 1);
                         Play Effect(All Players(All Teams), Explosion Sound, Color(Red), Value In Array((Attacker).Victim_Chain_Sorted, (Attacker).Active_Index), 75);
-                        Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.666);
+                        Modify Player Variable(Attacker, Blade_Damage, Multiply, 0.75);
                         If(Compare(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), !=, Victim));
                             Damage(Value In Array((Attacker).Victim_Chain_Sorted, Add((Attacker).Active_Index, (Attacker).Active_Index_2)), Attacker, (Attacker).Blade_Damage);
                         End;
