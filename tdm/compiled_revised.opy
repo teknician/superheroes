@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_90, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_90, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2564,19 +2564,13 @@ rule ("Active Mods 35 - Power Glove Toggle") {
         (Event Player).Active_Mod == 35;
         Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Reload)) == True;
+        (Event Player).Boolean == False;
     }
     actions {
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
+        Set Player Variable(Event Player, Active_String_2, Custom String("ON", Null, Null, Null));
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 75);
         Play Effect(All Players(All Teams), Good Pickup Effect, Color(Green), Event Player, 1);
-        Wait Until(Or(Compare((Event Player).Boolean, ==, False), Compare((Event Player).Active_Mod, !=, 35)), 99999);
-        Wait(0.05, Ignore Condition);
-        If(Compare((Event Player).Active_Mod, !=, 35));
-            Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
-            Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
-            Abort;
-        End;
-        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
 }
 
@@ -4361,7 +4355,7 @@ rule ("Active Mods 34 - Power Glove") {
         Set Player Variable(Event Player, Boolean, False);
         If(Or(Compare(Event Ability, ==, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Compare(Event Ability, ==, Button(Primary Fire)))));
             Damage(Victim, Null, Multiply(Event Damage, 3));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.5, 0)), 35, To World, Cancel Contrary Motion);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.2, 0)), 30, To World, Cancel Contrary Motion);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Null, Victim, 100);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Color(Team 2), Victim, 1);
             Set Player Variable(Event Player, Active_String, Icon String(X));
@@ -4370,6 +4364,7 @@ rule ("Active Mods 34 - Power Glove") {
         End;
         Wait(7, Ignore Condition);
         Set Player Variable(Event Player, Boolean, True);
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Set Player Variable(Event Player, Active_String, Icon String(Checkmark));
         Set Player Variable(Event Player, Active_String_2, Custom String("ON", Null, Null, Null));
         Set Player Variable(Event Player, Num_1, Color(Green));
@@ -4391,7 +4386,7 @@ rule ("Active Mods 35 - Elemental Charge") {
                 Set Status(Victim, Attacker, Frozen, 1.65);
                 Damage(Victim, Attacker, 25);
             Else If(Compare((Attacker).Num_4, ==, Color(Green)));
-                Apply Impulse(Victim, Vector(0, 0.7, 0), 15, To World, Cancel Contrary Motion);
+                Apply Impulse(Victim, Vector(0, 0.2, 0), 15, To World, Cancel Contrary Motion);
                 Damage(Victim, Attacker, 35);
             End;
             Wait(0.25, Ignore Condition);
