@@ -2708,7 +2708,7 @@ rule ("Active Mods 36 - Get Down") {
         Global.Intermission_In_Progress == False;
         (Event Player).CastMelee_Mod_Conditions_Ally == 1;
         Normalized Health(Event Player) > 0.2;
-        Player Closest To Reticle(Event Player, Normalized Health(Team Of(Event Player))) <= 0.2;
+        Normalized Health(Player Closest To Reticle(Event Player, Team Of(Event Player))) <= 0.2;
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
