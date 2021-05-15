@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_95, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_95, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1707,14 +1707,19 @@ rule ("Active Mods 10 - Shadowstep") {
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
-        Wait(0.25, Abort When False);
+        Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(Team 2), Position Of(Event Player), 100);
+        Wait(0.1, Abort When False);
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
-        Wait(0.25, Abort When False);
+        Wait(0.1, Abort When False);
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
-        Play Effect(All Players(All Teams), Reaper Wraith Form Sound, Color(Team 2), Position Of(Event Player), 100);
-        Wait(0.25, Abort When False);
+        Wait(0.1, Abort When False);
+        Small Message(Event Player, Custom String("1", Null, Null, Null));
         Teleport(Event Player, Nearest Walkable Position(World Vector Of(Vector(0, 0.5, -3.5), (Event Player).Mod_Effect_Target, Rotation And Translation)));
+        Small Message(Event Player, Custom String("2", Null, Null, Null));
         Set Facing(Event Player, Direction Towards(Event Player, (Event Player).Mod_Effect_Target), To World);
+        Small Message(Event Player, Custom String("3", Null, Null, Null));
+        Play Effect(All Players(All Teams), Moira Fade Reappear Sound, Color(Team 2), Position Of(Event Player), 100);
+        Small Message(Event Player, Custom String("4", Null, Null, Null));
         Wait(9, Ignore Condition);
     }
 }
@@ -2431,10 +2436,10 @@ rule ("Active Mods 30 - Anti-Injure") {
         Create Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 1, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.032, Ignore Condition);
-        Set Player Variable(Event Player, Health_Temp, Divide(Subtract(Max Health((Event Player).Mod_Effect_Target), Health((Event Player).Mod_Effect_Target)), 6));
-        Start Heal Over Time((Event Player).Mod_Effect_Target, Event Player, 6, (Event Player).Health_Temp);
+        Set Player Variable(Event Player, Health_Temp, Divide(Subtract(Max Health((Event Player).Mod_Effect_Target), Health((Event Player).Mod_Effect_Target)), 4));
+        Start Heal Over Time((Event Player).Mod_Effect_Target, Event Player, 4, (Event Player).Health_Temp);
         Set Player Variable(Event Player, HoT_Var, Last Heal Over Time ID);
-        Wait(6, Ignore Condition);
+        Wait(4, Ignore Condition);
         Stop Heal Over Time((Event Player).HoT_Var);
         Set Player Variable(Event Player, HoT_Var, Null);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
@@ -3218,7 +3223,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying. (~12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 10 seconds, damage you deal chains to other enemies. (Melee to activate) (9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 30, Custom String("Med-E-Port: Hold Melee to teleport to a random teammate. Heal them and nearby teammates for half their max HP. (8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 6 seconds. (12 sec. CD, starts on cast)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 4 seconds. (10 sec. CD, starts on cast)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Pocket Poison: Create a gas cloud at an enemy's feet. Enemies in it take 225 damage over 7 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 33, Custom String("Duel: Root yourself and an enemy for 2.5 seconds. You both take double damage. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Inner Power: Hold crouch to convert your ult charge to temporary health. (Resets when used again)", Null, Null, Null));
@@ -4050,9 +4055,9 @@ rule ("Passive Mods - Killstreak (Death)") {
         KillstreakDeath;
     }
     actions {
-        Set Damage Dealt(Event Player, 85);
-        Set Max Health(Event Player, 85);
-        Set Move Speed(Event Player, 90);
+        Set Damage Dealt(Event Player, 75);
+        Set Max Health(Event Player, 75);
+        Set Move Speed(Event Player, 75);
         Set Player Variable(Event Player, Num_2, 0);
         Set Player Variable At Index(Event Player, Num_3, 0, Custom String("0", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_3, 1, Custom String("", Null, Null, Null));
@@ -4355,14 +4360,14 @@ rule ("Passive Mods 39 - Lifesplit") {
         Lifesplit;
     }
     actions {
-        Set Player Variable(Attacker, Affected_Players, Remove From Array(Players Within Radius(Attacker, 15, Team Of(Event Player), Surfaces), Attacker));
-        Wait(0.05, Ignore Condition);
-        For Player Variable(Attacker, Passive_Index, 0, (Attacker).Affected_Players, 1);
+        Set Player Variable(Attacker, Affected_Players, Remove From Array(Players Within Radius(Attacker, 15, Team Of(Attacker), Surfaces), Attacker));
+        Wait(0.032, Ignore Condition);
+        For Player Variable(Attacker, Passive_Index, 0, Count Of((Attacker).Affected_Players), 1);
             Heal(Value In Array((Attacker).Affected_Players, (Attacker).Passive_Index), Attacker, Multiply(Event Damage, 0.33));
             Play Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), Value In Array((Attacker).Affected_Players, (Attacker).Passive_Index), 1);
             Wait(0.032, Ignore Condition);
         End;
-        Wait(0.05, Ignore Condition);
+        Wait(0.032, Ignore Condition);
     }
 }
 
