@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_93, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_94, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -120,42 +120,41 @@ variables {
         36: Mod_Effect_Target
         37: CastMelee_Mod_Conditions
         38: CastMelee_Mod_Conditions_Ally
-        39: Melee_Mod_Conditions_Ally
-        40: CastUltimate_Mod_Conditions_Ally
-        41: LoS_Mod_Conditions
-        42: Third_Person_Camera_Toggle
-        43: Player_ATK_SPD_HP
-        44: Player_Position
-        45: Player_Foot_Position
-        46: Player_Health
-        47: Vertical_Speed
-        48: Affected_Players
-        49: Active_Affected_Players
-        50: Other_Players
-        51: Current_Hero
-        52: Current_Hero_2
-        53: Current_Hero_3
-        54: Distance_Num
-        55: Temp_Index
-        56: Facing_Direction
-        57: Is_Colossus
-        58: Is_Blind
-        59: Is_Visible
-        60: Target
-        61: Target_Area_A
-        62: Target_Position
-        63: Boolean
-        64: Railgun_Charge
-        65: OraOra
-        66: Omega_Charge
-        67: Blade_Chase
-        68: Blade_Damage
-        69: Blade_Victim
-        70: Victim_Chain
-        71: Victim_Chain_Sorted
-        72: DoT_Var
-        73: DoT_Boolean
-        74: HoT_Var
+        39: CastUltimate_Mod_Conditions_Ally
+        40: LoS_Mod_Conditions
+        41: Third_Person_Camera_Toggle
+        42: Player_ATK_SPD_HP
+        43: Player_Position
+        44: Player_Foot_Position
+        45: Player_Health
+        46: Vertical_Speed
+        47: Affected_Players
+        48: Active_Affected_Players
+        49: Other_Players
+        50: Current_Hero
+        51: Current_Hero_2
+        52: Current_Hero_3
+        53: Distance_Num
+        54: Temp_Index
+        55: Facing_Direction
+        56: Is_Colossus
+        57: Is_Blind
+        58: Is_Visible
+        59: Target
+        60: Target_Area_A
+        61: Target_Position
+        62: Boolean
+        63: Railgun_Charge
+        64: OraOra
+        65: Omega_Charge
+        66: Blade_Chase
+        67: Blade_Damage
+        68: Blade_Victim
+        69: Victim_Chain
+        70: Victim_Chain_Sorted
+        71: DoT_Var
+        72: DoT_Boolean
+        73: HoT_Var
 }
 subroutines {
     0: MoveSpeed160
@@ -2386,7 +2385,7 @@ rule ("Active Mods 29 - Med-E-Port") {
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
-        Set Player Variable(Event Player, Current_Target_A, Random Value In Array(Remove From Array(All Players(Team Of(Event Player)), Null)));
+        Set Player Variable(Event Player, Current_Target_A, Random Value In Array(Remove From Array(All Players(Team Of(Event Player)), Array(Null, Event Player))));
         Wait(1.25, Abort When False);
         Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Effect, Color(Team 1), (Event Player).Current_Target_A, 1);
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), Event Player, 1);
@@ -2425,7 +2424,7 @@ rule ("Active Mods 30 - Anti-Injure") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
-        Abort If(Compare(Distance Between(Event Player, (Event Player).Mod_Effect_Target), >, 6));
+        Abort If(Compare(Distance Between(Event Player, (Event Player).Mod_Effect_Target), >, 10));
         Wait(0.032, Ignore Condition);
         Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), (Event Player).Mod_Effect_Target, 125);
         Play Effect(All Players(All Teams), Good Explosion, Color(Green), (Event Player).Mod_Effect_Target, 1);
@@ -2435,7 +2434,7 @@ rule ("Active Mods 30 - Anti-Injure") {
         Create Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 1, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.032, Ignore Condition);
-        Start Heal Over Time(Event Player, Event Player, 6, Subtract(Max Health((Event Player).Mod_Effect_Target), Divide(Health((Event Player).Mod_Effect_Target), 6)));
+        Start Heal Over Time((Event Player).Mod_Effect_Target, Event Player, 6, Subtract(Max Health((Event Player).Mod_Effect_Target), Divide(Health((Event Player).Mod_Effect_Target), 6)));
         Set Player Variable(Event Player, HoT_Var, Last Heal Over Time ID);
         Wait(6, Ignore Condition);
         Stop Heal Over Time((Event Player).HoT_Var);
@@ -2709,17 +2708,18 @@ rule ("Active Mods 36 - Desperate Measures") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 37;
         Global.Intermission_In_Progress == False;
-        (Event Player).Melee_Mod_Conditions_Ally == 1;
+        (Event Player).CastMelee_Mod_Conditions_Ally == 1;
         Normalized Health(Event Player) > 0.2;
+        Normalized Health(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) < 0.2;
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        Abort If(Compare(Normalized Health((Event Player).Mod_Effect_Target), >, 0.2));
         Set Player Variable(Event Player, Mod_Effect_Caster, Position Of(Event Player));
+        Wait(0.05, Ignore Condition);
         Set Status(Event Player, Null, Phased Out, 0.66);
         Set Status((Event Player).Mod_Effect_Target, Null, Phased Out, 0.66);
-        Teleport(Event Player, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        Teleport((Event Player).Mod_Effect_Target, Nearest Walkable Position((Event Player).Mod_Effect_Caster));
+        Teleport(Event Player, (Event Player).Mod_Effect_Target);
+        Teleport((Event Player).Mod_Effect_Target, (Event Player).Mod_Effect_Caster);
         Set Facing(Event Player, Facing Direction Of((Event Player).Mod_Effect_Target), To World);
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Null, Event Player, 100);
         Create Beam Effect(All Players(All Teams), Symmetra Projector Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Blue), Visible To Position and Radius);
@@ -4358,14 +4358,13 @@ rule ("Passive Mods 39 - Lifesplit") {
     }
     actions {
         Set Player Variable(Attacker, Affected_Players, Remove From Array(Players Within Radius(Attacker, 15, Team Of(Event Player), Surfaces), Attacker));
+        Wait(0.05, Ignore Condition);
         For Player Variable(Attacker, Passive_Index, 0, (Attacker).Affected_Players, 1);
             Heal(Value In Array((Attacker).Affected_Players, (Attacker).Passive_Index), Attacker, Multiply(Event Damage, 0.33));
             Play Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), Value In Array((Attacker).Affected_Players, (Attacker).Passive_Index), 1);
             Wait(0.032, Ignore Condition);
         End;
-        Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
-        Wait(0.25, Ignore Condition);
-        Destroy Effect((Event Player).Passive_Mod_FX);
+        Wait(0.05, Ignore Condition);
     }
 }
 
