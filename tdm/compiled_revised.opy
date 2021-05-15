@@ -4608,10 +4608,9 @@ rule ("Passive Mods - Resilient") {
         ResilientDamaged;
     }
     actions {
-        If(And(Compare(Event Ability, !=, Button(Primary Fire)), Compare(Event Ability, !=, Button(Secondary Fire))));
-            Start Damage Modification(Victim, Attacker, 66.66, Receivers Damagers and Damage Percent);
-            Wait(0.032, Ignore Condition);
-            Stop Damage Modification(Last Damage Modification ID);
+        If(Or(Compare(Event Ability, ==, Button(Primary Fire)), Compare(Event Ability, ==, Button(Secondary Fire))));
+            Heal(Victim, Null, Multiply(Event Damage, 0.33));
+            Wait(0.016, Ignore Condition);
     }
 }
 
