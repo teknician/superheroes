@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_92, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_93, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2456,6 +2456,7 @@ rule ("Active Mods 31 - Pocket Poison") {
         (Event Player).CastMelee_Mod_Conditions == 1;
     }
     actions {
+        Set Player Variable(Event Player, Active_Time, 0);
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Abort If(Is In Air((Event Player).Mod_Effect_Target));
         Wait(0.016, Ignore Condition);
@@ -2470,18 +2471,26 @@ rule ("Active Mods 31 - Pocket Poison") {
         Create Effect(All Players(All Teams), Ring, Color(Green), (Event Player).Current_Target_A, 6.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
         Wait(0.032, Ignore Condition);
-        Chase Player Variable At Rate(Event Player, Active_Time, 8, 1, Destination and Rate);
-        While(Compare((Event Player).Active_Time, <, 8));
-            Wait(0.5, Ignore Condition);
+        Chase Player Variable At Rate(Event Player, Active_Time, 7, 1, Destination and Rate);
+        While(Compare((Event Player).Active_Time, <, 7));
+            Wait(0.3, Ignore Condition);
             For Player Variable(Event Player, Active_Index, 0, Count Of(Players Within Radius((Event Player).Current_Target_A, 6.75, Opposite Team Of(Team Of(Event Player)), Off)), 1);
                 If(Not((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Boolean));
-                    Start Damage Over Time(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), Event Player, 8, 32);
+                    Start Damage Over Time(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), Event Player, 7, 32);
+                    Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Var, Last Damage Over Time ID);
+                    Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Effect, Color(Green), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 1);
+                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Green), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 1);
                 End;
                 Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, True);
+                Wait(0.15, Ignore Condition);
+                If(Not(Array Contains(Players Within Radius((Event Player).Current_Target_A, 6.75, Opposite Team Of(Team Of(Event Player)), Off), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index))));
+                    Stop Damage Over Time((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Var);
+                    Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, False);
+                End;
                 Wait(0.05, Ignore Condition);
             End;
             Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Current_Target_A, 6.75, Opposite Team Of(Team Of(Event Player)), Off));
-            Wait(0.25, Ignore Condition);
+            Wait(0.2, Ignore Condition);
         End;
         Stop Chasing Player Variable(Event Player, Active_Time);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
@@ -2701,6 +2710,13 @@ rule ("Active Mods 36 - Dampening Field") {
             Create Effect(All Players(All Teams), Sparkles Sound, Null, Event Player, Multiply(Update Every Frame((Event Player).Radius), 10), Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
         End;
+        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Active_Mod, !=, 37)), 99999);
+        If(Compare((Event Player).Active_Mod, !=, 37));
+            Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+            Abort;
+        End;
         While(Is Button Held(Event Player, Button(Interact)));
             Chase Player Variable Over Time(Event Player, Radius, 10, 4, Destination and Duration);
             Wait Until(Or(Or(Not(Is Button Held(Event Player, Button(Interact))), Compare((Event Player).Radius, ==, 10)), Compare((Event Player).Active_Mod, !=, 37)), 99999);
@@ -2715,6 +2731,7 @@ rule ("Active Mods 36 - Dampening Field") {
             Wait(0.1, Ignore Condition);
         End;
         Stop Chasing Player Variable(Event Player, Radius);
+        Wait(2, Ignore Condition);
         While(Not(Is Button Held(Event Player, Button(Interact))));
             Chase Player Variable Over Time(Event Player, Radius, 0, 2, Destination and Duration);
             Wait Until(Or(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Radius, ==, 0)), Compare((Event Player).Active_Mod, !=, 37)), 99999);
