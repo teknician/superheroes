@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_94, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_95, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1237,7 +1237,7 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.116, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(83, 0, 1, 2, 4, 6, 11, 14, 17, 19, 26, 30, 33, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 69, 71, 73, 76, 78, 80), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36, 39, 40, 41), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(81, 0, 1, 2, 4, 6, 11, 14, 17, 19, 26, 30, 33, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 69, 71, 73, 76, 78), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 22, 23, 25, 26, 27, 29, 30, 32, 34, 35, 36, 39, 41), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
@@ -1347,9 +1347,6 @@ rule ("Choose/Check Passive Mod") {
             Call Subroutine(Killstreak);
             Else;
             //__label_switch_2_30__:
-            Call Subroutine(Lifesplit);
-            Else;
-            //__label_switch_2_31__:
             Set Healing Dealt(Event Player, 150);
             Set Healing Received(Event Player, 150);
             Else;
@@ -2434,7 +2431,8 @@ rule ("Active Mods 30 - Anti-Injure") {
         Create Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 1, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.032, Ignore Condition);
-        Start Heal Over Time((Event Player).Mod_Effect_Target, Event Player, 6, Subtract(Max Health((Event Player).Mod_Effect_Target), Divide(Health((Event Player).Mod_Effect_Target), 6)));
+        Set Player Variable(Event Player, Health_Temp, Divide(Subtract(Max Health((Event Player).Mod_Effect_Target), Health((Event Player).Mod_Effect_Target)), 6));
+        Start Heal Over Time((Event Player).Mod_Effect_Target, Event Player, 6, (Event Player).Health_Temp);
         Set Player Variable(Event Player, HoT_Var, Last Heal Over Time ID);
         Wait(6, Ignore Condition);
         Stop Heal Over Time((Event Player).HoT_Var);
@@ -2752,8 +2750,8 @@ rule ("Active Mods 37 - Shift Burden") {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Play Effect(All Players(All Teams), Bad Explosion, Color(Gray), (Event Player).Mod_Effect_Target, 3);
         Play Effect(All Players(All Teams), Debuff Impact Sound, Null, (Event Player).Mod_Effect_Target, 100);
-        Wait(0.1, Ignore Condition);
-        "eventPlayer.Mod_Effect_Target.applyImpulse(Vector.DOWN, 35, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)"
+        Wait(0.05, Ignore Condition);
+        Apply Impulse((Event Player).Mod_Effect_Target, Down, 40, To World, Cancel Contrary Motion);
         Set Gravity((Event Player).Mod_Effect_Target, 500);
         Set Projectile Gravity((Event Player).Mod_Effect_Target, 500);
         Wait(3, Ignore Condition);
