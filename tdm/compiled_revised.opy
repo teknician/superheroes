@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_96, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_97, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1809,11 +1809,11 @@ rule ("Active Mods 13 - Telekinesis") {
     actions {
         Play Effect(All Players(All Teams), Good Explosion, Color(Turquoise), World Vector Of(Vector(0, 0.75, 1), Event Player, Rotation And Translation), 1);
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        Wait(0.75, Ignore Condition);
+        Wait(0.5, Ignore Condition);
         Abort If(Or(Is Dead(Event Player), Has Status(Event Player, Stunned)));
         Play Effect(All Players(All Teams), Ring Explosion, Color(Turquoise), (Event Player).Mod_Effect_Target, 5);
         Apply Impulse((Event Player).Mod_Effect_Target, Direction Towards((Event Player).Mod_Effect_Target, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), Null, All Players(All Teams), True)), 18, To World, Cancel Contrary Motion);
-        Wait(4.5, Ignore Condition);
+        Wait(4, Ignore Condition);
     }
 }
 
@@ -2269,24 +2269,24 @@ rule ("Active Mods 25 - Armor Field") {
         Set Player Variable(Event Player, Num_1, 1);
         Set Player Variable(Event Player, Player_Position, Eye Position(Event Player));
         Set Player Variable(Event Player, Player_Foot_Position, Position Of(Event Player));
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 3, Team Of(Event Player), Surfaces And Enemy Barriers));
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 4, Team Of(Event Player), Surfaces And Enemy Barriers));
         Create Effect(All Players(All Teams), Ring, Color(Orange), (Event Player).Player_Foot_Position, 3, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Player_Foot_Position, 3, Position and Radius);
+        Create Effect(All Players(All Teams), Sparkles, Color(Yellow), (Event Player).Player_Foot_Position, 4, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Create Effect(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Good Aura Sound, Null, (Event Player).Player_Position, 125, Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
         Wait(0.25, Ignore Condition);
         Chase Player Variable Over Time(Event Player, Active_Time, 5.01, 5, Destination and Duration);
         While(Compare((Event Player).Active_Time, <=, 5));
-            Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 3, Team Of(Event Player), Surfaces And Enemy Barriers));
+            Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, 4, Team Of(Event Player), Surfaces And Enemy Barriers));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Add Health Pool To Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Armor, 4.64, False, True);
             End;
             If(Array Contains(Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5), (Event Player).Num_1));
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Effect, Team Of(Event Player), Add((Event Player).Player_Position, Down), 1);
                 Play Effect(All Players(All Teams), Brigitte Repair Pack Armor Sound, Color(Orange), (Event Player).Player_Foot_Position, 50);
-                Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), (Event Player).Player_Foot_Position, 4);
+                Play Effect(All Players(All Teams), Ring Explosion, Color(Orange), (Event Player).Player_Foot_Position, 5);
             End;
             Modify Player Variable(Event Player, Num_1, Add, 0.25);
             Set Player Variable(Event Player, Active_Affected_Players, 0);
@@ -2331,12 +2331,12 @@ rule ("Active Mods 26 - Human Cannonball") {
             Wait(0.1, Ignore Condition);
         End;
         Wait Until(Compare(Altitude Of(Event Player), <=, 0.4), 10);
-        Set Status(Event Player, Null, Knocked Down, 1.35);
+        Set Status(Event Player, Null, Knocked Down, 1.25);
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
         Damage(Players Within Radius(Position Of(Event Player), 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, Min((Event Player).Active_Time, 150)));
-        Damage(Event Player, Null, Add(25, Min(Divide((Event Player).Active_Time, 2), 85)));
-        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
+        Damage(Event Player, Null, Add(25, Min(Divide((Event Player).Active_Time, 2), 80)));
+        Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
             Set Status((Event Player).Active_Affected_Players, Null, Knocked Down, 1.5);
             Wait(0.016, Ignore Condition);
@@ -2439,7 +2439,7 @@ rule ("Active Mods 30 - Anti-Injure") {
         Set Player Variable(Event Player, HoT_Var, Null);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-        Wait(6, Ignore Condition);
+        Wait(4, Ignore Condition);
     }
 }
 
@@ -2708,10 +2708,10 @@ rule ("Active Mods 36 - Get Down") {
         Global.Intermission_In_Progress == False;
         (Event Player).CastMelee_Mod_Conditions_Ally == 1;
         Normalized Health(Event Player) > 0.2;
-        Normalized Health(Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player)))) <= 0.2;
+        Player Closest To Reticle(Event Player, Normalized Health(Team Of(Event Player))) <= 0.2;
     }
     actions {
-        Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
+        Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Set Player Variable(Event Player, Mod_Effect_Caster, Position Of(Event Player));
         Wait(0.05, Ignore Condition);
         Set Status(Event Player, Null, Phased Out, 0.66);
@@ -3190,26 +3190,26 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (3 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (25m range) (11 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (30m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 5, Custom String("Zero Gravity (crouch in midair to toggle)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 6, Custom String("Corruption: Melee deals 40% of an enemy's max HP over 4 sec. (25m range) (10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 7, Custom String("Translocate: Melee to swap positions with an enemy (25m range, 8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 8, Custom String("Entangling Roots: Melee roots an enemy for 1.5 sec. (25m range, 9 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 6, Custom String("Corruption: Melee deals 40% of an enemy's max HP over 4 sec. (30m range) (10 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 7, Custom String("Translocate: Melee to swap positions with an enemy (30m range, 8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 8, Custom String("Entangling Roots: Melee roots an enemy for 1.5 sec. (30m range, 9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 9, Custom String("Blind: Target an enemy and press melee to blind them (13 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 10, Custom String("Fear: Melee forces a target enemy to run away from you (25m range, 10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target enemy (25m range, 9 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 10, Custom String("Fear: Melee forces a target enemy to run away from you (30m range, 10 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target enemy (30m range, 9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 12, Custom String("Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 13, Custom String("Save Disc: Press Reload + Melee to set a point you can return to by pressing them again (4 sec. CD) (resets on death)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Telekinesis: Melee to push an enemy towards your cursor after 0.75 sec. (25m range, 4 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Telekinesis: Melee to push an enemy towards your cursor after 0.5 sec. (30m range, 4 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 15, Custom String("Feign Death: Press Reload + Melee to kill yourself. Press it again within 6 sec. to revive (12 sec. CD) (excl. Smol Mode)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 16, Custom String("Sneak: Become invisible after crouching for 1.25 sec. (Lasts until you uncrouch, deal or take damage)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 17, Custom String("Hex: Melee turns target enemy into Torbjorn for 8 sec. (25m range, 14 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 18, Custom String("Taunt: Melee forces your target to chase and attack you (25m range, 8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 17, Custom String("Hex: Melee turns target enemy into Torbjorn for 8 sec. (30m range, 14 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 18, Custom String("Taunt: Melee forces your target to chase and attack you (30m range, 8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 19, Custom String("Cleanse: Press melee to clear any CC and become invulnerable for 4 sec. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 20, Custom String("Devour: Melee an enemy to eat them, then spit them out after 2.5 sec. (8 sec. CD) (excl. Sombra hero)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 21, Custom String("Life Tap: Press the Ultimate button to trade 30% HP for 20% ultimate charge (Excl. Echo hero)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 22, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (25m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 22, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (30m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 23, Custom String("Healthing Hand: Melee at a teammate to add twice your HP to theirs for 8 seconds - but stun yourself. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 24, Custom String("Colossus: Hold Interact to use 100% Ult and become a statue with +2500 Armor. Explode when you die. (18 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area. (7 sec. CD)", Null, Null, Null));
@@ -3218,8 +3218,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying. (~12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Bouncing Blades: For 10 seconds, damage you deal chains to other enemies. (Melee to activate) (9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 30, Custom String("Med-E-Port: Hold Melee to teleport to a random teammate. Heal them and nearby teammates for half their max HP. (8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 4 seconds. (10 sec. CD, starts on cast)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Pocket Poison: Create a gas cloud at an enemy's feet. Enemies in it take 225 damage over 7 seconds. (12 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 4 seconds. (8 sec. CD, starts on cast)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Pocket Poison: Create a gas cloud at an enemy's feet. Enemies in it take 250 damage over 7 seconds. (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 33, Custom String("Duel: Root yourself and an enemy for 2.5 seconds. You both take double damage. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Inner Power: Hold crouch to convert your ult charge to temporary health. (Resets when used again)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 35, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (7 sec. CD)", Null, Null, Null));
