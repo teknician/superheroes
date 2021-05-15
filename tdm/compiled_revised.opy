@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V1.9.9_97, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.0.0_0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -2714,20 +2714,24 @@ rule ("Active Mods 36 - Get Down") {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Set Player Variable(Event Player, Mod_Effect_Caster, Position Of(Event Player));
         Wait(0.05, Ignore Condition);
+        Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), Event Player, 1);
+        Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 1);
+        Play Effect(All Players(All Teams), Tracer Recall Disappear Sound, Null, Event Player, 200);
         Set Status(Event Player, Null, Phased Out, 0.66);
         Set Status((Event Player).Mod_Effect_Target, Null, Phased Out, 0.66);
         Teleport(Event Player, (Event Player).Mod_Effect_Target);
         Teleport((Event Player).Mod_Effect_Target, (Event Player).Mod_Effect_Caster);
         Set Facing(Event Player, Facing Direction Of((Event Player).Mod_Effect_Target), To World);
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Null, Event Player, 100);
-        Create Beam Effect(All Players(All Teams), Symmetra Projector Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Blue), Visible To Position and Radius);
+        Create Beam Effect(All Players(All Teams), Symmetra Projector Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Team 1), Visible To Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.05, Ignore Condition);
-        Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Null, (Event Player).Mod_Effect_Target, 100);
         Set Player Variable(Event Player, Health_Temp, Normalized Health(Event Player));
-        Set Player Health((Event Player).Mod_Effect_Target, Multiply(Max Health((Event Player).Mod_Effect_Target), (Event Player).Health_Temp));
         Set Player Health(Event Player, Multiply(Max Health(Event Player), Normalized Health((Event Player).Mod_Effect_Target)));
+        Set Player Health((Event Player).Mod_Effect_Target, Multiply(Max Health((Event Player).Mod_Effect_Target), (Event Player).Health_Temp));
         Wait(0.2, Ignore Condition);
+        Play Effect(All Players(All Teams), Tracer Recall Reappear Sound, Null, (Event Player).Mod_Effect_Target, 200);
+        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), Event Player, 1);
+        Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 1);
         Destroy Effect((Event Player).Active_Mod_FX);
         Set Player Variable(Event Player, Mod_Effect_Target, Null);
         Wait(7, Ignore Condition);
@@ -3250,15 +3254,6 @@ rule ("Optional - Debugging") {
         Create HUD Text(Host Player, Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Intermission: {0}", Global.Intermission_In_Progress, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Mod_Menu_Select: {0}", (Event Player).Mod_Menu_Select, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Passive Mod: {0}", (Event Player).Passive_Mod, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Active Mod: {0}", (Event Player).Active_Mod, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Melee Conditions: {0}", (Event Player).CastMelee_Mod_Conditions, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Friendly Melee Conditions: {0}", Distance Between(Event Player, (Event Player).Mod_Effect_Target), Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("In crosshair: {0}", Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("In crosshair: {0}", Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))), Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("HOT: {0}", (Event Player).HoT_Var, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
