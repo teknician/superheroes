@@ -2666,6 +2666,11 @@ rule ("Active Mods 35 - Elemental Charge") {
         (Event Player).Boolean != False;
     }
     actions {
+        If(Compare((Event Player).Active_Index, <, 2));
+            Modify Player Variable(Event Player, Active_Index, Add, 1);
+        Else If(Compare((Event Player).Active_Index, ==, 2));
+            Set Player Variable(Event Player, Active_Index, 0);
+        End;
         If(True);
         Skip(Value In Array(Array(12, 0, 4, 8), Add(1, Index Of Array Value(Array(0, 1, 2), (Event Player).Active_Index))));
         //__label_switch_3_0__:
@@ -2684,11 +2689,6 @@ rule ("Active Mods 35 - Elemental Charge") {
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Else;
         //__label_switch_3_default__:
-        End;
-        If(Compare((Event Player).Active_Index, <, 2));
-            Modify Player Variable(Event Player, Active_Index, Add, 1);
-        Else If(Compare((Event Player).Active_Index, ==, 2));
-            Set Player Variable(Event Player, Active_Index, 0);
         End;
         If(Compare((Event Player).Active_Mod, !=, 36));
             Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
