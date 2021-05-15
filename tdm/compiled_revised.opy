@@ -2564,7 +2564,7 @@ rule ("Active Mods 35 - Power Glove Toggle") {
         (Event Player).Active_Mod == 35;
         Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Reload)) == True;
-        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0) != False;
+        (Event Player).Active_Mod_Skill_Toggle == 0;
     }
     actions {
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
