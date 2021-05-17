@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.0.1_0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.0.1_0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -81,83 +81,84 @@ variables {
         10: Intermission_Array
     player:
         0: Cd_Visible_To
-        1: Cooldown_Indicator
-        2: Cooldown_Chase
-        3: Cooldown_String_1
-        4: Damage_Chase
-        5: Is_In_Combat
-        6: Health_Temp
-        7: Mod_Menu_Select
-        8: Mod_Menu_Text
-        9: Mod_Menu_Instructions
-        10: Passive_Mod
-        11: Passive_Mod_Index
-        12: Passive_Mod_FX
-        13: Passive_Mod_FX_Array
-        14: Passive_Mod_Skill_Toggle
-        15: Passive_Menu_String_Text
-        16: Passive_Time
-        17: Passive_Index
-        18: Current_Target_P
-        19: Old_Target_P
-        20: Active_Mod
-        21: Active_Mod_Index
-        22: Active_Mod_FX
-        23: Active_Mod_FX_Array
-        24: Active_Mod_Skill_Toggle
-        25: Active_Menu_String_Text
-        26: Active_Index
-        27: Active_Index_2
-        28: Active_String
-        29: Active_String_2
-        30: Active_Time
-        31: Current_Target_A
-        32: Old_Target_A
-        33: Index
-        34: Num_1
-        35: Num_2
-        36: Num_3
-        37: Num_4
-        38: Radius
-        39: Mod_Effect_Caster
-        40: Mod_Effect_Target
-        41: CastMelee_Mod_Conditions
-        42: CastMelee_Mod_Conditions_Ally
-        43: CastUltimate_Mod_Conditions_Ally
-        44: LoS_Mod_Conditions
-        45: Third_Person_Camera_Toggle
-        46: Player_ATK_SPD_HP
-        47: Player_Position
-        48: Player_Foot_Position
-        49: Player_Health
-        50: Vertical_Speed
-        51: Affected_Players
-        52: Active_Affected_Players
-        53: Other_Players
-        54: Current_Hero
-        55: Current_Hero_2
-        56: Current_Hero_3
-        57: Distance_Num
-        58: Temp_Index
-        59: Facing_Direction
-        60: Is_Colossus
-        61: Is_Blind
-        62: Is_Visible
-        63: Target
-        64: Target_Area_A
-        65: Target_Position
-        66: Boolean
-        67: Railgun_Charge
-        68: OraOra
-        69: Omega_Charge
-        70: Blade_Chase
-        71: Blade_Damage
-        72: Blade_Victim
-        73: Victim_Chain
-        74: Victim_Chain_Sorted
-        75: DoT_Var
-        76: DoT_Boolean
-        77: HoT_Var
+        1: Cd_Color
+        2: Cooldown_Indicator
+        3: Cooldown_Chase
+        4: Cooldown_String_1
+        5: Damage_Chase
+        6: Is_In_Combat
+        7: Health_Temp
+        8: Mod_Menu_Select
+        9: Mod_Menu_Text
+        10: Mod_Menu_Instructions
+        11: Passive_Mod
+        12: Passive_Mod_Index
+        13: Passive_Mod_FX
+        14: Passive_Mod_FX_Array
+        15: Passive_Mod_Skill_Toggle
+        16: Passive_Menu_String_Text
+        17: Passive_Time
+        18: Passive_Index
+        19: Current_Target_P
+        20: Old_Target_P
+        21: Active_Mod
+        22: Active_Mod_Index
+        23: Active_Mod_FX
+        24: Active_Mod_FX_Array
+        25: Active_Mod_Skill_Toggle
+        26: Active_Menu_String_Text
+        27: Active_Index
+        28: Active_Index_2
+        29: Active_String
+        30: Active_String_2
+        31: Active_Time
+        32: Current_Target_A
+        33: Old_Target_A
+        34: Index
+        35: Num_1
+        36: Num_2
+        37: Num_3
+        38: Num_4
+        39: Radius
+        40: Mod_Effect_Caster
+        41: Mod_Effect_Target
+        42: CastMelee_Mod_Conditions
+        43: CastMelee_Mod_Conditions_Ally
+        44: CastUltimate_Mod_Conditions_Ally
+        45: LoS_Mod_Conditions
+        46: Third_Person_Camera_Toggle
+        47: Player_ATK_SPD_HP
+        48: Player_Position
+        49: Player_Foot_Position
+        50: Player_Health
+        51: Vertical_Speed
+        52: Affected_Players
+        53: Active_Affected_Players
+        54: Other_Players
+        55: Current_Hero
+        56: Current_Hero_2
+        57: Current_Hero_3
+        58: Distance_Num
+        59: Temp_Index
+        60: Facing_Direction
+        61: Is_Colossus
+        62: Is_Blind
+        63: Is_Visible
+        64: Target
+        65: Target_Area_A
+        66: Target_Position
+        67: Boolean
+        68: Railgun_Charge
+        69: OraOra
+        70: Omega_Charge
+        71: Blade_Chase
+        72: Blade_Damage
+        73: Blade_Victim
+        74: Victim_Chain
+        75: Victim_Chain_Sorted
+        76: DoT_Var
+        77: DoT_Boolean
+        78: HoT_Var
 }
 subroutines {
     0: MoveSpeed160
@@ -1470,11 +1471,13 @@ rule ("Active Mods 1 - Blink") {
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Team Of(Event Player), Event Player, 1);
         End;
         Set Player Variable(Event Player, Cooldown_Chase, 0);
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("On Cooldown:", Null, Null, Null));
+        Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable Over Time(Event Player, Cooldown_Chase, 100, 2.85, Destination and Duration);
         Wait Until(Compare((Event Player).Cooldown_Chase, ==, 100), 9999);
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.032, Ignore Condition);
+        Set Player Variable(Event Player, Cd_Color, Color(Green));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready:", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
@@ -3592,11 +3595,12 @@ rule ("Create cooldown indicator for each player") {
         Has Spawned(Event Player) == True;
     }
     actions {
-        Create In-World Text((Event Player).Cd_Visible_To, Custom String("{0} {1}", (Event Player).Cooldown_String_1, (Event Player).Cooldown_Chase, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position String and Color, Color(Gray), Default Visibility);
+        Create In-World Text((Event Player).Cd_Visible_To, Custom String("{0} {1}", (Event Player).Cooldown_String_1, (Event Player).Cooldown_Chase, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 1.5, Do Not Clip, Visible To Position String and Color, (Event Player).Cd_Color, Default Visibility);
         Set Player Variable(Event Player, Cd_Visible_To, Null);
         Set Player Variable(Event Player, Cooldown_Indicator, Last Text ID);
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready:", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
+        Set Player Variable(Event Player, Cd_Color, Color(Green));
     }
 }
 
@@ -3622,8 +3626,9 @@ rule ("Mechanics - Open Mod Menu") {
             Set Ultimate Ability Enabled(Event Player, True);
             Disallow Button(Event Player, Button(Interact));
             Disallow Button(Event Player, Button(Reload));
-            Heal(Event Player, Null, 5000);
             Wait(0.5, Abort When False);
+            Heal(Event Player, Null, 5000);
+            Set Player Variable(Event Player, Cd_Visible_To, Null);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
             Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
             Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
@@ -3734,12 +3739,12 @@ rule ("Mechanics - Close Mod Menu") {
             Stop Facing(Event Player);
             Set Player Variable(Event Player, Passive_Mod, (Event Player).Passive_Mod_Index);
             Set Player Variable(Event Player, Active_Mod, (Event Player).Active_Mod_Index);
-            Set Player Variable(Event Player, Cd_Visible_To, Event Player);
             Wait(0.2, Ignore Condition);
             Destroy In-World Text((Event Player).Mod_Menu_Text);
             Destroy In-World Text(First Of((Event Player).Mod_Menu_Instructions));
             Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Instructions, 1));
             Wait(0.3, Ignore Condition);
+            Set Player Variable(Event Player, Cd_Visible_To, Event Player);
             Allow Button(Event Player, Button(Primary Fire));
             Allow Button(Event Player, Button(Secondary Fire));
             Allow Button(Event Player, Button(Interact));
@@ -3980,6 +3985,20 @@ rule ("Mechanics - Jump to End of Active Mods (Ability 2)") {
         Modify Player Variable(Event Player, Active_Mod_Index, Max, Subtract(Count Of(Global.Active_Mod_Strings), 1));
         Set Player Variable(Event Player, Active_Menu_String_Text, Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index));
         Loop If Condition Is True;
+    }
+}
+
+rule ("Don't remove score from suiciding players") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Attacker == Victim;
+    }
+    actions {
+        Set Team Score(Team Of(Event Player), Add(Team Score(Team Of(Event Player)), 1));
     }
 }
 
