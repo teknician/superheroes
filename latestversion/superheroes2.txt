@@ -3995,10 +3995,10 @@ rule ("Don't remove score from suiciding players") {
         All;
     }
     conditions {
-        Attacker == Victim;
+        Victim == Attacker;
     }
     actions {
-        Set Team Score(Team Of(Event Player), Add(Team Score(Team Of(Event Player)), 1));
+        Modify Team Score(Team Of(Event Player), 1);
     }
 }
 
