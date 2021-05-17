@@ -3990,7 +3990,7 @@ rule ("Mechanics - Jump to End of Active Mods (Ability 2)") {
 
 rule ("Don't remove score from suiciding players") {
     event {
-        Ongoing - Each Player;
+        Player Died;
         All;
         All;
     }
