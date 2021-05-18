@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.0.6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.0.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4329,7 +4329,7 @@ rule ("Don't stay in mod menu too long") {
         Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)) == True;
     }
     actions {
-        Wait(20, Abort When False);
+        Wait(35, Abort When False);
         Small Message(Event Player, Custom String("Stay in menu too long while not in intermission and you'll lose points.", Null, Null, Null));
         While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
             Wait(30, Abort When False);
@@ -4350,7 +4350,7 @@ rule ("Kick player out of menu after 2 minutes") {
         Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)) == True;
     }
     actions {
-        Wait(120, Abort When False);
+        Wait(90, Abort When False);
         Small Message(Event Player, Custom String("You've been choosing too long. Assigning random mods.", Null, Null, Null));
         While(And(Or(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare((Event Player).Mod_Menu_Select, ==, 2)), Compare(Global.Intermission_In_Progress, ==, False)));
             Call Subroutine(RandomPassive);
