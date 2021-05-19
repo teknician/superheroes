@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.0.7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.0.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1841,11 +1841,11 @@ rule ("Active Mods 10 - Shadowstep") {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(Team 2), Position Of(Event Player), 100);
-        Wait(0.1, Abort When False);
+        Wait(0.45, Abort When False);
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
-        Wait(0.1, Abort When False);
+        Wait(0.45, Abort When False);
         Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Purple), Position Of(Event Player), 1);
-        Wait(0.1, Abort When False);
+        Wait(0.45, Abort When False);
         Teleport(Event Player, Nearest Walkable Position(World Vector Of(Vector(0, 0.5, -3.5), (Event Player).Mod_Effect_Target, Rotation And Translation)));
         Set Facing(Event Player, Direction Towards(Event Player, (Event Player).Mod_Effect_Target), To World);
         Play Effect(All Players(All Teams), Moira Fade Reappear Sound, Color(Team 2), Position Of(Event Player), 100);
@@ -3059,14 +3059,14 @@ rule ("Active Mods 33 - Inner Power") {
         Set Player Variable(Event Player, Num_4, 3);
         "waitUntil(eventPlayer.isHoldingButton(Button.MELEE) or (eventPlayer.getCurrentHero() in [Hero.BRIGITTE, Hero.REINHARDT] and eventPlayer.isHoldingButton(Button.RELOAD)) or not eventPlayer.isHoldingButton(Button.CROUCH), 9999)"
         Remove Health Pool From Player((Event Player).Health_Temp);
+        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Null, Event Player, 100, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
+        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Null, Color(Team 1), 1, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
+        Set Player Variable(Event Player, Health_Temp, Last Created Health Pool);
         Wait(0.15, Ignore Condition);
         "eventPlayer.isHoldingButton(Button.MELEE) or (eventPlayer.getCurrentHero() in [Hero.BRIGITTE, Hero.REINHARDT] and eventPlayer.isHoldingButton(Button.RELOAD))"
         Add Health Pool To Player(Event Player, Shields, Multiply(Ultimate Charge Percent(Event Player), 2.5), False, False);
-        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Sound, Null, Event Player, 100, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Null, Event Player, 1, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Set Player Variable(Event Player, Health_Temp, Last Created Health Pool);
         Set Ultimate Charge(Event Player, 0);
         Wait(3, Ignore Condition);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
@@ -3074,7 +3074,7 @@ rule ("Active Mods 33 - Inner Power") {
     }
 }
 
-rule ("Active Mods 35 - Power Glove Toggle") {
+rule ("Active Mods 35 - Power Glove") {
     event {
         Ongoing - Each Player;
         All;
@@ -3098,7 +3098,7 @@ rule ("Active Mods 35 - Power Glove Toggle") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
-        Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 75);
+        Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 200);
         Play Effect(All Players(All Teams), Good Pickup Effect, Color(Green), Event Player, 1);
         Set Player Variable(Event Player, Boolean, True);
     }
@@ -3391,6 +3391,8 @@ rule ("Active Mods 40 - Spectralize") {
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Set Status((Event Player).Mod_Effect_Target, Event Player, Phased Out, 2);
+        Start Damage Modification(All Players(Team Of(Event Player)), (Event Player).Mod_Effect_Target, 0.001, Receivers Damagers and Damage Percent);
+        Set Player Variable(Event Player, Active_Index, Last Damage Modification ID);
         Play Effect(All Players(All Teams), Bad Explosion, Color(White), (Event Player).Mod_Effect_Target, 6);
         Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 2), (Event Player).Mod_Effect_Target, 100);
         Play Effect(All Players(All Teams), Reaper Wraith Form Sound, Color(Team 2), (Event Player).Mod_Effect_Target, 100);
@@ -3408,6 +3410,7 @@ rule ("Active Mods 40 - Spectralize") {
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
         Wait(3.5, Ignore Condition);
+        Stop Damage Modification((Event Player).Active_Index);
         Play Effect(All Players(All Teams), Bad Explosion, Color(White), (Event Player).Mod_Effect_Target, 6);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
@@ -3748,7 +3751,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 8, Custom String("Entangling Roots: Melee roots an enemy for 1.5 sec. (30m range, 9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 9, Custom String("Blind: Target an enemy and press melee to blind them (12 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 10, Custom String("Fear: Melee forces a target enemy to run away from you (30m range, 10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target enemy (30m range, 9 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Shadowstep: Melee teleports you behind your target enemy after a short time (30m range, 9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 12, Custom String("Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 13, Custom String("Save Disc: Press Reload + Melee to set a point you can return to by pressing them again (4 sec. CD) (resets on death)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Telekinesis: Melee to push an enemy towards your cursor after 0.5 sec. (30m range, 4 sec. CD)", Null, Null, Null));
@@ -4372,7 +4375,7 @@ rule ("Kick player out of menu after 2 minutes") {
             Clear Status(Event Player, Hacked);
             Clear Status(Event Player, Rooted);
             Clear Status(Event Player, Phased Out);
-            If(Not(Array Contains(Array(5, 12, 16, 34, 35, 36, 40), (Event Player).Active_Mod)));
+            If(Not(Array Contains(Array(0, 1, 5, 12, 16, 34, 36, 40), (Event Player).Active_Mod)));
                 Set Player Variable(Event Player, Cd_Visible_To, Event Player);
             End;
         End;
@@ -4616,7 +4619,11 @@ rule ("Mods - Remove FX/Etc. on Death") {
         Allow Button(Event Player, Button(Reload));
         Allow Button(Event Player, Button(Interact));
         Allow Button(Event Player, Button(Secondary Fire));
-        Set Max Health(Event Player, 100);
+        If(Compare((Event Player).Passive_Mod, ==, 40));
+            Set Max Health(Event Player, 75);
+        Else;
+            Set Max Health(Event Player, 100);
+        End;
         Remove All Health Pools From Player(Event Player);
     }
 }
@@ -4929,50 +4936,52 @@ rule ("Active Mods 28 - ORA ORA!") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
-        Set Player Variable(Event Player, OraOra, True);
+        Set Player Variable(Attacker, OraOra, True);
         Set Player Variable(Victim, OraOra, True);
-        Set Player Variable(Event Player, Player_Position, Position Of(Attacker));
-        Set Player Variable(Event Player, Target_Position, Position Of(Victim));
-        Start Forcing Player Position(Event Player, (Event Player).Player_Position, False);
-        Start Forcing Player Position(Victim, (Event Player).Target_Position, False);
-        Set Ability Cooldown(Event Player, Button(Melee), 0);
-        Start Facing(Event Player, Direction Towards(Eye Position(Attacker), Eye Position(Victim)), 2000, To World, Direction and Turn Rate);
-        Start Facing(Victim, Direction Towards(Eye Position(Victim), Eye Position(Event Player)), 2000, To World, Direction and Turn Rate);
-        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Color(White), Eye Position(Event Player), 1, Position and Radius);
-        Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
+        Set Player Variable(Attacker, Player_Position, Position Of(Attacker));
+        Set Player Variable(Attacker, Target_Position, Position Of(Victim));
+        Start Forcing Player Position(Attacker, (Attacker).Player_Position, False);
+        Start Forcing Player Position(Victim, (Attacker).Target_Position, False);
+        Set Ability Cooldown(Attacker, Button(Melee), 0);
+        Start Facing(Attacker, Direction Towards(Eye Position(Attacker), Eye Position(Victim)), 2000, To World, Direction and Turn Rate);
+        Start Facing(Victim, Direction Towards(Eye Position(Victim), Eye Position(Attacker)), 2000, To World, Direction and Turn Rate);
+        Create Effect(All Players(All Teams), Wrecking Ball Adaptive Shield Target Effect, Color(White), Eye Position(Attacker), 1, Position and Radius);
+        Set Player Variable(Attacker, Active_Mod_FX, Last Created Entity);
         Wait(0.3, Ignore Condition);
         Set Status(Attacker, Null, Unkillable, 2.25);
-        For Player Variable(Event Player, Active_Index, 0, 20, 1);
-            Set Ability Cooldown(Event Player, Button(Melee), 0);
-            Start Holding Button(Event Player, Button(Melee));
+        Start Damage Modification(Victim, Attacker, 80, Receivers Damagers and Damage Percent);
+        Set Player Variable(Attacker, Active_Index_2, Last Damage Modification ID);
+        For Player Variable(Attacker, Active_Index, 0, 20, 1);
+            Set Ability Cooldown(Attacker, Button(Melee), 0);
+            Start Holding Button(Attacker, Button(Melee));
             Wait(0.016, Ignore Condition);
-            Cancel Primary Action(Event Player);
-            Stop Holding Button(Event Player, Button(Melee));
-            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Event Player), Eye Position(Event Player), 1);
-            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Event Player), Eye Position(Event Player), 200);
-            Heal(Victim, Null, Multiply(Event Damage, 0.75));
+            Cancel Primary Action(Attacker);
+            Stop Holding Button(Attacker, Button(Melee));
+            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Team Of(Attacker), Eye Position(Attacker), 1);
+            Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Team Of(Attacker), Eye Position(Attacker), 200);
             Set Status(Victim, Attacker, Stunned, 0.25);
             If(Or(Is Dead(Victim), Is Dead(Attacker)));
                 Break;
             End;
             Wait(0.11, Ignore Condition);
         End;
-        Stop Facing(Event Player);
+        Stop Damage Modification((Attacker).Active_Index_2);
+        Stop Facing(Attacker);
         Stop Facing(Victim);
-        Stop Forcing Player Position(Event Player);
+        Stop Forcing Player Position(Attacker);
         Stop Forcing Player Position(Victim);
         Wait(0.1, Ignore Condition);
-        Play Effect(All Players(All Teams), Bad Explosion, Team Of(Event Player), Attacker, 3);
-        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Event Player), Attacker, 200);
+        Play Effect(All Players(All Teams), Bad Explosion, Team Of(Attacker), Attacker, 3);
+        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Sound, Team Of(Attacker), Attacker, 200);
         Apply Impulse(Victim, Vector(0, 0.4, -1), 30, To Player, Cancel Contrary Motion);
         Wait(0.016, Ignore Condition);
-        Stop Facing(Event Player);
+        Stop Facing(Attacker);
         Stop Facing(Victim);
-        Stop Forcing Player Position(Event Player);
+        Stop Forcing Player Position(Attacker);
         Stop Forcing Player Position(Victim);
-        Set Player Variable(Event Player, OraOra, False);
+        Set Player Variable(Attacker, OraOra, False);
         Set Player Variable(Victim, OraOra, False);
-        Destroy Effect((Event Player).Active_Mod_FX);
+        Destroy Effect((Attacker).Active_Mod_FX);
         Wait Until(Compare(Altitude Of(Victim), <=, 1), 10);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Null, Position Of(Victim), 1);
         Play Effect(All Players(All Teams), Sigma Accretion Impact Sound, Null, Position Of(Victim), 100);
@@ -5076,21 +5085,20 @@ rule ("Active Mods 34 - Power Glove") {
             Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.2, 0)), 30, To World, Cancel Contrary Motion);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Null, Victim, 100);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Color(Team 2), Victim, 1);
-        End;
-        Set Player Variable(Event Player, Cooldown_Chase, 7);
-        Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
-        Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
-        Wait Until(Or(Compare((Event Player).Cooldown_Chase, ==, 0), Compare((Event Player).Mod_Menu_Select, !=, 3)), 9999);
-        If(Compare((Event Player).Mod_Menu_Select, !=, 3));
-            Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
-        End;
-        Stop Chasing Player Variable(Event Player, Cooldown_Chase);
-        Wait(0.032, Ignore Condition);
-        Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
-        Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
-        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
+            Set Player Variable(Event Player, Cooldown_Chase, 7);
+            Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
+            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
+            Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
+            Wait Until(Or(Compare((Event Player).Cooldown_Chase, ==, 0), Compare((Event Player).Mod_Menu_Select, !=, 3)), 9999);
+            If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+                Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
+            End;
+            Stop Chasing Player Variable(Event Player, Cooldown_Chase);
+            Wait(0.032, Ignore Condition);
+            Set Player Variable(Event Player, Cd_Color, Color(Green));
+            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+            Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
+            Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
 }
 
