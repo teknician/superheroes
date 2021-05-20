@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.2, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -291,6 +291,8 @@ rule ("Initialize Mod Menu (Joined)") {
         Set Player Variable(Event Player, Mod_Menu_Select, 0);
         Set Player Variable(Event Player, Passive_Mod_Index, 0);
         Set Player Variable(Event Player, Active_Mod_Index, 0);
+        Set Player Variable(Event Player, Passive_Mod, 0);
+        Set Player Variable(Event Player, Active_Mod, 0);
         Set Player Variable At Index(Event Player, Page_Number, 0, 0);
         Set Player Variable At Index(Event Player, Page_Number, 1, 0);
         Set Player Variable At Index(Event Player, Menu_Element, 0, 0);
@@ -305,8 +307,6 @@ rule ("Initialize Mod Menu (Joined)") {
         Set Player Variable At Index(Event Player, Choice_Color_A, 2, Color(Orange));
         Set Player Variable At Index(Event Player, Choice_Color_A, 3, Color(Orange));
         Set Player Variable At Index(Event Player, Choice_Color_A, 4, Color(Orange));
-        Set Player Variable(Event Player, Passive_Mod, 0);
-        Set Player Variable(Event Player, Active_Mod, 0);
         Disallow Button(Event Player, Button(Reload));
         Disallow Button(Event Player, Button(Interact));
         Wait(3, Ignore Condition);
@@ -433,7 +433,7 @@ rule ("Passive Mods 1 - 160% Movement Speed") {
         Set Move Speed(Event Player, 160);
         Create Effect(All Players(All Teams), Soldier: 76 Sprinting Effect, Team Of(Event Player), Event Player, 1, Position and Radius);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 2), 99999);
+        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
         Destroy Effect((Event Player).Passive_Mod_FX);
     }
 }
@@ -467,7 +467,7 @@ rule ("Passive Mods 4 - Smol Mode") {
             Wait(0.75, Ignore Condition);
             Set Crouch Enabled(Event Player, True);
         End;
-        If(Compare((Event Player).Passive_Mod, !=, 5));
+        If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Set Max Health(Event Player, 100);
     }
 }
@@ -619,7 +619,7 @@ rule ("Passive Mods 9 - Rejuvenation") {
         If(Is Alive(Event Player));
             Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.1));
         End;
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 10), 99999);
+        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
         Stop All Heal Over Time(Event Player);
     }
 }
@@ -756,7 +756,7 @@ rule ("Passive Mods 11 - Level Up") {
         Set Max Health(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Create In-World Text(All Players(All Teams), Custom String("{0} {1}", Custom String("Level: ", Null, Null, Null), Divide((Event Player).Player_ATK_SPD_HP, 4), Null), Event Player, 1, Clip Against Surfaces, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 12), 99999);
+        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
         Destroy In-World Text((Event Player).Passive_Mod_FX);
     }
 }
@@ -786,8 +786,8 @@ rule ("Passive Mods 17 - Cheat Death (On)") {
             Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 1);
         End;
         Wait(1, Ignore Condition);
-        Wait Until(Or(Compare(Health(Event Player), ==, 1), Compare((Event Player).Passive_Mod, !=, 18)), 99999);
-        Abort If(Compare((Event Player).Passive_Mod, !=, 18));
+        Wait Until(Or(Compare(Health(Event Player), ==, 1), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Create Effect(All Players(All Teams), Good Aura, Color(Purple), Event Player, 0.75, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Baptiste Immortality Field Protected Sound, Null, Event Player, 75, Visible To Position and Radius);
@@ -1043,10 +1043,10 @@ rule ("Passive Mods 36 - Evil Eye") {
                 End;
                 Stop Chasing Player Variable(Event Player, Passive_Time);
                 Set Player Variable(Event Player, Old_Target_P, (Event Player).Current_Target_P);
-                Wait Until(Or(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), Compare((Event Player).Passive_Mod, !=, 35)), 99999);
+                Wait Until(Or(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
                 Wait(3.5, Ignore Condition);
                 If(And(Is Alive((Event Player).Current_Target_P), Compare((Event Player).Current_Target_P, ==, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))));
-                    Wait Until(Or(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), Compare((Event Player).Passive_Mod, !=, 35)), 99999);
+                    Wait Until(Or(Or(Compare((Event Player).Current_Target_P, ==, Null), Compare((Event Player).Current_Target_P, !=, Ray Cast Hit Player(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 25)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False))), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
                 End;
                 Set Player Variable(Event Player, Passive_Time, 0);
                 Set Move Speed((Event Player).Current_Target_P, 100);
@@ -1058,7 +1058,7 @@ rule ("Passive Mods 36 - Evil Eye") {
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
                 Play Effect(Array(Event Player, (Event Player).Old_Target_P), Bad Explosion, Color(Red), (Event Player).Old_Target_P, 1);
                 Set Player Variable(Event Player, Old_Target_P, Null);
-            Else If(Or(Is Dead((Event Player).Current_Target_P), Compare((Event Player).Passive_Mod, !=, 35)));
+            Else If(Or(Is Dead((Event Player).Current_Target_P), Compare((Event Player).Mod_Menu_Select, !=, 3)));
                 Destroy Effect((Event Player).Passive_Mod_FX_Array);
             End;
         End;
@@ -1075,8 +1075,8 @@ rule ("Passive Mods 37 - Omega Boost Ult Tracker") {
     actions {
         "keep track of omega ult charge respective to normal ult charge (almost half as fast to charge)"
         While(And(Compare((Event Player).Omega_Charge, !=, 100), Compare((Event Player).Passive_Mod, ==, 36)));
-            Wait Until(Or(Compare(Ultimate Charge Percent(Event Player), >=, 5), Compare((Event Player).Passive_Mod, !=, 36)), 99999);
-            Abort If(Compare((Event Player).Passive_Mod, !=, 36));
+            Wait Until(Or(Compare(Ultimate Charge Percent(Event Player), >=, 5), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+            Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             If(Compare((Event Player).Omega_Charge, !=, 100));
                 Modify Player Variable(Event Player, Omega_Charge, Add, 4);
                 Set Ultimate Charge(Event Player, 0);
@@ -1106,8 +1106,8 @@ rule ("Passive Mods 37 - Omega Boost") {
         If(And(Not(Entity Exists((Event Player).Passive_Mod_FX)), Compare((Event Player).Omega_Charge, !=, 100)));
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Charge: {1}", Icon String(Bolt), (Event Player).Omega_Charge, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
             Set Player Variable(Event Player, Passive_Mod_FX, Last Text ID);
-            Wait Until(Or(Compare((Event Player).Omega_Charge, ==, 100), Compare((Event Player).Passive_Mod, !=, 36)), 99999);
-            Abort If(Compare((Event Player).Passive_Mod, !=, 36));
+            Wait Until(Or(Compare((Event Player).Omega_Charge, ==, 100), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+            Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Destroy In-World Text((Event Player).Passive_Mod_FX);
             Play Effect(Event Player, Good Pickup Effect, Null, Event Player, 75);
             Create In-World Text(Event Player, Custom String("                  {0}\nOmega Boost Ready {1}", Icon String(Bolt), Icon String(Checkmark), Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.3, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
@@ -1115,8 +1115,8 @@ rule ("Passive Mods 37 - Omega Boost") {
             Wait(0.016, Ignore Condition);
         End;
         "wait for player to press Q"
-        Wait Until(Or(And(And(Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1), Is Button Held(Event Player, Button(Ultimate))), Compare((Event Player).Omega_Charge, ==, 100)), Compare((Event Player).Passive_Mod, !=, 36)), 99999);
-        Abort If(Compare((Event Player).Passive_Mod, !=, 36));
+        Wait Until(Or(And(And(Compare((Event Player).CastUltimate_Mod_Conditions_Ally, ==, 1), Is Button Held(Event Player, Button(Ultimate))), Compare((Event Player).Omega_Charge, ==, 100)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         "determine the target of the ultimate (teammate)"
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Wait(0.016, Ignore Condition);
@@ -1248,7 +1248,7 @@ rule ("Passive Mods 38 - Killstreak") {
         Set Max Health(Event Player, 75);
         Set Damage Dealt(Event Player, 75);
         Set Healing Received(Event Player, 75);
-        Wait Until(Compare((Event Player).Passive_Mod, !=, 39), 99999);
+        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
         Destroy In-World Text(First Of((Event Player).Passive_Mod_FX_Array));
     }
 }
@@ -1936,8 +1936,8 @@ rule ("Active Mods 12 - Save Disc") {
         Wait(0.032, Ignore Condition);
         Wait(2, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
-        Wait Until(Or(Or(Is Dead(Event Player), Compare((Event Player).Active_Mod, !=, 13)), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 0)), 99999);
-        Abort If(Compare((Event Player).Active_Mod, !=, 13));
+        Wait Until(Or(Or(Is Dead(Event Player), Compare((Event Player).Mod_Menu_Select, !=, 3)), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 0)), 99999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Destroy Icon((Event Player).Active_Mod_FX);
     }
@@ -3156,7 +3156,7 @@ rule ("Active Mods 35 - Elemental Charge (Initialize)") {
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Player Variable(Event Player, Boolean, True);
         Wait(0.2, Ignore Condition);
-        Wait Until(Compare((Event Player).Active_Mod, !=, 36), 99999);
+        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
         Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
     }
 }
@@ -3199,7 +3199,7 @@ rule ("Active Mods 35 - Elemental Charge") {
         Else;
         //__label_switch_3_default__:
         End;
-        If(Compare((Event Player).Active_Mod, !=, 36));
+        If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Destroy In-World Text(First Of((Event Player).Active_Mod_FX_Array));
             Abort;
         End;
@@ -3394,15 +3394,15 @@ rule ("Active Mods 39 - Vs. Goliath") {
         Set Player Variable(Event Player, Active_Index, Color(Rose));
         Set Player Variable(Event Player, Active_String, Custom String("More Damage Dealt", Null, Null, Null));
         Set Player Variable(Event Player, Active_String_2, Icon String(Arrow: Up));
-        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Active_Mod, !=, 40)), 99999);
-        Abort If(Compare((Event Player).Active_Mod, !=, 40));
+        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Set Player Variable(Event Player, Active_Index, Color(Green));
         Set Player Variable(Event Player, Active_String, Custom String("Less Damage Taken", Null, Null, Null));
         Set Player Variable(Event Player, Active_String_2, Icon String(Arrow: Down));
-        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Active_Mod, !=, 40)), 99999);
-        Abort If(Compare((Event Player).Active_Mod, !=, 40));
+        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Loop;
     }
@@ -3772,7 +3772,9 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 39, Custom String("Killstreak: Start weak, but get stronger with each final blow (stacks up to 3 times, resets on death).", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 40, Custom String("Lifesplit: Heal nearby teammates for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 41, Custom String("150% Healing Dealt/Received", Null, Null, Null));
-        "Passive_Mod_Strings[42] probably worth making these so the menu doesn't get fucked up\r\n Passive_Mod_Strings[43]\r\n Passive_Mod_Strings[44]"
+        Set Global Variable At Index(Passive_Mod_Strings, 42, Custom String("", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 43, Custom String("", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 44, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (3 sec. CD)", Null, Null, Null));
@@ -3815,6 +3817,9 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 39, Custom String("Ghosted: Melee in the air to phase out, become invisible, and get 200% speed for 2 seconds. (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 40, Custom String("Vs. Goliath: Melee to toggle between (dealing more/taking less) damage from enemies with more health than you.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 41, Custom String("Spectralize: Melee phases out target enemy for 3.5 seconds. (8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 42, Custom String("", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 43, Custom String("", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 44, Custom String("", Null, Null, Null));
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
@@ -4195,6 +4200,7 @@ rule ("Open mod menu") {
     actions {
         Wait(0.75, Abort When False);
         Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
+        Start Facing(Event Player, Forward, 150, To Player, Direction and Turn Rate);
         Set Ultimate Ability Enabled(Event Player, True);
         Disallow Button(Event Player, Button(Interact));
         Disallow Button(Event Player, Button(Reload));
@@ -4216,7 +4222,6 @@ rule ("Open mod menu") {
         Set Status(Event Player, Null, Rooted, 9999);
         Set Status(Event Player, Null, Hacked, 9999);
         Set Status(Event Player, Null, Phased Out, 9999);
-        Start Facing(Event Player, Forward, 150, To Player, Direction and Turn Rate);
         If(True);
         Skip(Value In Array(Array(18, 0, 2, 4, 6, 8, 10, 12, 14, 16), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8), First Of((Event Player).Page_Number)))));
         //__label_switch_4_0__:
@@ -4281,31 +4286,22 @@ rule ("Open mod menu") {
         End;
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Mod_Menu_Select, 1);
-        Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index), Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod_Index)), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, 0.150, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), First Of((Event Player).Choice_Color_P), First Of((Event Player).Choice_Color_A))), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Text, 0, Last Text ID);
+        For Player Variable(Event Player, Index, 0, 4, 1);
+            Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Value In Array(Global.Passive_Mod_Strings, Add((Event Player).Passive_Mod_Index, (Event Player).Index)), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, (Event Player).Index))), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, Subtract(0.150, Multiply((Event Player).Index, 0.075)), 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, (Event Player).Index), Value In Array((Event Player).Choice_Color_A, (Event Player).Index))), Default Visibility);
+            Set Player Variable At Index(Event Player, Mod_Menu_Text, (Event Player).Index, Last Text ID);
+            Wait(0.032, Ignore Condition);
+        End;
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Add(Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index), 1), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, 1))), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, 0.075, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, 1), Value In Array((Event Player).Choice_Color_A, 1))), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Text, 1, Last Text ID);
-        Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Add(Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index), 2), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, 2))), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, 0, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, 2), Value In Array((Event Player).Choice_Color_A, 2))), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Text, 2, Last Text ID);
-        Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Add(Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index), 3), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, 3))), Null, Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.075, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, 3), Value In Array((Event Player).Choice_Color_A, 3))), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Text, 3, Last Text ID);
-        Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Add(Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod_Index), 4), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, 4))), Null, Null)), Add(Subtract(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, 4), Value In Array((Event Player).Choice_Color_A, 4))), Default Visibility);
-        Set Player Variable At Index(Event Player, Mod_Menu_Text, 4, Last Text ID);
-        Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} | scroll {1}", Input Binding String(Button(Jump)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} | scroll {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 5, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} | scroll {1}", Input Binding String(Button(Crouch)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} | scroll {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 6, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Primary Fire)), Null), Custom String("{0} {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Right), Null), Null), Add(Add(Eye Position(Event Player), Vector(1, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.3, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Add(Add(Eye Position(Event Player), Vector(1, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(1, 0.5, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(1, 0.5, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 8, Last Text ID);
         Wait(0.15, Ignore Condition);
     }
@@ -4319,12 +4315,12 @@ rule ("Navigate through pages") {
     }
     conditions {
         Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == True;
-        Or(Is Button Held(Event Player, Button(Secondary Fire)), Is Button Held(Event Player, Button(Primary Fire))) == True;
-        Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Jump))) == False;
+        Or(Is Button Held(Event Player, Button(Ultimate)), Is Button Held(Event Player, Button(Ability 2))) == True;
+        Or(Is Button Held(Event Player, Button(Secondary Fire)), Is Button Held(Event Player, Button(Primary Fire))) == False;
     }
     actions {
         "Next Page"
-        If(Is Button Held(Event Player, Button(Secondary Fire)));
+        If(Is Button Held(Event Player, Button(Ability 2)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Page_Number), <, 8)));
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Modify Player Variable At Index(Event Player, Page_Number, 0, Add, 1);
@@ -4347,7 +4343,7 @@ rule ("Navigate through pages") {
                 Set Player Variable At Index(Event Player, Choice_Color_A, 4, Color(Orange));
             End;
         "Previous Page"
-        Else If(Is Button Held(Event Player, Button(Primary Fire)));
+        Else If(Is Button Held(Event Player, Button(Ultimate)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Page_Number), >, 0)));
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Modify Player Variable At Index(Event Player, Page_Number, 0, Subtract, 1);
@@ -4377,12 +4373,12 @@ rule ("Navigate within a single page") {
     }
     conditions {
         Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == True;
-        Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Jump))) == True;
-        Or(Is Button Held(Event Player, Button(Secondary Fire)), Is Button Held(Event Player, Button(Primary Fire))) == False;
+        Or(Is Button Held(Event Player, Button(Secondary Fire)), Is Button Held(Event Player, Button(Primary Fire))) == True;
+        Or(Is Button Held(Event Player, Button(Ultimate)), Is Button Held(Event Player, Button(Ability 2))) == False;
     }
     actions {
         "Scroll Down"
-        If(Is Button Held(Event Player, Button(Crouch)));
+        If(Is Button Held(Event Player, Button(Secondary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 8), Compare(First Of((Event Player).Menu_Element), <, 4), Compare(First Of((Event Player).Menu_Element), <, 1))));
                 Small Message(Event Player, Custom String("Passive scroll down", Null, Null, Null));
                 Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
@@ -4398,7 +4394,7 @@ rule ("Navigate within a single page") {
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Sky Blue));
             End;
         "Scroll Up"
-        Else If(Is Button Held(Event Player, Button(Jump)));
+        Else If(Is Button Held(Event Player, Button(Primary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Menu_Element), >, 0)));
                 Small Message(Event Player, Custom String("Passive scroll up", Null, Null, Null));
                 Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
@@ -4424,8 +4420,8 @@ rule ("Close out of Mod Menu") {
     conditions {
         Is Button Held(Event Player, Button(Melee)) == True;
         Array Contains(Array(1, 2), (Event Player).Mod_Menu_Select) == True;
-        Or(Not(Is Button Held(Event Player, Button(Jump))), Is Button Held(Event Player, Button(Crouch))) == True;
         Or(Not(Is Button Held(Event Player, Button(Secondary Fire))), Is Button Held(Event Player, Button(Primary Fire))) == True;
+        Or(Not(Is Button Held(Event Player, Button(Ultimate))), Is Button Held(Event Player, Button(Ability 2))) == True;
     }
     actions {
         "Close passive menu, move to active menu"
@@ -4632,8 +4628,8 @@ rule ("Passive Mods - Killstreak (Death)") {
         Set Player Variable At Index(Event Player, Num_3, 0, Custom String("0", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_3, 1, Custom String("", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_3, 2, Custom String("", Null, Null, Null));
-        Wait Until(Or(Is Alive(Event Player), Compare((Event Player).Passive_Mod, !=, 39)), 9999);
-        Abort If(Compare((Event Player).Passive_Mod, !=, 39));
+        Wait Until(Or(Is Alive(Event Player), Compare((Event Player).Mod_Menu_Select, !=, 3)), 9999);
+        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Set Max Health(Event Player, 75);
         Set Damage Dealt(Event Player, 75);
         Set Healing Received(Event Player, 75);
