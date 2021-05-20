@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -289,8 +289,8 @@ rule ("Initialize Mod Menu (Joined)") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 0);
-        Set Player Variable(Event Player, Passive_Mod_Index, First Of(Global.Passive_Mod_Strings));
-        Set Player Variable(Event Player, Active_Mod_Index, First Of(Global.Active_Mod_Strings));
+        Set Player Variable(Event Player, Passive_Mod_Index, 0);
+        Set Player Variable(Event Player, Active_Mod_Index, 0);
         Set Player Variable At Index(Event Player, Page_Number, 0, 0);
         Set Player Variable At Index(Event Player, Page_Number, 1, 0);
         Set Player Variable At Index(Event Player, Menu_Element, 0, 0);
@@ -4321,6 +4321,7 @@ rule ("Navigate through pages") {
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Modify Player Variable At Index(Event Player, Page_Number, 0, Add, 1);
                 Set Player Variable(Event Player, Passive_Mod_Index, Multiply(5, First Of((Event Player).Page_Number)));
+                Set Player Variable At Index(Event Player, Menu_Element, 0, 0);
                 Set Player Variable At Index(Event Player, Choice_Color_P, 0, Color(Sky Blue));
                 Set Player Variable At Index(Event Player, Choice_Color_P, 1, Color(Lime Green));
                 Set Player Variable At Index(Event Player, Choice_Color_P, 2, Color(Lime Green));
@@ -4330,6 +4331,7 @@ rule ("Navigate through pages") {
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Modify Player Variable At Index(Event Player, Page_Number, 1, Add, 1);
                 Set Player Variable(Event Player, Active_Mod_Index, Multiply(5, Value In Array((Event Player).Page_Number, 1)));
+                Set Player Variable At Index(Event Player, Menu_Element, 1, 0);
                 Set Player Variable At Index(Event Player, Choice_Color_A, 0, Color(Sky Blue));
                 Set Player Variable At Index(Event Player, Choice_Color_A, 1, Color(Orange));
                 Set Player Variable At Index(Event Player, Choice_Color_A, 2, Color(Orange));
@@ -4464,7 +4466,7 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
                 Wait(0.032, Ignore Condition);
             Else;
-                Wait(0.032, Ignore Condition);
+                Wait(0.064, Ignore Condition);
                 If(Global.Intermission_In_Progress);
                     Heal(Event Player, Null, 10000);
                 End;
@@ -4476,17 +4478,18 @@ rule ("Close out of Mod Menu") {
                 Allow Button(Event Player, Button(Secondary Fire));
                 Allow Button(Event Player, Button(Interact));
                 Allow Button(Event Player, Button(Reload));
-                Clear Status(Event Player, Hacked);
                 If(Global.Intermission_In_Progress);
                     Small Message(Event Player, Custom String("{0} {1}", Value In Array(Global.Intermission_Array, 10), Value In Array(Global.Intermission_Array, 1), Null));
                 Else;
                     Clear Status(Event Player, Rooted);
                     Clear Status(Event Player, Phased Out);
+                    Clear Status(Event Player, Hacked);
                     If(Not(Array Contains(Array(0, 5, 12, 16, 34, 36, 40), (Event Player).Active_Mod)));
                         Set Player Variable(Event Player, Cd_Visible_To, Event Player);
                     End;
                 End;
                 Wait(0.1, Ignore Condition);
+                Clear Status(Event Player, Hacked);
                 Set Player Variable(Event Player, Mod_Menu_Select, 3);
     }
 }
