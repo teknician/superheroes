@@ -1741,7 +1741,7 @@ rule ("Active Mods 8 - Blind") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
-        Create Beam Effect(All Players(All Teams), Moira Grasp Connected Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Team 2), Visible To Position and Radius);
+        Create Beam Effect(All Players(All Teams), Moira Grasp Connected Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Team 1), Visible To Position and Radius);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 0, Last Created Entity);
         Set Player Variable((Event Player).Mod_Effect_Target, Is_Blind, True);
         Stop Camera((Event Player).Mod_Effect_Target);
@@ -4287,9 +4287,9 @@ rule ("Open mod menu") {
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Mod_Menu_Select, 1);
         For Player Variable(Event Player, Index, 0, 4, 1);
-            Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Value In Array(Global.Passive_Mod_Strings, Add((Event Player).Passive_Mod_Index, (Event Player).Index)), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, (Event Player).Index))), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, Subtract(0.150, Multiply((Event Player).Index, 0.075)), 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, (Event Player).Index), Value In Array((Event Player).Choice_Color_A, (Event Player).Index))), Default Visibility);
-            Set Player Variable At Index(Event Player, Mod_Menu_Text, (Event Player).Index, Last Text ID);
-            Wait(0.032, Ignore Condition);
+            Create In-World Text(Event Player, Update Every Frame(Custom String("{0}", If-Then-Else(Array Contains(Array(0, 1), (Event Player).Mod_Menu_Select), Value In Array(Global.Passive_Mod_Strings, Add((Event Player).Passive_Mod_Index, Evaluate Once((Event Player).Index))), Value In Array(Global.Active_Mod_Strings, Add((Event Player).Active_Mod_Index, Evaluate Once((Event Player).Index)))), Null, Null)), Add(Add(Eye Position(Event Player), Vector(0, Subtract(0.150, Multiply(Evaluate Once((Event Player).Index), 0.075)), 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position String and Color, Update Every Frame(If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Value In Array((Event Player).Choice_Color_P, Evaluate Once((Event Player).Index)), Value In Array((Event Player).Choice_Color_A, Evaluate Once((Event Player).Index)))), Default Visibility);
+            Set Player Variable At Index(Event Player, Mod_Menu_Text, Evaluate Once((Event Player).Index), Last Text ID);
+            Wait(2, Ignore Condition);
         End;
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("{0} | scroll {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
