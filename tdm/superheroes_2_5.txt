@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_5, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_6, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -278,7 +278,7 @@ rule ("Initialize intermission") {
     }
     actions {
         Set Global Variable(Start_Intermission, 1);
-        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 45, 42, Custom String("   Game starts", Null, Null, Null), Null, Null, Null, Null, Null, Custom String("Match hasn't started", Null, Null, Null), Custom String("Match setup", Null, Null, Null)));
+        Set Global Variable(Intermission_Array, Array(Custom String("Game start! Time to choose your mods!", Null, Null, Null), Custom String("yet... You can still change mods!", Null, Null, Null), 60, 57, Custom String("   Game starts", Null, Null, Null), Null, Null, Null, Null, Null, Custom String("Match hasn't started", Null, Null, Null), Custom String("Match setup", Null, Null, Null)));
     }
 }
 
@@ -3598,7 +3598,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 14);
             Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 14);
             If(Compare(Global.Global_Index, ==, Subtract(Value In Array(Global.Intermission_Array, 2), 4)));
-                Wait(0.25, Ignore Condition);
+                Wait(0.032, Ignore Condition);
                 Stop Chasing Global Variable(Intermission_Duration);
                 Destroy HUD Text(Value In Array(Global.Intermission_Array, 5));
             End;
@@ -3732,8 +3732,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Ongoing - Global;
     }
     actions {
-        Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Click to scroll through Passive Mods. Press Melee to select one", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 0, Custom String("Primary/Secondary fire to scroll through passives. Ult/Ability 2 to change pages, Melee to choose", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 1, Custom String("Random Passive Ability", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 2, Custom String("160% Movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("140% Damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
@@ -3777,8 +3777,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 42, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 43, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 44, Custom String("", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte use RELOAD, not MELEE for active mods.", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Mod", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 0, Custom String("NOTE: Reinhardt and Brigitte press RELOAD, not MELEE for using active abilities.", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 1, Custom String("Random Active Ability", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 2, Custom String("Blink: Melee teleports you 7 meters forward (3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 3, Custom String("Death Grip: Melee roots an enemy for 1 sec. and pulls them to you (30m range) (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 4, Custom String("Preparation: Press Reload + Melee to refresh your ability cooldowns (11 sec. CD)", Null, Null, Null));
@@ -4233,6 +4233,7 @@ rule ("Open mod menu") {
         Set Player Variable At Index(Event Player, Menu_Misc, 3, Last Created Entity);
         Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 6, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 4, Last Created Entity);
+        Disable Hero HUD(Event Player);
         Disallow Button(Event Player, Button(Primary Fire));
         Disallow Button(Event Player, Button(Secondary Fire));
         Set Status(Event Player, Null, Rooted, 9999);
@@ -4462,6 +4463,20 @@ rule ("Close out of Mod Menu") {
             Wait(0.032, Ignore Condition);
             Set Player Variable(Event Player, Mod_Menu_Select, 2);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 120);
+            If(True);
+            Skip(Value In Array(Array(5, 0, 1, 2, 3, 4), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4), First Of((Event Player).Menu_Element)))));
+            //__label_switch_6_0__:
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            //__label_switch_6_1__:
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            //__label_switch_6_2__:
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            //__label_switch_6_3__:
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            //__label_switch_6_4__:
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            //__label_switch_6_default__:
+            End;
         "Close active menu, fully exit"
         Else If(Compare((Event Player).Mod_Menu_Select, ==, 2));
             If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 8));
@@ -4498,6 +4513,20 @@ rule ("Close out of Mod Menu") {
                 Wait(0.032, Ignore Condition);
             Else;
                 Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 120);
+                If(True);
+                Skip(Value In Array(Array(5, 0, 1, 2, 3, 4), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4), Value In Array((Event Player).Menu_Element, 1)))));
+                //__label_switch_7_0__:
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                //__label_switch_7_1__:
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                //__label_switch_7_2__:
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                //__label_switch_7_3__:
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                //__label_switch_7_4__:
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                //__label_switch_7_default__:
+                End;
                 Wait(0.064, Ignore Condition);
                 Heal(Event Player, Null, 10000);
                 For Player Variable(Event Player, Index, 0, Count Of((Event Player).Mod_Menu_Text), 1);
