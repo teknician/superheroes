@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_6, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_7, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3657,12 +3657,12 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         Destroy Icon(Value In Array(Global.Intermission_Array, 8));
         Destroy In-World Text(Value In Array(Global.Intermission_Array, 7));
         Destroy In-World Text(Value In Array(Global.Intermission_Array, 9));
-        Play Effect(All Players(Team 1), McCree Flashbang Explosion Sound, Color(Team 2), Global.Team_2_Spawns, 200);
-        Play Effect(All Players(Team 2), McCree Flashbang Explosion Sound, Color(Team 1), Global.Team_1_Spawns, 200);
+        Play Effect(All Players(Team 1), McCree Flashbang Explosion Sound, Null, Global.Team_1_Spawns, 200);
+        Play Effect(All Players(Team 2), McCree Flashbang Explosion Sound, Null, Global.Team_2_Spawns, 200);
         Wait(0.016, Ignore Condition);
         Set Global Variable At Index(Intermission_Array, 0, Custom String("Intermission! Maybe change mods?", Null, Null, Null));
-        Set Global Variable At Index(Intermission_Array, 2, 25);
-        Set Global Variable At Index(Intermission_Array, 3, 22);
+        Set Global Variable At Index(Intermission_Array, 2, 30);
+        Set Global Variable At Index(Intermission_Array, 3, 27);
         Set Global Variable At Index(Intermission_Array, 4, Custom String("Intermission ends", Null, Null, Null));
         Set Global Variable At Index(Intermission_Array, 6, Null);
         Set Global Variable At Index(Intermission_Array, 7, Null);
@@ -4232,13 +4232,13 @@ rule ("Open mod menu") {
             Set Player Variable At Index(Event Player, Choice_Color_A, 0, Color(Sky Blue));
         End;
         Wait(0.064, Ignore Condition);
-        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 2, Visible To Position and Radius);
+        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 0.5)), 2, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 0, Last Created Entity);
-        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.2)), 3, Visible To Position and Radius);
+        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 0.75)), 3, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 1, Last Created Entity);
-        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.3)), 4, Visible To Position and Radius);
+        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.1)), 4, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 2, Last Created Entity);
-        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.4)), 5, Visible To Position and Radius);
+        Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.25)), 5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 3, Last Created Entity);
         Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 1.5)), 6, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 4, Last Created Entity);
@@ -4327,11 +4327,14 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("                                                                                             PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                                                                                               Page nav: {0}{1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String(" | {0}", Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                                                                                   Page nav: {0}", Custom String("{0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.85, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 8, Last Text ID);
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
+        Wait(0.016, Ignore Condition);
+        Create In-World Text(Event Player, Custom String("Hold {0} to change heroes                                                                                                 {1}", Input Binding String(Button(Jump)), Custom String("              ", Null, Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Set Player Variable At Index(Event Player, Mod_Menu_Text, 10, Last Text ID);
         Wait(0.15, Ignore Condition);
     }
 }
@@ -4410,14 +4413,14 @@ rule ("Navigate within a single page") {
         If(Is Button Held(Event Player, Button(Secondary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 8), Compare(First Of((Event Player).Menu_Element), <, 4), Compare(First Of((Event Player).Menu_Element), <, 1))));
                 Wait(0.032, Ignore Condition);
-                Play Effect(Event Player, DVa Micro Missiles Explosion Sound, Null, Event Player, 150);
+                Play Effect(Event Player, McCree Flashbang Explosion Sound, Null, Event Player, 200);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Add, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Sky Blue));
             End;
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), <, 8), Compare(Value In Array((Event Player).Menu_Element, 1), <, 4), Compare(Value In Array((Event Player).Menu_Element, 1), <, 1))));
                 Wait(0.032, Ignore Condition);
-                Play Effect(Event Player, DVa Micro Missiles Explosion Sound, Null, Event Player, 100);
+                Play Effect(Event Player, DVa Micro Missiles Explosion Sound, Null, Event Player, 200);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Orange));
                 Modify Player Variable At Index(Event Player, Menu_Element, 1, Add, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Sky Blue));
@@ -4426,14 +4429,14 @@ rule ("Navigate within a single page") {
         Else If(Is Button Held(Event Player, Button(Primary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Menu_Element), >, 0)));
                 Wait(0.032, Ignore Condition);
-                Play Effect(Event Player, DVa Micro Missiles Explosion Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Pharah Barrage Explosion Sound, Null, Event Player, 200);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Subtract, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Sky Blue));
             End;
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Menu_Element, 1), >, 0)));
                 Wait(0.032, Ignore Condition);
-                Play Effect(Event Player, DVa Micro Missiles Explosion Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Soldier: 76 Sprint Start Sound, Null, Event Player, 200);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Orange));
                 Modify Player Variable At Index(Event Player, Menu_Element, 1, Subtract, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Sky Blue));
@@ -4475,15 +4478,15 @@ rule ("Close out of Mod Menu") {
             If(True);
             Skip(Value In Array(Array(5, 0, 1, 2, 3, 4), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4), First Of((Event Player).Menu_Element)))));
             //__label_switch_6_0__:
-            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
             //__label_switch_6_1__:
-            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
             //__label_switch_6_2__:
-            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
             //__label_switch_6_3__:
-            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
             //__label_switch_6_4__:
-            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+            Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
             //__label_switch_6_default__:
             End;
         "Close active menu, fully exit"
@@ -4521,19 +4524,20 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
                 Wait(0.032, Ignore Condition);
             Else;
+                Enable Hero HUD(Event Player);
                 Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 120);
                 If(True);
                 Skip(Value In Array(Array(5, 0, 1, 2, 3, 4), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4), Value In Array((Event Player).Menu_Element, 1)))));
                 //__label_switch_7_0__:
-                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.15, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
                 //__label_switch_7_1__:
-                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, 0.05, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
                 //__label_switch_7_2__:
-                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.05, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
                 //__label_switch_7_3__:
-                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.15, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
                 //__label_switch_7_4__:
-                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.25);
+                Play Effect(Event Player, Good Pickup Effect, Color(Sky Blue), Add(Add(Eye Position(Event Player), Vector(0, -0.25, 0)), Multiply(Facing Direction Of(Event Player), 0.3)), 0.05);
                 //__label_switch_7_default__:
                 End;
                 Wait(0.064, Ignore Condition);
