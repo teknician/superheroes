@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_3, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -90,7 +90,7 @@ variables {
         7: Health_Temp
         8: Mod_Menu_Select
         9: Mod_Menu_Text
-        10: Menu_FX
+        10: Menu_Misc
         11: Page_Number
         12: Menu_Element
         13: Choice_Color_P
@@ -290,6 +290,7 @@ rule ("Initialize Mod Menu (Joined)") {
     }
     actions {
         Set Player Variable(Event Player, Mod_Menu_Select, 0);
+        Set Player Variable At Index(Event Player, Menu_Misc, 5, 0);
         Set Player Variable(Event Player, Passive_Mod_Index, 0);
         Set Player Variable(Event Player, Active_Mod_Index, 0);
         Set Player Variable(Event Player, Passive_Mod, 0);
@@ -4217,6 +4218,10 @@ rule ("Open mod menu") {
         If(Or(Compare((Event Player).Passive_Mod, ==, 20), Compare((Event Player).Active_Mod, ==, 21)));
             Set Ultimate Charge(Event Player, 0);
         End;
+        If(Compare(Value In Array((Event Player).Menu_Misc, 5), ==, 0));
+            Set Player Variable At Index(Event Player, Choice_Color_P, 0, Color(Sky Blue));
+            Set Player Variable At Index(Event Player, Choice_Color_A, 0, Color(Sky Blue));
+        End;
         Wait(0.064, Ignore Condition);
         Disallow Button(Event Player, Button(Primary Fire));
         Disallow Button(Event Player, Button(Secondary Fire));
@@ -4296,28 +4301,28 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("{0} | up {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 5, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("   {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.425, 0)), Multiply(Facing Direction Of(Event Player), 1.25)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("      {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.425, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 6, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                                             PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                                                                     PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                                    Page nav: {0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                                                                                      Page{0}", Custom String(" nav: {0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 8, Last Text ID);
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
         Wait(0.15, Ignore Condition);
-        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 1, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Menu_FX, 0, Last Created Entity);
-        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 2, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Menu_FX, 1, Last Created Entity);
-        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 3, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Menu_FX, 2, Last Created Entity);
-        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 4, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Menu_FX, 3, Last Created Entity);
-        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 5, Visible To Position and Radius);
-        Set Player Variable At Index(Event Player, Menu_FX, 4, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Eye Position(Event Player), 1, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_Misc, 0, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Eye Position(Event Player), 2, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_Misc, 1, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Eye Position(Event Player), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_Misc, 2, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Eye Position(Event Player), 4, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_Misc, 3, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Eye Position(Event Player), 5, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_Misc, 4, Last Created Entity);
     }
 }
 
@@ -4394,7 +4399,6 @@ rule ("Navigate within a single page") {
         "Scroll Down"
         If(Is Button Held(Event Player, Button(Secondary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 8), Compare(First Of((Event Player).Menu_Element), <, 4), Compare(First Of((Event Player).Menu_Element), <, 1))));
-                Small Message(Event Player, Custom String("Passive scroll down", Null, Null, Null));
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Add, 1);
@@ -4456,7 +4460,8 @@ rule ("Close out of Mod Menu") {
             End;
             Wait(0.032, Ignore Condition);
             Set Player Variable(Event Player, Mod_Menu_Select, 2);
-            Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 80);
+            Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 120);
+            Play Effect(Event Player, Bad Explosion, Color(White), Event Player, 4);
         "Close active menu, fully exit"
         Else If(Compare((Event Player).Mod_Menu_Select, ==, 2));
             If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 8));
@@ -4482,6 +4487,9 @@ rule ("Close out of Mod Menu") {
                 End;
             End;
             Wait(0.032, Ignore Condition);
+            If(Compare(Value In Array((Event Player).Menu_Misc, 5), ==, 0));
+                Set Player Variable At Index(Event Player, Menu_Misc, 5, 1);
+            End;
             "Incompatible mods"
             If(Or(Or(Or(And(Compare((Event Player).Passive_Mod, ==, 5), Array Contains(Array(5, 15, 24), (Event Player).Active_Mod)), And(Compare((Event Player).Passive_Mod, ==, 30), Array Contains(Array(2, 11), (Event Player).Active_Mod))), And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 20))), And(Compare((Event Player).Passive_Mod, ==, 36), Compare((Event Player).Active_Mod, ==, 34))));
                 Play Effect(Event Player, Debuff Impact Sound, Null, Event Player, 100);
@@ -4489,15 +4497,16 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
                 Wait(0.032, Ignore Condition);
             Else;
-                Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 80);
+                Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 120);
+                Play Effect(Event Player, Bad Explosion, Color(White), Event Player, 4);
                 Wait(0.064, Ignore Condition);
                 Heal(Event Player, Null, 10000);
                 For Player Variable(Event Player, Index, 0, Count Of((Event Player).Mod_Menu_Text), 1);
                     Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Text, (Event Player).Index));
                 End;
                 Wait(0.016, Ignore Condition);
-                For Player Variable(Event Player, Index, 0, Count Of((Event Player).Menu_FX), 1);
-                    Destroy Effect(Value In Array((Event Player).Menu_FX, (Event Player).Index));
+                For Player Variable(Event Player, Index, 0, Count Of((Event Player).Menu_Misc), 1);
+                    Destroy Effect(Value In Array((Event Player).Menu_Misc, (Event Player).Index));
                 End;
                 Stop Facing(Event Player);
                 Allow Button(Event Player, Button(Primary Fire));
