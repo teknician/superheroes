@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -90,78 +90,79 @@ variables {
         7: Health_Temp
         8: Mod_Menu_Select
         9: Mod_Menu_Text
-        10: Page_Number
-        11: Menu_Element
-        12: Choice_Color_P
-        13: Choice_Color_A
-        14: Passive_Mod
-        15: Passive_Mod_Index
-        16: Passive_Mod_FX
-        17: Passive_Mod_FX_Array
-        18: Passive_Mod_Skill_Toggle
-        19: Passive_Time
-        20: Passive_Index
-        21: Current_Target_P
-        22: Old_Target_P
-        23: Active_Mod
-        24: Active_Mod_Index
-        25: Active_Mod_FX
-        26: Active_Mod_FX_Array
-        27: Active_Mod_Skill_Toggle
-        28: Active_Index
-        29: Active_Index_2
-        30: Active_String
-        31: Active_String_2
-        32: Active_Time
-        33: Current_Target_A
-        34: Old_Target_A
-        35: Index
-        36: Num_1
-        37: Num_2
-        38: Num_3
-        39: Num_4
-        40: Radius
-        41: Mod_Effect_Caster
-        42: Mod_Effect_Target
-        43: CastMelee_Mod_Conditions
-        44: CastMelee_Mod_Conditions_Ally
-        45: CastUltimate_Mod_Conditions_Ally
-        46: LoS_Mod_Conditions
-        47: Third_Person_Camera_Toggle
-        48: Player_ATK_SPD_HP
-        49: Player_Position
-        50: Player_Foot_Position
-        51: Player_Health
-        52: Vertical_Speed
-        53: Affected_Players
-        54: Active_Affected_Players
-        55: Other_Players
-        56: Current_Hero
-        57: Current_Hero_2
-        58: Current_Hero_3
-        59: Distance_Num
-        60: Temp_Index
-        61: Facing_Direction
-        62: Is_Colossus
-        63: Is_Blind
-        64: Is_Visible
-        65: Target
-        66: Target_Area_A
-        67: Target_Position
-        68: Boolean
-        69: Railgun_Charge
-        70: OraOra
-        71: Omega_Charge
-        72: Blade_Chase
-        73: Blade_Damage
-        74: Blade_Victim
-        75: Victim_Chain
-        76: Victim_Chain_Sorted
-        77: Projectile
-        78: Projectile_Position
-        79: DoT_Var
-        80: DoT_Boolean
-        81: HoT_Var
+        10: Menu_FX
+        11: Page_Number
+        12: Menu_Element
+        13: Choice_Color_P
+        14: Choice_Color_A
+        15: Passive_Mod
+        16: Passive_Mod_Index
+        17: Passive_Mod_FX
+        18: Passive_Mod_FX_Array
+        19: Passive_Mod_Skill_Toggle
+        20: Passive_Time
+        21: Passive_Index
+        22: Current_Target_P
+        23: Old_Target_P
+        24: Active_Mod
+        25: Active_Mod_Index
+        26: Active_Mod_FX
+        27: Active_Mod_FX_Array
+        28: Active_Mod_Skill_Toggle
+        29: Active_Index
+        30: Active_Index_2
+        31: Active_String
+        32: Active_String_2
+        33: Active_Time
+        34: Current_Target_A
+        35: Old_Target_A
+        36: Index
+        37: Num_1
+        38: Num_2
+        39: Num_3
+        40: Num_4
+        41: Radius
+        42: Mod_Effect_Caster
+        43: Mod_Effect_Target
+        44: CastMelee_Mod_Conditions
+        45: CastMelee_Mod_Conditions_Ally
+        46: CastUltimate_Mod_Conditions_Ally
+        47: LoS_Mod_Conditions
+        48: Third_Person_Camera_Toggle
+        49: Player_ATK_SPD_HP
+        50: Player_Position
+        51: Player_Foot_Position
+        52: Player_Health
+        53: Vertical_Speed
+        54: Affected_Players
+        55: Active_Affected_Players
+        56: Other_Players
+        57: Current_Hero
+        58: Current_Hero_2
+        59: Current_Hero_3
+        60: Distance_Num
+        61: Temp_Index
+        62: Facing_Direction
+        63: Is_Colossus
+        64: Is_Blind
+        65: Is_Visible
+        66: Target
+        67: Target_Area_A
+        68: Target_Position
+        69: Boolean
+        70: Railgun_Charge
+        71: OraOra
+        72: Omega_Charge
+        73: Blade_Chase
+        74: Blade_Damage
+        75: Blade_Victim
+        76: Victim_Chain
+        77: Victim_Chain_Sorted
+        78: Projectile
+        79: Projectile_Position
+        80: DoT_Var
+        81: DoT_Boolean
+        82: HoT_Var
 }
 subroutines {
     0: MoveSpeed160
@@ -1764,7 +1765,7 @@ rule ("Active Mods 8 - Blind") {
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 7, Last Created Entity);
         Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Null, (Event Player).Mod_Effect_Target, 100);
         Wait(0.75, Ignore Condition);
-        Start Camera((Event Player).Mod_Effect_Target, Vector(0.5, -299, 0), Vector(0, -300, 0), 0);
+        Start Camera((Event Player).Mod_Effect_Target, Vector(0, -298, 0), Vector(0, -300, 0), 0);
         Wait(1.5, Ignore Condition);
         If(Is Dead((Event Player).Mod_Effect_Target));
             Destroy Effect(First Of(((Event Player).Mod_Effect_Target).Active_Mod_FX_Array));
@@ -4307,6 +4308,16 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
         Wait(0.15, Ignore Condition);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 1, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_FX, 0, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 2, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_FX, 1, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_FX, 2, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 4, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_FX, 3, Last Created Entity);
+        Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 5, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Menu_FX, 4, Last Created Entity);
     }
 }
 
@@ -4384,14 +4395,14 @@ rule ("Navigate within a single page") {
         If(Is Button Held(Event Player, Button(Secondary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 8), Compare(First Of((Event Player).Menu_Element), <, 4), Compare(First Of((Event Player).Menu_Element), <, 1))));
                 Small Message(Event Player, Custom String("Passive scroll down", Null, Null, Null));
-                Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Add, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Sky Blue));
             End;
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), <, 8), Compare(Value In Array((Event Player).Menu_Element, 1), <, 4), Compare(Value In Array((Event Player).Menu_Element, 1), <, 1))));
                 Small Message(Event Player, Custom String("Active scroll down", Null, Null, Null));
-                Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Orange));
                 Modify Player Variable At Index(Event Player, Menu_Element, 1, Add, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Sky Blue));
@@ -4400,14 +4411,14 @@ rule ("Navigate within a single page") {
         Else If(Is Button Held(Event Player, Button(Primary Fire)));
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Menu_Element), >, 0)));
                 Small Message(Event Player, Custom String("Passive scroll up", Null, Null, Null));
-                Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Subtract, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Sky Blue));
             End;
             If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Menu_Element, 1), >, 0)));
                 Small Message(Event Player, Custom String("Active scroll up", Null, Null, Null));
-                Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Event Player, 100);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 100);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Orange));
                 Modify Player Variable At Index(Event Player, Menu_Element, 1, Subtract, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Sky Blue));
@@ -4445,6 +4456,7 @@ rule ("Close out of Mod Menu") {
             End;
             Wait(0.032, Ignore Condition);
             Set Player Variable(Event Player, Mod_Menu_Select, 2);
+            Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 80);
         "Close active menu, fully exit"
         Else If(Compare((Event Player).Mod_Menu_Select, ==, 2));
             If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 8));
@@ -4477,10 +4489,15 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
                 Wait(0.032, Ignore Condition);
             Else;
+                Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 80);
                 Wait(0.064, Ignore Condition);
                 Heal(Event Player, Null, 10000);
                 For Player Variable(Event Player, Index, 0, Count Of((Event Player).Mod_Menu_Text), 1);
                     Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Text, (Event Player).Index));
+                End;
+                Wait(0.016, Ignore Condition);
+                For Player Variable(Event Player, Index, 0, Count Of((Event Player).Menu_FX), 1);
+                    Destroy Effect(Value In Array((Event Player).Menu_FX, (Event Player).Index));
                 End;
                 Stop Facing(Event Player);
                 Allow Button(Event Player, Button(Primary Fire));
@@ -4499,6 +4516,7 @@ rule ("Close out of Mod Menu") {
                 End;
                 Wait(0.1, Ignore Condition);
                 Clear Status(Event Player, Hacked);
+                Wait(1, Ignore Condition);
                 Set Player Variable(Event Player, Mod_Menu_Select, 3);
     }
 }
