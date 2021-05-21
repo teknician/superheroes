@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_9, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3596,7 +3596,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
         "countdown until can move again"
         Set Global Variable(Intermission_Duration, Value In Array(Global.Intermission_Array, 2));
         Chase Global Variable Over Time(Intermission_Duration, 0, Value In Array(Global.Intermission_Array, 2), Destination and Duration);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String(" {0} in {1} seconds.\n  Hold {2} To change heroes.", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Input Binding String(Button(Jump))), Top, 3, Null, Null, Color(White), Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String(" {0} in {1} seconds.", Value In Array(Global.Intermission_Array, 4), Round To Integer(Global.Intermission_Duration, Down), Null), Top, 3, Null, Null, Color(White), Visible To and String, Default Visibility);
         Set Global Variable At Index(Intermission_Array, 5, Last Text ID);
         Wait(0.02, Ignore Condition);
         Play Effect(All Players(All Teams), Good Explosion, Color(Sky Blue), Global.Team_1_Spawns, 30);
@@ -3685,7 +3685,7 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
     }
     actions {
         Wait Until(Has Spawned(Event Player), 99999);
-        Wait(2.5, Abort When False);
+        Wait(0.25, Abort When False);
         If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 12)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
             If(Compare(Team Of(Event Player), ==, Team 1));
                 Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
@@ -3695,7 +3695,12 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
             End;
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
-            Wait(1, Ignore Condition);
+            Wait(0.1, Ignore Condition);
+            Start Holding Button(Event Player, Button(Reload));
+            Start Holding Button(Event Player, Button(Interact));
+            Wait(0.9, Ignore Condition);
+            Stop Holding Button(Event Player, Button(Reload));
+            Stop Holding Button(Event Player, Button(Interact));
             Small Message(Event Player, Custom String("Welcome! {0} isn't over yet. Choose your mods!", Value In Array(Global.Intermission_Array, 11), Null, Null));
             Wait Until(Not(Global.Intermission_In_Progress), 99999);
             If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
@@ -3705,7 +3710,12 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
         Else If(Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), <, 12));
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
-            Wait(1, Ignore Condition);
+            Wait(0.1, Ignore Condition);
+            Start Holding Button(Event Player, Button(Reload));
+            Start Holding Button(Event Player, Button(Interact));
+            Wait(0.9, Ignore Condition);
+            Stop Holding Button(Event Player, Button(Reload));
+            Stop Holding Button(Event Player, Button(Interact));
             Wait Until(Not(Global.Intermission_In_Progress), 99999);
             If(Or(Compare((Event Player).Mod_Menu_Select, ==, 0), Compare((Event Player).Mod_Menu_Select, ==, 3)));
                 Clear Status(Event Player, Rooted);
@@ -3980,9 +3990,9 @@ rule ("Initialization - Current Mods HUD Text") {
     }
     actions {
         Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 1), 99999);
-        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Passive_Mod_Strings, (Event Player).Passive_Mod)), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Passive_Mod_Strings, If-Then-Else(Compare(First Of((Event Player).Page_Number), !=, 8), Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))), Add(40, First Of((Event Player).Menu_Element))))), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
         Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 2), 99999);
-        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Active_Mod_Strings, (Event Player).Active_Mod)), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Active_Mod_Strings, If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), !=, 8), Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))), Add(40, Value In Array((Event Player).Menu_Element, 1))))), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -4212,9 +4222,6 @@ rule ("Open mod menu") {
         Wait(0.75, Abort When False);
         Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
         Start Facing(Event Player, Forward, 150, To Player, Direction and Turn Rate);
-        Set Ultimate Ability Enabled(Event Player, True);
-        Disallow Button(Event Player, Button(Interact));
-        Disallow Button(Event Player, Button(Reload));
         Heal(Event Player, Null, 10000);
         For Player Variable(Event Player, Index, 0, Count Of((Event Player).Mod_Menu_Text), 1);
             Destroy In-World Text(Value In Array((Event Player).Mod_Menu_Text, (Event Player).Index));
@@ -4223,7 +4230,6 @@ rule ("Open mod menu") {
         Play Effect(All Players(All Teams), Sombra Translocator Disappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Sound, Team Of(Event Player), Position Of(Event Player), 75);
         Play Effect(All Players(All Teams), Sombra Translocator Reappear Effect, Team Of(Event Player), Position Of(Event Player), 1);
-        Call Subroutine(PlayerReset);
         If(Or(Compare((Event Player).Passive_Mod, ==, 20), Compare((Event Player).Active_Mod, ==, 21)));
             Set Ultimate Charge(Event Player, 0);
         End;
@@ -4231,6 +4237,9 @@ rule ("Open mod menu") {
             Set Player Variable At Index(Event Player, Choice_Color_P, 0, Color(Sky Blue));
             Set Player Variable At Index(Event Player, Choice_Color_A, 0, Color(Sky Blue));
         End;
+        Set Player Variable(Event Player, Passive_Mod, 0);
+        Set Player Variable(Event Player, Active_Mod, 0);
+        Call Subroutine(PlayerReset);
         Wait(0.064, Ignore Condition);
         Create Effect(Event Player, Bad Aura, Color(Black), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 0.5)), 2, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Menu_Misc, 0, Last Created Entity);
@@ -4318,22 +4327,22 @@ rule ("Open mod menu") {
             Wait(0.032, Ignore Condition);
         End;
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} | up {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} | up {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 5, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("       {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.45, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("       {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.485, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 6, Last Text ID);
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("                                                                                             PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                                                                                                   Page nav: {0}", Custom String("{0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.85, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                                                                                         P{0}", Custom String("age nav: {0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.8, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 8, Last Text ID);
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("Hold {0} to change heroes                                                                                                 {1}", Input Binding String(Button(Jump)), Custom String("                      ", Null, Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("Hold {0} to change heroes                                                                                                 {1}", Input Binding String(Button(Jump)), Custom String("                                  ", Null, Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.8, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 10, Last Text ID);
         Wait(0.15, Ignore Condition);
     }
