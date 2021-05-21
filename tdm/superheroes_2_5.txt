@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.4, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.4_1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4295,16 +4295,16 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("{0} | up {1}", Input Binding String(Button(Primary Fire)), Icon String(Arrow: Up), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 5, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.45, 0)), Multiply(Facing Direction Of(Event Player), 1.25)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("   {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.425, 0)), Multiply(Facing Direction Of(Event Player), 1.25)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 6, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                    {0} | {1}", Custom String("{0} {1} : prev. page", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("next page: {0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                             PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.25, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                    PAGE {0}/9", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.5, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                    Page nav: {0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.4, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 8, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.35, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
         Wait(0.15, Ignore Condition);
     }
