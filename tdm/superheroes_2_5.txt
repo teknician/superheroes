@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.1.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.1.5, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -5688,7 +5688,7 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
             Set Player Variable(Event Player, Victim_Chain, Players Within Radius(Victim, 25, Team Of(Victim), Off));
             Set Player Variable(Event Player, Active_Affected_Players, Sorted Array((Event Player).Victim_Chain, Distance Between(Value In Array((Event Player).Victim_Chain, Current Array Element), Value In Array((Event Player).Victim_Chain, Add(Current Array Element, 1)))));
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, Null));
-            Set Player Variable(Event Player, Active_Index, Count Of((Event Damage).Active_Affected_Players));
+            Set Player Variable(Event Player, Active_Index, Count Of((Event Player).Active_Affected_Players));
             Set Player Variable(Event Player, Other_Players, Empty Array);
         End;
         Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
