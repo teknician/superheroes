@@ -5662,7 +5662,7 @@ rule ("Active Mods 29 - ORA ORA!") {
         Play Effect(All Players(All Teams), Sigma Accretion Impact Sound, Null, Position Of(Victim), 100);
         Set Status(Victim, Attacker, Knocked Down, 1);
         Damage(Victim, Attacker, 30);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(10, (Event Damage).Optimize));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(10, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
