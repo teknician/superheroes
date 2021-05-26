@@ -5684,31 +5684,20 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
         BouncingBlade;
     }
     actions {
-        "if the chain has finished, create a new chain || if at starting conditions, 0 == 0"
         If(Compare(Count Of((Event Player).Other_Players), ==, (Event Player).Active_Index));
-            "look for all players in a 25 meter radius of victim"
             Set Player Variable(Event Player, Victim_Chain, Players Within Radius(Victim, 25, Team Of(Victim), Off));
-            "returns a sorted list, includes null"
             Set Player Variable(Event Player, Active_Affected_Players, Sorted Array((Event Player).Victim_Chain, Distance Between(Value In Array((Event Player).Victim_Chain, Current Array Element), Value In Array((Event Player).Victim_Chain, Add(Current Array Element, 1)))));
-            "excludes null"
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, Null));
-            "stores the number of affected players to eventually compare to Other_Players, to see if the chain is finished"
             Set Player Variable(Event Player, Active_Index, Count Of((Event Damage).Active_Affected_Players));
-            "creates the other_players array which holds all players who have been damaged in the chain"
             Set Player Variable(Event Player, Other_Players, Empty Array);
         End;
-        "excludes all players that have already been chained"
         Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
-        "if there are any players left to be chained"
         If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
-            "defines the player to be damaged as the closest player"
             Set Player Variable(Event Player, Mod_Effect_Target, First Of((Event Player).Active_Affected_Players));
-            "createBeam(getAllPlayers(), Beam.OMNIC_SLICER, victim, eventPlayer.Mod_Effect_Target, Color.TEAM_2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)\r\neventPlayer.Active_Mod_FX_Array[0] = getLastCreatedEntity()"
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
             Modify Player Variable(Event Player, Other_Players, Append To Array, (Event Player).Mod_Effect_Target);
-            "deals 3/4 damage to the next player in the chain"
-            Damage((Event Player).Mod_Effect_Target, Attacker, Multiply(Event Damage, If-Then-Else(Compare((Event Player).Optimize, >, 0), 1, 0.75)));
+            Damage((Event Player).Mod_Effect_Target, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), Event Damage, Multiply(Event Damage, 0.75)));
     }
 }
 
