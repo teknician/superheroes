@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.2, by LUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4305,7 +4305,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
     actions {
         If(Global.Start_Intermission);
             "200"
-            Wait(0.5, Ignore Condition);
+            Wait(1.5, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
             Wait(200, Ignore Condition);
@@ -4644,23 +4644,15 @@ rule ("Optional - Debugging") {
         Create HUD Text(Host Player, Custom String("Average Load: {0}", Server Load Average, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("Peak: {0}", Server Load Peak, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("Server Load: {0}", Server Load, Null, Null), Null, Null, Left, 0, Color(White), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CP0: {0}", First Of((Event Player).Choice_Color_P), Null, Null), Null, Null, Left, 4, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CP1: {0}", Value In Array((Event Player).Choice_Color_P, 1), Null, Null), Null, Null, Left, 5, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CP2: {0}", Value In Array((Event Player).Choice_Color_P, 2), Null, Null), Null, Null, Left, 6, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CP3: {0}", Value In Array((Event Player).Choice_Color_P, 3), Null, Null), Null, Null, Left, 7, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CP4: {0}", Value In Array((Event Player).Choice_Color_P, 4), Null, Null), Null, Null, Left, 8, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CA0: {0}", First Of((Event Player).Choice_Color_A), Null, Null), Null, Null, Left, 9, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CA1: {0}", Value In Array((Event Player).Choice_Color_A, 1), Null, Null), Null, Null, Left, 10, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CA2: {0}", Value In Array((Event Player).Choice_Color_A, 2), Null, Null), Null, Null, Left, 11, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CA3: {0}", Value In Array((Event Player).Choice_Color_A, 3), Null, Null), Null, Null, Left, 12, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("CA4: {0}", Value In Array((Event Player).Choice_Color_A, 4), Null, Null), Null, Null, Left, 13, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("MU0: {0}", First Of((Event Player).Menu_Element), Null, Null), Null, Null, Left, 14, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("MU1: {0}", Value In Array((Event Player).Menu_Element, 1), Null, Null), Null, Null, Left, 15, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+        "hudHeader(hostPlayer, \"MU1: {0}\".format(eventPlayer.Menu_Element[1]), HudPosition.LEFT, 15, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)"
         Create HUD Text(Host Player, Custom String("PIndex: {0}", (Event Player).Passive_Mod_Index, Null, Null), Null, Null, Left, 16, Color(Green), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("AIndex: {0}", (Event Player).Active_Mod_Index, Null, Null), Null, Null, Left, 17, Color(Orange), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("PNum0: {0}", First Of((Event Player).Page_Number), Null, Null), Null, Null, Left, 18, Color(Green), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("PNum1: {0}", Value In Array((Event Player).Page_Number, 1), Null, Null), Null, Null, Left, 19, Color(Orange), Null, Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Custom String("MMS: {0}", (Event Player).Mod_Menu_Select, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("Radius: {0}", (Event Player).Radius, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("AAP: {0}", (Event Player).Active_Affected_Players, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("OP: {0}", (Event Player).Other_Players, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -5905,7 +5897,7 @@ rule ("Mods PlayerDealtDamage Events") {
     actions {
         "personal space"
         If(Compare((Event Player).Passive_Mod, ==, 42));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.5, 0)), Divide(Event Damage, 20), To World, Incorporate Contrary Motion);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Divide(Event Damage, 15), To World, Cancel Contrary Motion XYZ);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 33), Compare((Event Player).Blade_Chase, >, 0)));
             Start Rule(BouncingBlade, Do Nothing);
@@ -5914,8 +5906,8 @@ rule ("Mods PlayerDealtDamage Events") {
             Start Rule(Lifesplit, Do Nothing);
         End;
         If(Compare((Event Player).Passive_Mod, ==, 44));
-            If(Compare(First Of((Event Player).Num_3), <, 300));
-                Set Player Variable At Index(Event Player, Num_3, 0, If-Then-Else(Compare(Add(First Of((Event Player).Num_3), Round To Integer(Multiply(Event Damage, 0.1), Down)), <=, 300), Add(First Of((Event Player).Num_3), Round To Integer(Multiply(Event Damage, 0.1), Down)), 300));
+            If(Compare(First Of((Event Player).Num_0), <, 350));
+                Set Player Variable At Index(Event Player, Num_0, 0, If-Then-Else(Compare(Add(First Of((Event Player).Num_0), Round To Integer(Multiply(Event Damage, 0.15), Down)), <=, 350), Add(First Of((Event Player).Num_0), Round To Integer(Multiply(Event Damage, 0.15), Down)), 350));
             End;
         End;
         If(And(Compare((Event Player).Passive_Mod, ==, 46), Compare(Attacker, !=, Victim)));
