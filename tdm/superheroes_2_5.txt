@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -1311,132 +1311,6 @@ rule ("Passive Mods 40 - Superhero Landing") {
             End;
         End;
         Wait(3, Ignore Condition);
-    }
-}
-
-rule ("Passive Mods 43 - Power Points (FX)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Passive_Mod == 44;
-    }
-    actions {
-        If(Not(Entity Exists((Event Player).Passive_Mod_FX_Array)));
-            Set Player Variable At Index(Event Player, Num_0, 0, 0);
-            Set Player Variable At Index(Event Player, Num_0, 1, Custom String("", Null, Null, Null));
-            Create In-World Text(Event Player, Custom String("Superjump: 25PP\nAbility 1 Refresh: 80PP\nAbility 2 Refresh: 80PP\n+33% Ult: 175PP", Null, Null, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.575, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.075, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 1.2, Do Not Clip, Visible To Position and String, Custom Color(200, 200, 200, 255), Default Visibility);
-            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Text ID);
-            Create In-World Text(Event Player, Update Every Frame(Custom String("PP: {0}{1}", First Of((Event Player).Num_0), Value In Array((Event Player).Num_0, 1), Null)), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.5, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.25, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 2.5, Do Not Clip, Visible To Position and String, Color(Yellow), Default Visibility);
-            Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Text ID);
-        End;
-        While(Compare((Event Player).Mod_Menu_Select, ==, 3));
-            If(Compare(First Of((Event Player).Num_0), >=, 350));
-                Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, Subtract(First Of((Event Player).Num_0), 300));
-            Else;
-                Modify Player Variable At Index(Event Player, Num_0, 0, Add, 1);
-            End;
-            Wait(0.5, Ignore Condition);
-        End;
-        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
-        Destroy In-World Text((Event Player).Passive_Mod_FX_Array);
-    }
-}
-
-rule ("Passive Mods 43 - Power Points (Spend Power Points)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).Mod_Menu_Select == 3;
-        (Event Player).Passive_Mod == 44;
-        Is Button Held(Event Player, Button(Interact)) == True;
-        (Event Player).Passive_Mod_Skill_Toggle == 0;
-        First Of((Event Player).Num_0) >= 25;
-    }
-    actions {
-        Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 1);
-        Wait(0.05, Ignore Condition);
-        Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-        Play Effect(Event Player, Brigitte Repair Pack Impact Effect, Color(Team 1), Eye Position(Event Player), 1);
-        Set Player Variable(Event Player, Passive_Index, 5);
-        Wait(0.016, Ignore Condition);
-        Chase Player Variable Over Time(Event Player, Passive_Index, 0, 5, Destination and Duration);
-        Set Player Variable At Index(Event Player, Num_0, 1, Custom String(" - SPENDING: {0}...", (Event Player).Passive_Index, Null, Null));
-        Wait(0.05, Ignore Condition);
-        Wait Until(Or(Or(Or(Or(Or(Is Button Held(Event Player, Button(Jump)), Is Button Held(Event Player, Button(Ability 1))), Is Button Held(Event Player, Button(Ability 2))), Is Button Held(Event Player, Button(Ultimate))), Compare((Event Player).Passive_Index, ==, 0)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
-        Stop Chasing Player Variable(Event Player, Passive_Index);
-        If(Compare((Event Player).Mod_Menu_Select, !=, 3));
-            Destroy Effect((Event Player).Passive_Mod_FX_Array);
-            Abort;
-        End;
-        If(Compare((Event Player).Passive_Index, ==, 0));
-            Set Player Variable At Index(Event Player, Num_0, 1, Custom String("", Null, Null, Null));
-            Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-            Wait(2, Ignore Condition);
-            Abort;
-        End;
-        While(Compare((Event Player).Passive_Mod_Skill_Toggle, ==, 1));
-            If(And(And(Is Button Held(Event Player, Button(Jump)), Compare(First Of((Event Player).Num_0), >=, 25)), Compare(Altitude Of(Event Player), <=, 1)));
-                Wait(0.05, Ignore Condition);
-                Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 25);
-                Apply Impulse(Event Player, Up, 30, To World, Cancel Contrary Motion);
-                Play Effect(All Players(All Teams), Good Pickup Effect, Color(Yellow), Event Player, 2);
-                Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Null, Event Player, 100);
-                Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-            Else If(And(Is Button Held(Event Player, Button(Ability 1)), Compare(First Of((Event Player).Num_0), >=, 100)));
-                Wait(0.25, Ignore Condition);
-                If(Compare(Ability Cooldown(Event Player, Button(Ability 1)), >, 0));
-                    Wait(0.016, Ignore Condition);
-                    Set Ability Cooldown(Event Player, Button(Ability 1), 0);
-                    Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 100);
-                    Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-                    Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 100);
-                    Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-                Else If(Compare(Ability Charge(Event Player, Button(Ability 1)), ==, 0));
-                    Wait(0.016, Ignore Condition);
-                    Set Ability Charge(Event Player, Button(Ability 1), Add(Ability Charge(Event Player, Button(Ability 1)), 1));
-                    Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 100);
-                    Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-                    Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 100);
-                    Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-                End;
-            Else If(And(Is Button Held(Event Player, Button(Ability 2)), Compare(First Of((Event Player).Num_0), >=, 100)));
-                Wait(0.25, Ignore Condition);
-                If(Compare(Ability Cooldown(Event Player, Button(Ability 2)), >, 0));
-                    Wait(0.016, Ignore Condition);
-                    Set Ability Cooldown(Event Player, Button(Ability 2), 0);
-                    Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 100);
-                    Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-                    Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 100);
-                    Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-                Else If(Compare(Ability Charge(Event Player, Button(Ability 2)), ==, 0));
-                    Wait(0.016, Ignore Condition);
-                    Set Ability Charge(Event Player, Button(Ability 2), Add(Ability Charge(Event Player, Button(Ability 2)), 1));
-                    Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 100);
-                    Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-                    Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 100);
-                    Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-                End;
-            Else If(And(Is Button Held(Event Player, Button(Ultimate)), Compare(First Of((Event Player).Num_0), >=, 175)));
-                Wait(0.015, Ignore Condition);
-                If(Compare(Ultimate Charge Percent(Event Player), <, 66));
-                    Modify Player Variable At Index(Event Player, Num_0, 0, Subtract, 175);
-                    Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 33));
-                    Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-                    Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 100);
-                    Play Effect(Event Player, Brigitte Repair Pack Impact Sound, Null, Position Of(Event Player), 150);
-                End;
-            End;
-            Wait(1, Ignore Condition);
-        End;
-        Set Player Variable At Index(Event Player, Num_0, 1, Custom String("", Null, Null, Null));
-        Wait(0.25, Ignore Condition);
     }
 }
 
@@ -4132,8 +4006,8 @@ rule ("Active Mods 45 - Shockwave") {
                     Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Null, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 200);
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Sky Blue), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
                     Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Min(200, Multiply(100, Divide(2, Square Root((Event Player).Radius)))));
-                    Apply Impulse(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Vector(0, 1, 0), Min(17, Multiply(10, Divide(3, Square Root((Event Player).Radius)))), To World, Cancel Contrary Motion);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(2.5, Add(1, Divide(2, Square Root((Event Player).Radius)))));
+                    Apply Impulse(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Vector(0, 1, 0), Min(16, Multiply(10, Divide(2.75, Square Root((Event Player).Radius)))), To World, Cancel Contrary Motion);
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(3.25, Add(2, Divide(3, Square Root((Event Player).Radius)))));
                     Set Player Variable(Event Player, Other_Players, Append To Array((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index)));
                 End;
                 Wait(0.1, Ignore Condition);
@@ -5128,7 +5002,7 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("       {0} | down {1}", Input Binding String(Button(Secondary Fire)), Icon String(Arrow: Down), Null), Add(Subtract(Eye Position(Event Player), Vector(0, 0.485, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.25, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 6, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("                                                                                             PAGE {0}/11", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("                                                                                                     PAGE {0}/10", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Add(First Of((Event Player).Page_Number), 1), Add(Value In Array((Event Player).Page_Number, 1), 1)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 1.2, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 7, Last Text ID);
         Wait(0.016, Ignore Condition);
         Create In-World Text(Event Player, Custom String("                                                                                                                          {0}", Custom String("        Page nav: {0} | {1}", Custom String("{0} {1}", Icon String(Arrow: Left), Input Binding String(Button(Ultimate)), Null), Custom String("{0} {1}", Input Binding String(Button(Ability 2)), Icon String(Arrow: Right), Null), Null), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, -0.442, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.8, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
@@ -5157,7 +5031,7 @@ rule ("Navigate through pages") {
     actions {
         "Next Page"
         If(Is Button Held(Event Player, Button(Ability 2)));
-            If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Page_Number), <, 10)));
+            If(And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Page_Number), <, 9)));
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 90);
                 Modify Player Variable At Index(Event Player, Page_Number, 0, Add, 1);
                 Set Player Variable(Event Player, Passive_Mod_Index, Multiply(5, First Of((Event Player).Page_Number)));
@@ -5167,7 +5041,7 @@ rule ("Navigate through pages") {
                 Set Player Variable At Index(Event Player, Choice_Color_P, 2, Color(Lime Green));
                 Set Player Variable At Index(Event Player, Choice_Color_P, 3, Color(Lime Green));
                 Set Player Variable At Index(Event Player, Choice_Color_P, 4, Color(Lime Green));
-            Else If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Page_Number, 1), <, 10)));
+            Else If(And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Page_Number, 1), <, 9)));
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 90);
                 Modify Player Variable At Index(Event Player, Page_Number, 1, Add, 1);
                 Set Player Variable(Event Player, Active_Mod_Index, Multiply(5, Value In Array((Event Player).Page_Number, 1)));
@@ -5217,14 +5091,14 @@ rule ("Navigate within a single page") {
     actions {
         "Scroll Down"
         If(Is Button Held(Event Player, Button(Secondary Fire)));
-            If(If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 10), And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Menu_Element), <, 4)), Compare(First Of((Event Player).Menu_Element), <, 2)));
+            If(If-Then-Else(Compare(First Of((Event Player).Page_Number), <, 9), And(Compare((Event Player).Mod_Menu_Select, ==, 1), Compare(First Of((Event Player).Menu_Element), <, 4)), Compare(First Of((Event Player).Menu_Element), <, 1)));
                 Wait(0.032, Ignore Condition);
                 Play Effect(Event Player, Soldier: 76 Sprint Start Sound, Null, Event Player, 85);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Lime Green));
                 Modify Player Variable At Index(Event Player, Menu_Element, 0, Add, 1);
                 Set Player Variable At Index(Event Player, Choice_Color_P, First Of((Event Player).Menu_Element), Color(Sky Blue));
             End;
-            If(If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), <, 10), And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Menu_Element, 1), <, 4)), Compare(Value In Array((Event Player).Menu_Element, 1), <, 3)));
+            If(If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), <, 9), And(Compare((Event Player).Mod_Menu_Select, ==, 2), Compare(Value In Array((Event Player).Menu_Element, 1), <, 4)), Compare(Value In Array((Event Player).Menu_Element, 1), <, 2)));
                 Wait(0.032, Ignore Condition);
                 Play Effect(Event Player, Soldier: 76 Sprint Start Sound, Null, Event Player, 85);
                 Set Player Variable At Index(Event Player, Choice_Color_A, Value In Array((Event Player).Menu_Element, 1), Color(Orange));
@@ -5264,11 +5138,20 @@ rule ("Close out of Mod Menu") {
     actions {
         "Close passive menu, move to active menu"
         If(Compare((Event Player).Mod_Menu_Select, ==, 1));
-            "if eventPlayer.Page_Number[0] != 8:"
-            Set Player Variable(Event Player, Passive_Mod, Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))));
-            "else:\r\neventPlayer.Passive_Mod = 40 + eventPlayer.Menu_Element[0]"
-            Wait(0.032, Ignore Condition);
             "Get a random mod"
+            If(And(Compare(First Of((Event Player).Page_Number), ==, 0), Compare(First Of((Event Player).Menu_Element), ==, 1)));
+                Set Player Variable(Event Player, Passive_Mod, Random Integer(2, 46));
+                Wait(0.016, Ignore Condition);
+                If(And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 26)));
+                    Set Player Variable(Event Player, Passive_Mod, 28);
+                End;
+                Wait(0, Ignore Condition);
+            Else If(Compare(First Of((Event Player).Page_Number), !=, 9));
+                Set Player Variable(Event Player, Passive_Mod, Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))));
+            Else;
+                Set Player Variable(Event Player, Passive_Mod, Add(45, First Of((Event Player).Menu_Element)));
+            End;
+            Wait(0.032, Ignore Condition);
             If(Compare((Event Player).Passive_Mod, ==, 1));
                 Set Player Variable(Event Player, Index, Random Integer(2, 52));
                 If(And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Index, ==, 26)));
@@ -5283,20 +5166,20 @@ rule ("Close out of Mod Menu") {
             Play Effect(All Players(All Teams), Good Pickup Effect, Color(Lime Green), Add(Eye Position(Event Player), Facing Direction Of(Event Player)), 1);
         "Close active menu, fully exit"
         Else If(Compare((Event Player).Mod_Menu_Select, ==, 2));
-            "if eventPlayer.Page_Number[1] != 8:"
-            Set Player Variable(Event Player, Active_Mod, Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))));
-            "else:\r\neventPlayer.Active_Mod = 40 + eventPlayer.Menu_Element[1]\r\nGet a random mod"
-            If(Compare((Event Player).Active_Mod, ==, 1));
-                Set Player Variable(Event Player, Index, Random Integer(2, 52));
-                Wait(0.25, Ignore Condition);
-                Set Player Variable(Event Player, Active_Mod, (Event Player).Index);
+            "Get a random mod"
+            If(And(Compare(Value In Array((Event Player).Page_Number, 1), ==, 0), Compare(Value In Array((Event Player).Menu_Element, 1), ==, 1)));
+                Set Player Variable(Event Player, Active_Mod, Random Integer(2, 47));
+            Else If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 9));
+                Set Player Variable(Event Player, Active_Mod, Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))));
+            Else;
+                Set Player Variable(Event Player, Active_Mod, Add(45, Value In Array((Event Player).Menu_Element, 1)));
             End;
             Wait(0.032, Ignore Condition);
             If(Compare(Value In Array((Event Player).Menu_Misc, 5), ==, 0));
                 Set Player Variable At Index(Event Player, Menu_Misc, 5, 1);
             End;
             "Incompatible mods"
-            If(Or(Or(Or(Or(And(Compare((Event Player).Passive_Mod, ==, 18), Array Contains(Array(19, 23, 24), (Event Player).Active_Mod)), And(Compare((Event Player).Passive_Mod, ==, 39), Array Contains(Array(2, 4), (Event Player).Active_Mod))), And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 27))), And(Compare((Event Player).Passive_Mod, ==, 29), Compare((Event Player).Active_Mod, ==, 22))), And(Compare((Event Player).Passive_Mod, ==, 44), Array Contains(Array(24, 25, 28, 32, 36), (Event Player).Active_Mod))));
+            If(Or(Or(Or(And(Compare((Event Player).Passive_Mod, ==, 18), Array Contains(Array(19, 23, 24), (Event Player).Active_Mod)), And(Compare((Event Player).Passive_Mod, ==, 39), Array Contains(Array(2, 4), (Event Player).Active_Mod))), And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 27))), And(Compare((Event Player).Passive_Mod, ==, 29), Compare((Event Player).Active_Mod, ==, 22))));
                 Play Effect(Event Player, Debuff Impact Sound, Null, Position Of(Event Player), 100);
                 Small Message(Event Player, Custom String("Incompatible mods! Choose again.", Null, Null, Null));
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
@@ -5904,18 +5787,14 @@ rule ("Mods PlayerDealtDamage Events") {
     actions {
         "personal space"
         If(Compare((Event Player).Passive_Mod, ==, 42));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Divide(Event Damage, 15), To World, Cancel Contrary Motion XYZ);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Max(4, Divide(Event Damage, 10)), To World, Cancel Contrary Motion XYZ);
+            Wait(0.1, Ignore Condition);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 33), Compare((Event Player).Blade_Chase, >, 0)));
             Start Rule(BouncingBlade, Do Nothing);
         End;
         If(Compare((Event Player).Passive_Mod, ==, 13));
             Start Rule(Lifesplit, Do Nothing);
-        End;
-        If(Compare((Event Player).Passive_Mod, ==, 44));
-            If(Compare(First Of((Event Player).Num_0), <, 350));
-                Set Player Variable At Index(Event Player, Num_0, 0, If-Then-Else(Compare(Add(First Of((Event Player).Num_0), Round To Integer(Multiply(Event Damage, 0.15), Down)), <=, 350), Add(First Of((Event Player).Num_0), Round To Integer(Multiply(Event Damage, 0.15), Down)), 350));
-            End;
         End;
         If(And(Compare((Event Player).Passive_Mod, ==, 46), Compare(Attacker, !=, Victim)));
             Start Rule(Mastery, Do Nothing);
