@@ -5820,7 +5820,7 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
             Set Player Variable(Event Player, Victim_Chain, Append To Array((Event Player).Victim_Chain, Value In Array((Event Player).Num_1, 1)));
             Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Other_Players, Value In Array((Event Player).Num_1, 1)));
             Set Player Variable(Event Player, Blade_Victim, Value In Array((Event Player).Num_1, 1));
-            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Position Of((Event Damage).Blade_Victim), 3);
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Position Of((Event Player).Blade_Victim), 3);
             Damage((Event Player).Blade_Victim, Event Player, Event Damage);
             Wait(1, Ignore Condition);
         End;
