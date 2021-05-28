@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.3.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.3.0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4150,7 +4150,7 @@ rule ("Active Mods 47 - Void Connection") {
             End;
             Wait(0.75, Ignore Condition);
         End;
-        Wait Until(Compare((Event Ability).Active_Chase_1, ==, 25), 25);
+        Wait Until(Compare((Event Player).Active_Chase_1, ==, 25), 25);
         Stop Chasing Player Variable(Event Player, Active_Chase_1);
         Set Player Variable At Index(Event Player, Num_1, 0, False);
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 4));
@@ -4216,7 +4216,7 @@ rule ("Active Mods 47 - Void Connection makes another sphere") {
             End;
             Wait(0.75, Ignore Condition);
         End;
-        Wait Until(Compare((Event Ability).Active_Chase_2, ==, 25), 25);
+        Wait Until(Compare((Event Player).Active_Chase_2, ==, 25), 25);
         Stop Chasing Player Variable(Event Player, Active_Chase_2);
         Set Player Variable At Index(Event Player, Num_1, 1, False);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
