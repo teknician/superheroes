@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.8_5, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.9, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4123,81 +4123,50 @@ rule ("Active Mods 47 - Void Connection") {
         (Event Player).Active_Mod == 48;
         Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Melee)) == True;
+        Value In Array((Event Player).Num_1, 1) == False;
+        Value In Array((Event Ability).Num_1, 4) == False;
     }
     actions {
-        "if you have already made a sphere"
-        If(Value In Array((Event Player).Num_1, 1));
-            Set Player Variable At Index(Event Player, Mod_Effect_Target, 1, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), Null, Null, False));
-            Wait(1, Ignore Condition);
-            Create Effect(All Players(All Teams), Cloud, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
-            Create Effect(All Players(All Teams), Orb, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-            Create Effect(All Players(All Teams), Bad Aura, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
-            Create Effect(All Players(All Teams), Bad Aura Sound, Null, First Of((Event Player).Mod_Effect_Target), 100, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
-            "sphere exists"
-            Set Player Variable At Index(Event Player, Num_1, 0, True);
-            Chase Player Variable At Rate(Event Player, Active_Chase_2, 25, 1, Destination and Rate);
-            While(Compare((Event Player).Active_Chase_2, <, 25));
-                Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
-                For Player Variable(Event Player, Active_Index_2, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
-                    Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, 3, 5);
-                    Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Effect, Null, Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), 1);
-                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Black), Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), 0.5);
-                    Wait(0.016, Ignore Condition);
-                End;
-                Wait(0.75, Ignore Condition);
+        Wait(0.032, Ignore Condition);
+        If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+            Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
+        End;
+        Set Player Variable(Event Player, Cd_Color, Color(Yellow));
+        Set Player Variable(Event Player, Cd_Visible_To, Event Player);
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
+        Wait(0.032, Ignore Condition);
+        Set Player Variable At Index(Event Player, Mod_Effect_Target, 0, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), Null, Null, False));
+        Create Effect(All Players(All Teams), Cloud, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
+        Create Effect(All Players(All Teams), Orb, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
+        Create Effect(All Players(All Teams), Bad Aura, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
+        Create Effect(All Players(All Teams), Bad Aura Sound, Null, First Of((Event Player).Mod_Effect_Target), 100, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
+        "sphere exists"
+        Set Player Variable At Index(Event Player, Num_1, 1, True);
+        Chase Player Variable At Rate(Event Player, Active_Chase_1, 25, 1, Destination and Rate);
+        While(Compare((Event Player).Active_Chase_1, <, 25));
+            Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
+            For Player Variable(Event Player, Active_Index_1, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
+                Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), Event Player, 3, 5);
+                Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Effect, Null, Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), 1);
+                Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Black), Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), 0.5);
+                Wait(0.016, Ignore Condition);
             End;
-            Stop Chasing Player Variable(Event Player, Active_Chase_2);
-            Set Player Variable At Index(Event Player, Num_1, 0, False);
-            Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 3));
-            Set Player Variable(Event Player, Active_Chase_2, 0);
-        Else If(Not(Value In Array((Event Player).Num_1, 1)));
-            Wait(0.032, Ignore Condition);
-            If(Compare((Event Player).Mod_Menu_Select, !=, 3));
-                Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
-            End;
-            Set Player Variable(Event Player, Cd_Color, Color(Yellow));
-            Set Player Variable(Event Player, Cd_Visible_To, Event Player);
-            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
-            Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
-            Wait(0.032, Ignore Condition);
-            Set Player Variable At Index(Event Player, Mod_Effect_Target, 0, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), Null, Null, False));
-            Create Effect(All Players(All Teams), Cloud, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
-            Create Effect(All Players(All Teams), Orb, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
-            Create Effect(All Players(All Teams), Bad Aura, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 6, Last Created Entity);
-            Create Effect(All Players(All Teams), Bad Aura Sound, Null, First Of((Event Player).Mod_Effect_Target), 100, Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
-            "sphere exists"
-            Set Player Variable At Index(Event Player, Num_1, 1, True);
-            Chase Player Variable At Rate(Event Player, Active_Chase_1, 25, 1, Destination and Rate);
-            While(Compare((Event Player).Active_Chase_1, <, 25));
-                Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
-                For Player Variable(Event Player, Active_Index_1, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
-                    Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), Event Player, 3, 5);
-                    Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Effect, Null, Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), 1);
-                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Black), Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_1), 0.5);
-                    Wait(0.016, Ignore Condition);
-                End;
-                Wait(0.75, Ignore Condition);
-            End;
-            Stop Chasing Player Variable(Event Player, Active_Chase_1);
-            Set Player Variable At Index(Event Player, Num_1, 1, False);
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 4));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 5));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 6));
-            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 7));
-            Set Player Variable(Event Player, Active_Chase_1, 0);
-            Wait(1, Ignore Condition);
-        Else If(Value In Array((Event Player).Num_1, 4));
+            Wait(0.75, Ignore Condition);
+        End;
+        Stop Chasing Player Variable(Event Player, Active_Chase_1);
+        Set Player Variable At Index(Event Player, Num_1, 1, False);
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 4));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 5));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 6));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 7));
+        Set Player Variable(Event Player, Active_Chase_1, 0);
+        Wait(1, Ignore Condition);
+        If(Value In Array((Event Player).Num_1, 4));
             Set Player Variable(Event Player, Cooldown_Chase, Subtract(13, (Event Player).Optimize));
             Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
             Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
@@ -4211,6 +4180,55 @@ rule ("Active Mods 47 - Void Connection") {
             Set Player Variable(Event Player, Cd_Color, Color(Green));
             Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
             Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
+    }
+}
+
+rule ("Active Mods 47 - Void Connection makes another sphere") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Active_Mod == 48;
+        Global.Intermission_In_Progress == False;
+        Is Button Held(Event Player, Button(Melee)) == True;
+        "if you have already made a sphere"
+        Value In Array((Event Player).Num_1, 1) != False;
+        Value In Array((Event Ability).Num_1, 4) == False;
+    }
+    actions {
+        Set Player Variable At Index(Event Player, Mod_Effect_Target, 1, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), Null, Null, False));
+        Wait(1, Ignore Condition);
+        Create Effect(All Players(All Teams), Cloud, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
+        Create Effect(All Players(All Teams), Orb, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
+        Create Effect(All Players(All Teams), Bad Aura, Color(Black), First Of((Event Player).Mod_Effect_Target), 3, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
+        Create Effect(All Players(All Teams), Bad Aura Sound, Null, First Of((Event Player).Mod_Effect_Target), 100, Visible To Position and Radius);
+        Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
+        "sphere exists"
+        Set Player Variable At Index(Event Player, Num_1, 0, True);
+        Chase Player Variable At Rate(Event Player, Active_Chase_2, 25, 1, Destination and Rate);
+        While(Compare((Event Player).Active_Chase_2, <, 25));
+            Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
+            For Player Variable(Event Player, Active_Index_2, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
+                Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, 3, 5);
+                Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Effect, Null, Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), 1);
+                Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Black), Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), 0.5);
+                Wait(0.016, Ignore Condition);
+            End;
+            Wait(0.75, Ignore Condition);
+        End;
+        Stop Chasing Player Variable(Event Player, Active_Chase_2);
+        Set Player Variable At Index(Event Player, Num_1, 0, False);
+        Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 2));
+        Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 3));
+        Set Player Variable(Event Player, Active_Chase_2, 0);
     }
 }
 
@@ -5813,32 +5831,33 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
             Set Player Variable(Event Player, Active_Index_2, Event Damage);
             Set Player Variable(Event Player, Boolean, True);
         End;
-        If(Compare(Count Of((Event Player).Other_Players), ==, (Event Player).Active_Index));
-            Set Player Variable(Event Player, Victim_Chain, Players Within Radius((Event Player).Blade_Victim, 30, Team Of((Event Player).Blade_Victim), Off));
-            Set Player Variable(Event Player, Active_Affected_Players, Sorted Array((Event Player).Victim_Chain, Distance Between(Value In Array((Event Player).Victim_Chain, Current Array Element), Value In Array((Event Player).Victim_Chain, Add(Current Array Element, 1)))));
-            Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, Null));
-            Set Player Variable(Event Player, Active_Index, Count Of((Event Player).Active_Affected_Players));
-            Set Player Variable(Event Player, Other_Players, Empty Array);
-            Wait(0.05, Ignore Condition);
-        End;
+        "if len(eventPlayer.Other_Players) == eventPlayer.Active_Index:"
+        Set Player Variable(Event Player, Victim_Chain, Players Within Radius((Event Player).Blade_Victim, 30, Team Of((Event Player).Blade_Victim), Off));
+        Set Player Variable(Event Player, Active_Affected_Players, Sorted Array((Event Player).Victim_Chain, Distance Between(Value In Array((Event Player).Victim_Chain, Current Array Element), Value In Array((Event Player).Victim_Chain, Add(Current Array Element, 1)))));
+        Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, Null));
+        Set Player Variable(Event Player, Active_Index, Count Of((Event Player).Active_Affected_Players));
+        Set Player Variable(Event Player, Other_Players, Empty Array);
+        Wait(0.05, Ignore Condition);
         For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
             If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
-                Set Player Variable(Event Player, Mod_Effect_Target, Value In Array((Event Player).Active_Affected_Players, If-Then-Else(Compare((Event Player).Active_Index_1, ==, 0), Add((Event Player).Active_Index_1, 1), (Event Player).Active_Index_1)));
+                Set Player Variable(Event Player, Mod_Effect_Target, Value In Array((Event Player).Active_Affected_Players, Add((Event Player).Active_Index_1, 1)));
                 Destroy Effect((Event Player).Active_Mod_FX);
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Blade_Victim, 1);
                 Modify Player Variable(Event Player, Other_Players, Append To Array, (Event Player).Mod_Effect_Target);
                 If(Is Alive((Event Player).Mod_Effect_Target));
                     Damage((Event Player).Mod_Effect_Target, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), (Event Player).Active_Index_2, Multiply((Event Player).Active_Index_2, 0.9)));
-                    Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
                     Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, (Event Player).Blade_Victim, (Event Player).Mod_Effect_Target, Null, Visible To Position and Radius);
                     Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
                     If(Is Dead((Event Player).Mod_Effect_Target));
+                        Wait(0.1, Ignore Condition);
                         Destroy Effect((Event Player).Active_Mod_FX);
+                    Else;
+                        Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
                     End;
                     Set Player Variable(Event Player, Blade_Victim, (Event Player).Mod_Effect_Target);
                 End;
                 "eventPlayer.Active_Affected_Players = eventPlayer.Active_Affected_Players.exclude(eventPlayer.Other_Players)"
-                Wait(1, Ignore Condition);
+                Wait(0.75, Ignore Condition);
             Else;
                 Set Player Variable(Event Player, Boolean, False);
                 Wait(0.05, Ignore Condition);
