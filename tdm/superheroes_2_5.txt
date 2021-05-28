@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4653,9 +4653,9 @@ rule ("Initialization - Current Mods HUD Text") {
     }
     actions {
         Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 1), 99999);
-        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Passive_Mod_Strings, If-Then-Else(Compare(First Of((Event Player).Page_Number), !=, 8), Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))), Add(40, First Of((Event Player).Menu_Element))))), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Passive_Mod_Strings, If-Then-Else(Compare(First Of((Event Player).Page_Number), !=, 9), Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))), Add(45, First Of((Event Player).Menu_Element))))), Null, Top, 1, Null, Color(Lime Green), Null, Visible To and String, Default Visibility);
         Wait Until(Compare((Event Player).Mod_Menu_Select, ==, 2), 99999);
-        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Active_Mod_Strings, If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), !=, 8), Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))), Add(40, Value In Array((Event Player).Menu_Element, 1))))), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Event Player, Null, Update Every Frame(Value In Array(Global.Active_Mod_Strings, If-Then-Else(Compare(Value In Array((Event Player).Page_Number, 1), !=, 9), Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))), Add(45, Value In Array((Event Player).Menu_Element, 1))))), Null, Top, 2, Null, Color(Orange), Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -5145,7 +5145,9 @@ rule ("Close out of Mod Menu") {
                 If(And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 26)));
                     Set Player Variable(Event Player, Passive_Mod, 28);
                 End;
-                Wait(0, Ignore Condition);
+                Set Player Variable At Index(Event Player, Page_Number, 0, Round To Integer(Divide((Event Player).Passive_Mod, 5), Down));
+                Set Player Variable At Index(Event Player, Menu_Element, 0, Subtract(Modulo((Event Player).Passive_Mod, 5), 1));
+                Wait(0.016, Ignore Condition);
             Else If(Compare(First Of((Event Player).Page_Number), !=, 9));
                 Set Player Variable(Event Player, Passive_Mod, Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))));
             Else;
@@ -5169,6 +5171,9 @@ rule ("Close out of Mod Menu") {
             "Get a random mod"
             If(And(Compare(Value In Array((Event Player).Page_Number, 1), ==, 0), Compare(Value In Array((Event Player).Menu_Element, 1), ==, 1)));
                 Set Player Variable(Event Player, Active_Mod, Random Integer(2, 47));
+                Wait(0.016, Ignore Condition);
+                Set Player Variable At Index(Event Player, Page_Number, 1, Round To Integer(Divide((Event Player).Active_Mod, 5), Down));
+                Set Player Variable At Index(Event Player, Menu_Element, 1, Subtract(Modulo((Event Player).Active_Mod, 5), 1));
             Else If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 9));
                 Set Player Variable(Event Player, Active_Mod, Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))));
             Else;
