@@ -5832,10 +5832,13 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
                     Damage((Event Player).Mod_Effect_Target, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), (Event Player).Active_Index_2, Multiply((Event Player).Active_Index_2, 0.9)));
                     Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
                     Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, (Event Player).Blade_Victim, (Event Player).Mod_Effect_Target, Null, Visible To Position and Radius);
+                    If(Is Dead((Event Player).Mod_Effect_Target));
+                        Destroy Effect((Event Player).Active_Mod_FX);
+                    End;
                     Set Player Variable(Event Player, Blade_Victim, (Event Player).Mod_Effect_Target);
                 End;
                 "eventPlayer.Active_Affected_Players = eventPlayer.Active_Affected_Players.exclude(eventPlayer.Other_Players)"
-                Wait(0.05, Ignore Condition);
+                Wait(1, Ignore Condition);
             Else;
                 Set Player Variable(Event Player, Boolean, False);
                 Wait(0.05, Ignore Condition);
