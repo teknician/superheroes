@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.5, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.6, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3575,7 +3575,15 @@ rule ("Active Mods 41 - Soul Link") {
         Play Effect(All Players(All Teams), Good Explosion, Color(Green), (Event Player).Mod_Effect_Target, 3);
         Play Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), (Event Player).Mod_Effect_Target, 100);
         Wait(0.5, Ignore Condition);
-        Wait Until(Or(Or(Or(Not(Value In Array((Event Player).Linked, 1)), Is Dead(Event Player)), Is Dead((Event Player).Mod_Effect_Target)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        While(And(And(And(Value In Array(((Event Player).Mod_Effect_Target).Linked, 1), Is Alive(Event Player)), Is Alive((Event Player).Mod_Effect_Target)), Compare((Event Player).Mod_Menu_Select, ==, 3)));
+            If(Not(Is In Line of Sight(Event Player, (Event Player).Mod_Effect_Target, Barriers Do Not Block LOS)));
+                Wait(3, Ignore Condition);
+                If(Not(Is In Line of Sight(Event Player, (Event Player).Mod_Effect_Target, Barriers Do Not Block LOS)));
+                    Break;
+                End;
+            End;
+            Wait(2, Ignore Condition);
+        End;
         Set Player Variable(Event Player, Boolean, True);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Linked, 0, Null);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Linked, 1, False);
@@ -3717,12 +3725,12 @@ rule ("Active Mods 43 - Meteor Shower") {
             Abort;
         End;
         Wait(1.5, Ignore Condition);
-        For Player Variable(Event Player, Active_Index, 0, 5, 1);
+        For Player Variable(Event Player, Active_Index, 0, 8, 1);
             Set Player Variable At Index(Event Player, Target_Area_A, 0, Nearest Walkable Position(Add((Event Player).Target_Position, Vector(Random Integer(-10, 10), 0, Random Integer(-10, 10)))));
             If(Compare(Ray Cast Hit Position(First Of((Event Player).Target_Area_A), Add(First Of((Event Player).Target_Area_A), Vector(0, 200, 0)), Null, Null, False), ==, Add(First Of((Event Player).Target_Area_A), Vector(0, 200, 0))));
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Red), First Of((Event Player).Target_Area_A), 6);
                 Wait(0.5, Ignore Condition);
-                Create Effect(All Players(All Teams), Ring, Custom Color(255, 85, 0, 255), First Of((Event Player).Target_Area_A), 4, Visible To Position and Radius);
+                Create Effect(All Players(All Teams), Ring, Color(Red), First Of((Event Player).Target_Area_A), 4, Visible To Position and Radius);
                 Set Player Variable At Index(Event Player, Active_Mod_FX_Array, Add((Event Player).Active_Index, 3), Last Created Entity);
                 Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Target_Area_A), 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
                 For Player Variable(Event Player, Active_Index_1, Random Integer(20, 40), 0, -2);
@@ -3737,14 +3745,14 @@ rule ("Active Mods 43 - Meteor Shower") {
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), First Of((Event Player).Target_Area_A), 5);
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Red), First Of((Event Player).Target_Area_A), 6);
                 Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
-                Damage(First Of((Event Player).Active_Affected_Players), Event Player, 150);
+                Damage(First Of((Event Player).Active_Affected_Players), Event Player, Random Integer(75, 125));
                 For Player Variable(Event Player, Active_Index_2, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
                     Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, 5, Random Integer(8, 10));
                     Set Status(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, Burning, 5);
                     Wait(0.016, Ignore Condition);
                 End;
                 Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, Add((Event Player).Active_Index, 3)));
-                Wait(Random Integer(0.5, 1.65), Ignore Condition);
+                Wait(Random Integer(0.4, 1.2), Ignore Condition);
             Else;
                 Wait(0.016, Ignore Condition);
             End;
@@ -3781,12 +3789,12 @@ rule ("Active Mods 43 - Meteor Shower (Concurrent)") {
         (Event Player).Boolean != False;
     }
     actions {
-        For Player Variable(Event Player, Active_Index_3, 0, 7, 1);
+        For Player Variable(Event Player, Active_Index_3, 0, 6, 1);
             Set Player Variable At Index(Event Player, Target_Area_A, 1, Nearest Walkable Position(Add((Event Player).Target_Position, Vector(Random Integer(-10, 10), 0, Random Integer(-10, 10)))));
             If(Compare(Ray Cast Hit Position(Value In Array((Event Player).Target_Area_A, 1), Add(Value In Array((Event Player).Target_Area_A, 1), Vector(0, 200, 0)), Null, Null, False), ==, Add(Value In Array((Event Player).Target_Area_A, 1), Vector(0, 200, 0))));
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 6);
                 Wait(0.5, Ignore Condition);
-                Create Effect(All Players(All Teams), Ring, Custom Color(255, 85, 0, 255), Value In Array((Event Player).Target_Area_A, 1), 4, Visible To Position and Radius);
+                Create Effect(All Players(All Teams), Ring, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 4, Visible To Position and Radius);
                 Set Player Variable At Index(Event Player, Active_Mod_FX_Array, Add((Event Player).Active_Index_3, 12), Last Created Entity);
                 Set Player Variable At Index(Event Player, Active_Affected_Players, 1, Players Within Radius(Value In Array((Event Player).Target_Area_A, 1), 5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
                 For Player Variable(Event Player, Active_Index_4, Random Integer(20, 40), 0, -2);
@@ -3801,12 +3809,12 @@ rule ("Active Mods 43 - Meteor Shower (Concurrent)") {
                 Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 5);
                 Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 6);
                 Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
-                Damage(Value In Array((Event Player).Active_Affected_Players, 1), Event Player, Random Integer(75, 125));
+                Damage(Value In Array((Event Player).Active_Affected_Players, 1), Event Player, 150);
                 For Player Variable(Event Player, Active_Index_5, 0, Count Of(Value In Array((Event Player).Active_Affected_Players, 1)), 1);
                     Start Damage Over Time(Value In Array(Value In Array((Event Player).Active_Affected_Players, 1), (Event Player).Active_Index_5), Event Player, 5, Random Integer(10, 15));
                     Set Status(Value In Array(Value In Array((Event Player).Active_Affected_Players, 1), (Event Player).Active_Index_5), Event Player, Burning, 5);
                 End;
-                Wait(Random Integer(0.4, 1.2), Ignore Condition);
+                Wait(Random Integer(0.6, 1.65), Ignore Condition);
             Else;
                 Wait(0.016, Ignore Condition);
             End;
@@ -3866,11 +3874,9 @@ rule ("Active Mods 44 - Thunderstorm") {
             Create Effect(All Players(All Teams), Ring, Color(Black), (Event Player).Target_Position, 22, Visible To Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX, 6, Last Created Entity);
             Wait(0.016, Ignore Condition);
-            Create Effect(All Players(All Teams), Cloud, Custom Color(90, 90, 90, 255), Add((Event Player).Target_Position, Vector(0, 21.5, 0)), Multiply((Event Player).Num_4, 1.25), Visible To Position and Radius);
+            Create Effect(All Players(All Teams), Cloud, Custom Color(90, 90, 90, 255), Add((Event Player).Target_Position, Vector(0, 21.5, 0)), (Event Player).Num_4, Visible To Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX, 7, Last Created Entity);
             Wait(0.016, Ignore Condition);
-            Create Effect(All Players(All Teams), Bad Aura, Custom Color(40, 40, 40, 255), Add((Event Player).Target_Position, Vector(0, 22, 0)), Multiply((Event Player).Num_4, 1.25), Visible To Position and Radius);
-            Set Player Variable At Index(Event Player, Active_Mod_FX, 8, Last Created Entity);
             Play Effect(All Players(All Teams), Ring Explosion Sound, Null, (Event Player).Target_Position, 200);
         Else;
             Abort;
@@ -3891,8 +3897,8 @@ rule ("Active Mods 44 - Thunderstorm") {
                     Play Effect(All Players(All Teams), Bad Explosion, Color(White), First Of((Event Player).Num_1), 3);
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(White), First Of((Event Player).Num_1), 3);
                     Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, 33);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Hacked, 2);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Stunned, 0.6);
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Hacked, 2.5);
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Stunned, 0.75);
                 End;
                 Wait(Random Integer(0.4, 1), Ignore Condition);
                 Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Active_Index));
@@ -3938,31 +3944,29 @@ rule ("Active Mods 43 - Thunderstorm (Concurrent)") {
         (Event Player).Boolean != False;
     }
     actions {
-        Wait(2, Ignore Condition);
+        Wait(1, Ignore Condition);
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 22, Opposite Team Of(Team Of(Event Player)), Surfaces));
-        For Player Variable(Event Player, Active_Index_3, 0, 3, 1);
-            For Player Variable(Event Player, Active_Index_2, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Set Player Variable At Index(Event Player, Num_1, 0, Position Of(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2)));
-                Set Player Variable At Index(Event Player, Num_1, 1, Vector(0, Distance Between(Add((Event Player).Target_Position, Vector(0, 25, 0)), First Of((Event Player).Num_1)), 0));
-                If(And(Compare(Distance Between(Add(First Of((Event Player).Num_1), Vector(0, 1, 0)), (Event Player).Target_Position), <, 22), Is Alive(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index))));
-                    Create Beam Effect(All Players(All Teams), Winston Tesla Cannon Beam, Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), First Of((Event Player).Num_1), Color(Team 1), Visible To Position and Radius);
-                    Set Player Variable At Index(Event Player, Active_Mod_FX_Array, Add((Event Player).Active_Index_2, 10), Last Created Entity);
-                    Play Effect(All Players(All Teams), Bad Explosion, Color(White), Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), 3);
-                    Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Null, Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), 80);
-                    Wait(0.25, Ignore Condition);
-                    Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Null, First Of((Event Player).Num_1), 200);
-                    Play Effect(All Players(All Teams), Bad Explosion, Color(White), First Of((Event Player).Num_1), 3);
-                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(White), First Of((Event Player).Num_1), 3);
-                    Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, 66);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, Hacked, 3.5);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, Stunned, 1);
-                End;
-                Wait(Random Integer(1, 1.8), Ignore Condition);
-                Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, Add((Event Player).Active_Index_2, 8)));
-                Wait(0.2, Ignore Condition);
+        For Player Variable(Event Player, Active_Index_2, 0, Count Of((Event Player).Active_Affected_Players), 1);
+            Set Player Variable At Index(Event Player, Num_1, 0, Position Of(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2)));
+            Set Player Variable At Index(Event Player, Num_1, 1, Vector(0, Distance Between(Add((Event Player).Target_Position, Vector(0, 25, 0)), First Of((Event Player).Num_1)), 0));
+            If(And(Compare(Distance Between(Add(First Of((Event Player).Num_1), Vector(0, 1, 0)), (Event Player).Target_Position), <, 22), Is Alive(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2))));
+                Create Beam Effect(All Players(All Teams), Winston Tesla Cannon Beam, Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), First Of((Event Player).Num_1), Color(Team 1), Visible To Position and Radius);
+                Set Player Variable At Index(Event Player, Active_Mod_FX_Array, Add((Event Player).Active_Index_2, 10), Last Created Entity);
+                Play Effect(All Players(All Teams), Bad Explosion, Color(White), Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), 3);
+                Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Null, Add(First Of((Event Player).Num_1), Value In Array((Event Player).Num_1, 1)), 80);
+                Wait(0.25, Ignore Condition);
+                Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Null, First Of((Event Player).Num_1), 200);
+                Play Effect(All Players(All Teams), Bad Explosion, Color(White), First Of((Event Player).Num_1), 3);
+                Play Effect(All Players(All Teams), Bad Pickup Effect, Color(White), First Of((Event Player).Num_1), 3);
+                Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, 66);
+                Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, Hacked, 4);
+                Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, Stunned, 1.5);
             End;
-            Wait(0.3, Ignore Condition);
+            Wait(Random Integer(0.75, 1.4), Ignore Condition);
+            Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, Add((Event Player).Active_Index_2, 10)));
+            Wait(0.2, Ignore Condition);
         End;
+        Wait(0.3, Ignore Condition);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Boolean, False);
     }
@@ -4007,7 +4011,7 @@ rule ("Active Mods 45 - Shockwave") {
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Sky Blue), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
                     Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Min(200, Multiply(100, Divide(2, Square Root((Event Player).Radius)))));
                     Apply Impulse(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Vector(0, 1, 0), Min(16, Multiply(10, Divide(2.75, Square Root((Event Player).Radius)))), To World, Cancel Contrary Motion);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(3.25, Add(2, Divide(3, Square Root((Event Player).Radius)))));
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(3.25, Add(1.65, Divide(3, Square Root((Event Player).Radius)))));
                     Set Player Variable(Event Player, Other_Players, Append To Array((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index)));
                 End;
                 Wait(0.1, Ignore Condition);
@@ -5011,7 +5015,7 @@ rule ("Open mod menu") {
         Create In-World Text(Event Player, Custom String("{0} ABILITIES", If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Custom String("PASSIVE", Null, Null, Null), Custom String("ACTIVE", Null, Null, Null)), Null, Null), Add(Add(Eye Position(Event Player), Vector(0, 0.275, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 2, Do Not Clip, Visible To Position and String, If-Then-Else(Compare((Event Player).Mod_Menu_Select, ==, 1), Color(Green), Color(Orange)), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 9, Last Text ID);
         Wait(0.016, Ignore Condition);
-        Create In-World Text(Event Player, Custom String("Hold {0} to change heroes                                                                                                 {1}", Input Binding String(Button(Jump)), Custom String("                                       ", Null, Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.442, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.8, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
+        Create In-World Text(Event Player, Custom String("Hold {0} to change heroes                                                                                                 {1}", Input Binding String(Button(Jump)), Custom String("                                            ", Null, Null, Null), Null), Add(Add(Eye Position(Event Player), Vector(0, -0.442, 0)), Multiply(Facing Direction Of(Event Player), 1.5)), 0.8, Do Not Clip, Visible To Position and String, Color(White), Default Visibility);
         Set Player Variable At Index(Event Player, Mod_Menu_Text, 10, Last Text ID);
         Wait(0.15, Ignore Condition);
     }
@@ -5146,7 +5150,7 @@ rule ("Close out of Mod Menu") {
                     Set Player Variable(Event Player, Passive_Mod, 28);
                 End;
                 Set Player Variable At Index(Event Player, Page_Number, 0, Round To Integer(Divide((Event Player).Passive_Mod, 5), Down));
-                Set Player Variable At Index(Event Player, Menu_Element, 0, Subtract(Modulo((Event Player).Passive_Mod, 5), 1));
+                Set Player Variable At Index(Event Player, Menu_Element, 0, Modulo((Event Player).Passive_Mod, 5));
                 Wait(0.016, Ignore Condition);
             Else If(Compare(First Of((Event Player).Page_Number), !=, 9));
                 Set Player Variable(Event Player, Passive_Mod, Add(First Of((Event Player).Menu_Element), Multiply(5, First Of((Event Player).Page_Number))));
@@ -5173,7 +5177,7 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable(Event Player, Active_Mod, Random Integer(2, 47));
                 Wait(0.016, Ignore Condition);
                 Set Player Variable At Index(Event Player, Page_Number, 1, Round To Integer(Divide((Event Player).Active_Mod, 5), Down));
-                Set Player Variable At Index(Event Player, Menu_Element, 1, Subtract(Modulo((Event Player).Active_Mod, 5), 1));
+                Set Player Variable At Index(Event Player, Menu_Element, 1, Modulo((Event Player).Active_Mod, 5));
             Else If(Compare(Value In Array((Event Player).Page_Number, 1), !=, 9));
                 Set Player Variable(Event Player, Active_Mod, Add(Value In Array((Event Player).Menu_Element, 1), Multiply(5, Value In Array((Event Player).Page_Number, 1))));
             Else;
@@ -5792,7 +5796,7 @@ rule ("Mods PlayerDealtDamage Events") {
     actions {
         "personal space"
         If(Compare((Event Player).Passive_Mod, ==, 42));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Max(4, Divide(Event Damage, 10)), To World, Cancel Contrary Motion XYZ);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Max(3, Divide(Event Damage, 25)), To World, Cancel Contrary Motion XYZ);
             Wait(0.1, Ignore Condition);
         End;
         If(And(Compare((Event Player).Active_Mod, ==, 33), Compare((Event Player).Blade_Chase, >, 0)));
