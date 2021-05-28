@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.2.8, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.2.8_5, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4139,7 +4139,7 @@ rule ("Active Mods 47 - Void Connection") {
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
             "sphere exists"
             Set Player Variable At Index(Event Player, Num_1, 0, True);
-            Chase Player Variable Over Time(Event Player, Active_Chase_2, 25, 1, Destination and Duration);
+            Chase Player Variable At Rate(Event Player, Active_Chase_2, 25, 1, Destination and Rate);
             While(Compare((Event Player).Active_Chase_2, <, 25));
                 Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
                 For Player Variable(Event Player, Active_Index_2, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
@@ -4178,7 +4178,7 @@ rule ("Active Mods 47 - Void Connection") {
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 7, Last Created Entity);
             "sphere exists"
             Set Player Variable At Index(Event Player, Num_1, 1, True);
-            Chase Player Variable Over Time(Event Player, Active_Chase_1, 25, 1, Destination and Duration);
+            Chase Player Variable At Rate(Event Player, Active_Chase_1, 25, 1, Destination and Rate);
             While(Compare((Event Player).Active_Chase_1, <, 25));
                 Set Player Variable At Index(Event Player, Active_Affected_Players, 0, Players Within Radius(First Of((Event Player).Mod_Effect_Target), 5, Opposite Team Of(Team Of(Event Player)), Surfaces));
                 For Player Variable(Event Player, Active_Index_1, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
@@ -5823,15 +5823,15 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
         End;
         For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
             If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
-                Set Player Variable(Event Player, Mod_Effect_Target, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1));
+                Set Player Variable(Event Player, Mod_Effect_Target, Value In Array((Event Player).Active_Affected_Players, If-Then-Else(Compare((Event Player).Active_Index_1, ==, 0), Add((Event Player).Active_Index_1, 1), (Event Player).Active_Index_1)));
                 Destroy Effect((Event Player).Active_Mod_FX);
-                Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Victim, 1);
-                Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
+                Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Blade_Victim, 1);
                 Modify Player Variable(Event Player, Other_Players, Append To Array, (Event Player).Mod_Effect_Target);
                 If(Is Alive((Event Player).Mod_Effect_Target));
                     Damage((Event Player).Mod_Effect_Target, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), (Event Player).Active_Index_2, Multiply((Event Player).Active_Index_2, 0.9)));
                     Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
                     Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, (Event Player).Blade_Victim, (Event Player).Mod_Effect_Target, Null, Visible To Position and Radius);
+                    Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
                     If(Is Dead((Event Player).Mod_Effect_Target));
                         Destroy Effect((Event Player).Active_Mod_FX);
                     End;
