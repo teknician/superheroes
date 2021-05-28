@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.3.1, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.3.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -5804,7 +5804,7 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
         Set Player Variable(Event Player, Blade_Victim, Victim);
         Set Player Variable(Event Player, Victim_Chain, Array(Victim));
         Set Player Variable(Event Player, Active_Index, Players Within Radius(Victim, 40, Opposite Team Of(Team Of(Event Player)), Surfaces));
-        Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Active_Affected_Players, Value In Array((Event Player).Active_Index, (Event Player).Blade_Victim)));
+        Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Other_Players, (Event Player).Blade_Victim));
         While(Compare(Count Of((Event Player).Other_Players), !=, 0));
             "shortest distance"
             Set Player Variable At Index(Event Player, Num_1, 0, 40);
@@ -5814,14 +5814,14 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
                 If(Compare(Distance Between((Event Player).Blade_Victim, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1)), <, First Of((Event Player).Num_1)));
                     Set Player Variable At Index(Event Player, Num_1, 0, Distance Between((Event Player).Blade_Victim, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1)));
                     Set Player Variable At Index(Event Player, Num_1, 1, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1));
+                    Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Position Of((Event Player).Blade_Victim), 3);
+                    Damage((Event Player).Blade_Victim, Event Player, Event Damage);
                 End;
                 Wait(0.016, Ignore Condition);
             End;
             Set Player Variable(Event Player, Victim_Chain, Append To Array((Event Player).Victim_Chain, Value In Array((Event Player).Num_1, 1)));
             Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Other_Players, Value In Array((Event Player).Num_1, 1)));
             Set Player Variable(Event Player, Blade_Victim, Value In Array((Event Player).Num_1, 1));
-            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Position Of((Event Player).Blade_Victim), 3);
-            Damage((Event Player).Blade_Victim, Event Player, Event Damage);
             Wait(1, Ignore Condition);
         End;
     }
