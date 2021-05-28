@@ -4196,7 +4196,7 @@ rule ("Active Mods 47 - Void Connection makes another sphere") {
         Is Button Held(Event Player, Button(Melee)) == True;
         "if you have already made a sphere"
         Value In Array((Event Player).Num_1, 1) != False;
-        Value In Array((Event Ability).Num_1, 4) == False;
+        Value In Array((Event Player).Num_1, 4) == False;
     }
     actions {
         Set Player Variable At Index(Event Player, Mod_Effect_Target, 1, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), Null, Null, False));
