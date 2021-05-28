@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.3.0, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.3.1, by ƒøUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4586,7 +4586,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 41, Custom String("Superhero Landing: Damage and knockdown nearby enemies when you hit the ground. The faster the better.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 42, Custom String("Personal Space: Damaging enemies knocks them away from you.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 43, Custom String("Optimize: Your active ability is better and has a lower cooldown. (some exceptions)", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 44, Custom String("Power Points: Press F to start spending PP you gain over time. (excl. F-triggered active abilities)", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 44, Custom String("Pummel: Every 5th hit on one target deals 200% damage. (1.25 sec. between hits)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 45, Custom String("Null Zone: Upon death, create a null zone that instantly kills enemies. (max. 3 null zones)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 46, Custom String("Mastery: Your hero abilities deal 180% damage.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 47, Custom String("", Null, Null, Null));
@@ -5801,41 +5801,28 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
         BouncingBlade;
     }
     actions {
-        If(Not((Event Player).Boolean));
-            Set Player Variable(Event Player, Blade_Victim, Victim);
-            Set Player Variable(Event Player, Active_Index_2, Event Damage);
-            Set Player Variable(Event Player, Boolean, True);
-        End;
-        "if len(eventPlayer.Other_Players) == eventPlayer.Active_Index:"
-        Set Player Variable(Event Player, Victim_Chain, Players Within Radius((Event Player).Blade_Victim, 30, Team Of((Event Player).Blade_Victim), Off));
-        Set Player Variable(Event Player, Active_Affected_Players, Sorted Array((Event Player).Victim_Chain, Distance Between(Value In Array((Event Player).Victim_Chain, Current Array Element), Value In Array((Event Player).Victim_Chain, Add(Current Array Element, 1)))));
-        Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, Null));
-        Set Player Variable(Event Player, Active_Index, Count Of((Event Player).Active_Affected_Players));
-        Set Player Variable(Event Player, Other_Players, Empty Array);
-        Wait(0.05, Ignore Condition);
-        For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
-            If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
-                Set Player Variable(Event Player, Mod_Effect_Target, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1));
-                Destroy Effect((Event Player).Active_Mod_FX);
-                Modify Player Variable(Event Player, Other_Players, Append To Array, (Event Player).Mod_Effect_Target);
-                If(Is Alive((Event Player).Mod_Effect_Target));
-                    Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Blade_Victim, 1);
-                    Damage((Event Player).Mod_Effect_Target, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), (Event Player).Active_Index_2, Multiply((Event Player).Active_Index_2, 0.9)));
-                    Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, (Event Player).Blade_Victim, (Event Player).Mod_Effect_Target, Null, Visible To Position and Radius);
-                    Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
-                    Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Mod_Effect_Target, 1);
-                    If(Is Dead((Event Player).Mod_Effect_Target));
-                        Wait(0.1, Ignore Condition);
-                        Destroy Effect((Event Player).Active_Mod_FX);
-                    End;
+        Set Player Variable(Event Player, Blade_Victim, Victim);
+        Set Player Variable(Event Player, Victim_Chain, Array(Victim));
+        Set Player Variable(Event Player, Active_Index, Players Within Radius(Victim, 40, Opposite Team Of(Team Of(Event Player)), Surfaces));
+        Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Active_Affected_Players, Value In Array((Event Player).Active_Index, (Event Player).Blade_Victim)));
+        While(Compare(Count Of((Event Player).Other_Players), !=, 0));
+            "shortest distance"
+            Set Player Variable At Index(Event Player, Num_1, 0, 40);
+            "best candidate"
+            Set Player Variable At Index(Event Player, Num_1, 1, False);
+            For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Other_Players), 1);
+                If(Compare(Distance Between((Event Player).Blade_Victim, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1)), <, First Of((Event Player).Num_1)));
+                    Set Player Variable At Index(Event Player, Num_1, 0, Distance Between((Event Player).Blade_Victim, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1)));
+                    Set Player Variable At Index(Event Player, Num_1, 1, Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1));
                 End;
-                Set Player Variable(Event Player, Blade_Victim, (Event Player).Mod_Effect_Target);
-                "eventPlayer.Active_Affected_Players = eventPlayer.Active_Affected_Players.exclude(eventPlayer.Other_Players)"
-                Wait(0.75, Ignore Condition);
-            Else;
-                Set Player Variable(Event Player, Boolean, False);
-                Wait(0.05, Ignore Condition);
+                Wait(0.016, Ignore Condition);
             End;
+            Set Player Variable(Event Player, Victim_Chain, Append To Array((Event Player).Victim_Chain, Value In Array((Event Player).Num_1, 1)));
+            Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Other_Players, Value In Array((Event Player).Num_1, 1)));
+            Set Player Variable(Event Player, Blade_Victim, Value In Array((Event Player).Num_1, 1));
+            Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Position Of((Event Damage).Blade_Victim), 3);
+            Damage((Event Player).Blade_Victim, Event Player, Event Damage);
+            Wait(1, Ignore Condition);
         End;
     }
 }
