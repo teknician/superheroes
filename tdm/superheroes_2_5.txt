@@ -4124,7 +4124,7 @@ rule ("Active Mods 47 - Void Connection") {
         Global.Intermission_In_Progress == False;
         Is Button Held(Event Player, Button(Melee)) == True;
         Value In Array((Event Player).Num_1, 1) == False;
-        Value In Array((Event Ability).Num_1, 4) == False;
+        Value In Array((Event Player).Num_1, 4) == False;
     }
     actions {
         Wait(0.032, Ignore Condition);
