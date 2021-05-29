@@ -3176,7 +3176,7 @@ rule ("Active Mods 33 - Vs. Goliath Toggle") {
         (Event Player).Mod_Menu_Select == 3;
         Global.Intermission_In_Progress == False;
         (Event Player).Active_Mod == 34;
-        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0) != False;
+        (Event Player).Active_Mod_Skill_Toggle == 0;
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Button Held(Event Player, Button(Reload)) == False;
     }
