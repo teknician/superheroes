@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.3.8, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.3.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3163,17 +3163,38 @@ rule ("Active Mods 33 - Vs. Goliath") {
         Set Player Variable(Event Player, Active_Index, Color(Rose));
         Set Player Variable(Event Player, Active_String, Custom String("More Damage Dealt", Null, Null, Null));
         Set Player Variable(Event Player, Active_String_2, Icon String(Arrow: Up));
-        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
-        Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+    }
+}
+
+rule ("Active Mods 33 - Vs. Goliath Toggle") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 3;
+        Global.Intermission_In_Progress == False;
+        (Event Player).Active_Mod == 34;
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0) != False;
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Is Button Held(Event Player, Button(Reload)) == False;
+    }
+    actions {
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
         Set Player Variable(Event Player, Active_Index, Color(Green));
         Set Player Variable(Event Player, Active_String, Custom String("Less Damage Taken", Null, Null, Null));
         Set Player Variable(Event Player, Active_String_2, Icon String(Arrow: Down));
-        Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
+        Wait(0.25, Ignore Condition);
+        Wait Until(Or(And(And(Is Button Held(Event Player, Button(Interact)), Not(Is Button Held(Event Player, Button(Reload)))), Is Moving(Event Player)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
         Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Null, Event Player, 200);
-        Loop;
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
+        Set Player Variable(Event Player, Active_Index, Color(Rose));
+        Set Player Variable(Event Player, Active_String, Custom String("More Damage Dealt", Null, Null, Null));
+        Set Player Variable(Event Player, Active_String_2, Icon String(Arrow: Up));
+        Wait(0.25, Ignore Condition);
     }
 }
 
