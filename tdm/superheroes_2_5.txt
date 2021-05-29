@@ -4910,7 +4910,7 @@ rule ("Mechanics - Check out of combat") {
     }
     actions {
         Set Player Variable(Event Player, Is_In_Combat, True);
-        Wait(5, Restart When True);
+        Wait(3.5, Restart When True);
         Set Player Variable(Event Player, Is_In_Combat, False);
     }
 }
@@ -4923,7 +4923,7 @@ rule ("Mechanics - Check out of combat") {
     }
     actions {
         Set Player Variable(Event Player, Is_In_Combat, True);
-        Wait(5, Restart When True);
+        Wait(3.5, Restart When True);
         Set Player Variable(Event Player, Is_In_Combat, False);
     }
 }
@@ -5752,6 +5752,7 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
                 End;
                 Wait(0.016, Ignore Condition);
             End;
+            Wait(0.016, Ignore Condition);
             Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, (Event Player).Blade_Victim, Value In Array((Event Player).Num_1, 1), Null, Visible To);
             Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
             Set Player Variable(Event Player, Other_Players, Remove From Array((Event Player).Other_Players, Value In Array((Event Player).Num_1, 1)));
@@ -5762,8 +5763,9 @@ rule ("Active Mod 32 - Bouncing Blades (Damage dealt)") {
                 Damage((Event Player).Blade_Victim, Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), Event Damage, Value In Array((Event Player).Num_1, 2)));
                 Modify Player Variable At Index(Event Player, Num_1, 2, Multiply, 0.8);
             End;
-            Wait(0.2, Ignore Condition);
+            Wait(0.15, Ignore Condition);
             Destroy Effect((Event Player).Active_Mod_FX);
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
