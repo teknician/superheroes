@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.3.9, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -4300,7 +4300,7 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(1.5, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(300, Ignore Condition);
+            Wait(360, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
@@ -4836,6 +4836,23 @@ rule ("Get yourself unstuck") {
             Wait(0.2, Ignore Condition);
             Play Effect(Event Player, Sombra Translocator Reappear Sound, Color(Team 2), Position Of(Event Player), 100);
             Play Effect(Event Player, Tracer Recall Reappear Effect, Color(Team 1), Event Player, 1);
+    }
+}
+
+rule ("Instructions for people without mods") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Mod_Menu_Select == 0;
+        Has Spawned(Event Player) == True;
+    }
+    actions {
+        Small Message(Event Player, Custom String("Stand still and Hold {0} + {1} to get started!", Input Binding String(Button(Interact)), Input Binding String(Button(Reload)), Null));
+        Wait(10, Ignore Condition);
+        Loop If Condition Is True;
     }
 }
 
