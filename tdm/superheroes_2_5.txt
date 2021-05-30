@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.0, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.1, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -5947,8 +5947,9 @@ rule ("Mods PlayerDealtDamage Events") {
             If(Compare((Event Player).Passive_Mod, ==, 46));
                 Start Rule(Mastery, Do Nothing);
             Else If(Compare((Event Player).Passive_Mod, ==, 45));
-                If(Compare(Normalized Health(Victim), <, 0.5));
+                If(And(Compare(Normalized Health(Victim), <, 0.5), Compare(Event Ability, !=, Null)));
                     Damage(Victim, Attacker, Event Damage);
+                    Wait(0.016, Ignore Condition);
                 End;
             End;
         End;
@@ -5985,7 +5986,7 @@ rule ("Mods PlayerDealtDamage Events") {
         If(And(Compare((Event Player).Active_Mod, ==, 20), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1)));
             Call Subroutine(SneakDealtDmg);
         End;
-        If(And(Compare((Event Player).Active_Mod, ==, 34), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 0)));
+        If(And(And(Compare((Event Player).Active_Mod, ==, 34), Compare((Event Player).Active_Mod_Skill_Toggle, ==, 0)), Compare(Event Ability, !=, Null)));
             Start Rule(VsGoliathDealtDmg, Do Nothing);
         End;
         If(Compare((Event Player).Boolean, ==, True));
@@ -6172,8 +6173,9 @@ rule ("Mods PlayerTookDamage Events") {
                 Start Rule(ResilientDamaged, Do Nothing);
             End;
             If(Compare((Event Player).Passive_Mod, ==, 45));
-                If(Compare(Normalized Health(Victim), <=, 0.5));
+                If(And(Compare(Normalized Health(Victim), <=, 0.5), Compare(Event Ability, !=, Null)));
                     Damage(Victim, Attacker, Event Damage);
+                    Wait(0.016, Ignore Condition);
     }
 }
 
