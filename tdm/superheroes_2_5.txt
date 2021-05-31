@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.4, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -173,6 +173,7 @@ variables {
         90: Linked
         91: Optimize
         92: Is_In_Meteor_Shower
+        93: Crowd_Controlled
 }
 subroutines {
     0: MoveSpeed160
@@ -1365,7 +1366,7 @@ rule ("Choose/Check Passive Mod") {
             Start Rule(BootsOfMobility, Do Nothing);
             Else;
             //__label_switch_2_7__:
-            Start Damage Modification(Event Player, All Players(Opposite Team Of(Team Of(Event Player))), 66.66, Receivers Damagers and Damage Percent);
+            Start Damage Modification(Event Player, All Players(Opposite Team Of(Team Of(Event Player))), 50, Receivers Damagers and Damage Percent);
             Set Player Variable(Event Player, Passive_Index, Last Damage Modification ID);
             Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
             Stop Damage Modification((Event Player).Passive_Index);
@@ -1601,10 +1602,12 @@ rule ("Active Mods 2 - Human Cannonball") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 3;
         Global.Intermission_In_Progress == False;
-        Altitude Of(Event Player) <= 1;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
+        If(Not(Compare(Altitude Of(Event Player), <=, 1)));
+            Abort If(Compare((Event Player).Optimize, ==, 0));
+        End;
         Set Player Variable(Event Player, Player_Position, Position Of(Event Player));
         Start Facing(Event Player, Facing Direction Of(Event Player), 360, To World, Direction and Turn Rate);
         Wait(0.02, Ignore Condition);
@@ -1628,7 +1631,9 @@ rule ("Active Mods 2 - Human Cannonball") {
             Wait(0.1, Ignore Condition);
         End;
         Wait Until(Compare(Altitude Of(Event Player), <=, 0.4), 10);
-        Set Status(Event Player, Null, Knocked Down, 1.25);
+        If(Compare((Event Player).Optimize, ==, 0));
+            Set Status(Event Player, Null, Knocked Down, 1.25);
+        End;
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
         Damage(Players Within Radius(Position Of(Event Player), 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, Multiply(Min((Event Player).Active_Time, 150), Multiply((Event Player).Optimize, 0.66))));
@@ -1823,6 +1828,7 @@ rule ("Active Mods 7 - Entangling Roots") {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Opposite Team Of(Team Of(Event Player))));
         Set Status((Event Player).Mod_Effect_Target, Event Player, Rooted, 1.8);
         Big Message((Event Player).Mod_Effect_Target, Custom String("ROOTED", Null, Null, Null));
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, True);
         Create Effect(All Players(All Teams), Light Shaft, Color(Green), Add((Event Player).Mod_Effect_Target, Down), 1, Visible To Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Apply Impulse((Event Player).Mod_Effect_Target, Direction Towards((Event Player).Mod_Effect_Target, (Event Player).Mod_Effect_Target), 0.01, To Player, Cancel Contrary Motion);
@@ -1839,6 +1845,7 @@ rule ("Active Mods 7 - Entangling Roots") {
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
         Wait(If-Then-Else(Compare((Event Player).Optimize, >, 0), 2.5, 1.5), Ignore Condition);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, False);
         Destroy Effect((Event Player).Active_Mod_FX);
         Stop Forcing Player Position((Event Player).Mod_Effect_Target);
         Set Player Variable(Event Player, Cooldown_Chase, Subtract(8, Multiply((Event Player).Optimize, 0.5)));
@@ -1883,10 +1890,21 @@ rule ("Active Mods 8 - Shift Burden") {
         Play Effect(All Players(All Teams), Bad Explosion, Color(Gray), (Event Player).Mod_Effect_Target, 3);
         Play Effect(All Players(All Teams), Debuff Impact Sound, Null, (Event Player).Mod_Effect_Target, 100);
         Wait(0.05, Ignore Condition);
+        If(Compare(Hero Of((Event Player).Mod_Effect_Target), ==, Hero(Echo)));
+            If(Is Using Ability 1((Event Player).Mod_Effect_Target));
+                Cancel Primary Action((Event Player).Mod_Effect_Target);
+            End;
+            Disallow Button((Event Player).Mod_Effect_Target, Button(Jump));
+            Disallow Button((Event Player).Mod_Effect_Target, Button(Ability 1));
+        Else If(Compare(Hero Of((Event Player).Mod_Effect_Target), ==, Hero(Mercy)));
+            Disallow Button((Event Player).Mod_Effect_Target, Button(Jump));
+        End;
         Apply Impulse((Event Player).Mod_Effect_Target, Down, 50, To World, Cancel Contrary Motion);
         Set Gravity((Event Player).Mod_Effect_Target, 1000);
         Set Projectile Gravity((Event Player).Mod_Effect_Target, 500);
         Wait(Add(4, (Event Player).Optimize), Ignore Condition);
+        Allow Button((Event Player).Mod_Effect_Target, Button(Jump));
+        Allow Button((Event Player).Mod_Effect_Target, Button(Ability 1));
         If(Compare(((Event Player).Mod_Effect_Target).Active_Mod, ==, 5));
             If(Compare(((Event Player).Mod_Effect_Target).Active_Mod_Skill_Toggle, ==, 1));
                 Set Gravity((Event Player).Mod_Effect_Target, 0);
@@ -1940,6 +1958,7 @@ rule ("Active Mods 9 - Blind") {
         Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position((Event Player).Mod_Effect_Target), Multiply(Facing Direction Of((Event Player).Mod_Effect_Target), 0.75)), 7, Visible To Position and Radius);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 2, Last Created Entity);
         Big Message((Event Player).Mod_Effect_Target, Custom String("BLINDED", Null, Null, Null));
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, True);
         Wait(0.3, Ignore Condition);
         Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Vector(0, -300, 0), 1, Visible To Position and Radius);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 3, Last Created Entity);
@@ -1961,6 +1980,7 @@ rule ("Active Mods 9 - Blind") {
         Create Effect((Event Player).Mod_Effect_Target, Bad Aura, Color(Black), Add(Eye Position((Event Player).Mod_Effect_Target), Multiply(Facing Direction Of((Event Player).Mod_Effect_Target), 0.75)), 7, Visible To Position and Radius);
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Active_Mod_FX_Array, 7, Last Created Entity);
         Set Player Variable((Event Player).Mod_Effect_Target, Is_Blind, False);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, False);
         Wait(0.1, Ignore Condition);
         Stop Camera((Event Player).Mod_Effect_Target);
         Wait(0.2, Ignore Condition);
@@ -2002,6 +2022,7 @@ rule ("Active Mods 10 - Fear") {
         Big Message((Event Player).Mod_Effect_Target, Custom String("FEARED", Null, Null, Null));
         Start Facing((Event Player).Mod_Effect_Target, World Vector Of(Vector(0, 0, 1), Event Player, Rotation), 1000, To Player, None);
         Start Throttle In Direction((Event Player).Mod_Effect_Target, World Vector Of(Vector(0, 0, 1), (Event Player).Mod_Effect_Target, Rotation), 2, To World, Replace existing throttle, Direction and Magnitude);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, True);
         Wait(0.032, Ignore Condition);
         If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
@@ -2011,7 +2032,8 @@ rule ("Active Mods 10 - Fear") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
-        Wait(1.75, Ignore Condition);
+        Wait(1.8, Ignore Condition);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, False);
         Stop Facing((Event Player).Mod_Effect_Target);
         Stop Throttle In Direction((Event Player).Mod_Effect_Target);
         Destroy Effect((Event Player).Active_Mod_FX);
@@ -2058,7 +2080,9 @@ rule ("Active Mods 11 - Taunt") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, True);
         Wait(2.25, Ignore Condition);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, False);
         Stop Holding Button((Event Player).Mod_Effect_Target, Button(Primary Fire));
         Stop Facing((Event Player).Mod_Effect_Target);
         Stop Throttle In Direction((Event Player).Mod_Effect_Target);
@@ -2117,11 +2141,13 @@ rule ("Active Mods 12 - Duel") {
             Set Damage Received(Event Player, 200);
         End;
         Set Damage Received((Event Player).Mod_Effect_Target, 200);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, True);
         Big Message(Array(Event Player, (Event Player).Mod_Effect_Target), Custom String("DUEL!", Null, Null, Null));
         Wait(0.05, Ignore Condition);
         Stop Facing(Event Player);
         Stop Facing((Event Player).Mod_Effect_Target);
         Wait(2.5, Ignore Condition);
+        Set Player Variable((Event Player).Mod_Effect_Target, Crowd_Controlled, False);
         Set Damage Received(Event Player, 100);
         Set Damage Received((Event Player).Mod_Effect_Target, 100);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
@@ -2151,12 +2177,13 @@ rule ("Active Mods 13 - Cleanse") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 14;
         Global.Intermission_In_Progress == False;
-        Or(Or(Or(Has Status(Event Player, Rooted), Has Status(Event Player, Stunned)), Has Status(Event Player, Knocked Down)), Has Status(Event Player, Frozen)) == True;
+        Or(Or(Or(Or(Has Status(Event Player, Rooted), Has Status(Event Player, Stunned)), Has Status(Event Player, Knocked Down)), Has Status(Event Player, Frozen)), Compare((Event Player).Crowd_Controlled, ==, True)) == True;
         Or(Is Button Held(Event Player, Button(Melee)), And(Array Contains(Array(Hero(Brigitte), Hero(Reinhardt)), Hero Of(Event Player)), Is Button Held(Event Player, Button(Reload)))) == True;
     }
     actions {
         Play Effect(All Players(All Teams), Orisa Halt Implosion Sound, Team Of(Event Player), Position Of(Event Player), 150);
         Play Effect(All Players(All Teams), Orisa Halt Implosion Effect, Team Of(Event Player), Eye Position(Event Player), 1);
+        Enable Hero HUD((Event Player).Mod_Effect_Target);
         Clear Status(Event Player, Stunned);
         Clear Status(Event Player, Knocked Down);
         Clear Status(Event Player, Asleep);
@@ -2167,7 +2194,9 @@ rule ("Active Mods 13 - Cleanse") {
         Stop Facing(Event Player);
         Stop Forcing Player Position(Event Player);
         Stop Forcing Throttle(Event Player);
-        Set Status(Event Player, Null, Phased Out, 4.5);
+        Stop Throttle In Direction(Event Ability);
+        Stop Holding Button(Event Ability, Button(Primary Fire));
+        Set Status(Event Player, Null, Phased Out, 3.25);
         Create Effect(All Players(All Teams), Sparkles, Color(Lime Green), Event Player, 1, Visible To Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
         Wait(0.032, Ignore Condition);
@@ -2179,7 +2208,7 @@ rule ("Active Mods 13 - Cleanse") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
-        Wait(4.5, Ignore Condition);
+        Wait(3.25, Ignore Condition);
         Destroy Effect((Event Player).Active_Mod_FX);
         Set Player Variable(Event Player, Cooldown_Chase, Subtract(10, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
@@ -2868,7 +2897,7 @@ rule ("Active Mods 27 - Railgun") {
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
             Create Beam Effect(All Players(All Teams), Winston Tesla Cannon Beam, Add(Eye Position(Event Player), Vector(-0.8, -0.7, 0.2)), Eye Position((Event Player).Current_Target_A), Color(White), Position and Radius);
             Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
-            Damage((Event Player).Current_Target_A, Event Player, Raise To Power(Multiply((Event Player).Railgun_Charge, If-Then-Else(Compare((Event Player).Optimize, >, 0), 0.259, 0.173)), 2));
+            Damage((Event Player).Current_Target_A, Event Player, Raise To Power(Multiply((Event Player).Railgun_Charge, If-Then-Else(Compare((Event Player).Optimize, >, 0), 0.245, 0.173)), 2));
             Set Status((Event Player).Current_Target_A, Event Player, Burning, Multiply((Event Player).Railgun_Charge, 0.05));
             Start Damage Over Time((Event Player).Current_Target_A, Event Player, Multiply((Event Player).Railgun_Charge, 0.05), Add(5, Multiply((Event Player).Railgun_Charge, 0.15)));
             Wait(0.5, Ignore Condition);
@@ -2878,7 +2907,7 @@ rule ("Active Mods 27 - Railgun") {
         Wait(0.016, Ignore Condition);
         Destroy Progress Bar HUD Text(First Of((Event Player).Active_Mod_FX_Array));
         Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, 1));
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(7, Multiply((Event Player).Optimize, 1.5)));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(8, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -3232,11 +3261,11 @@ rule ("Active Mods 34 - Ghosted") {
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
         Wait(0.15, Ignore Condition);
-        Set Move Speed(Event Player, 200);
+        Set Move Speed(Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 300, 200));
         Set Invisible(Event Player, Enemies);
         Create Effect(All Players(All Teams), Cloud, Color(Gray), Event Player, 1, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-        Wait(If-Then-Else(Compare((Event Player).Optimize, >, 0), 4, 2), Ignore Condition);
+        Wait(If-Then-Else(Compare((Event Player).Optimize, >, 0), 4.25, 2.25), Ignore Condition);
         Call Subroutine(MovementReset);
         Set Invisible(Event Player, None);
         Play Effect(All Players(All Teams), Bad Explosion, Color(White), Event Player, 5);
@@ -3304,11 +3333,11 @@ rule ("Active Mods 36 - Healthing Hand") {
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Create Beam Effect(All Players(All Teams), Good Beam, Event Player, (Event Player).Mod_Effect_Target, Color(Green), Visible To Position and Radius);
         Set Player Variable(Event Player, Active_Mod_FX, Last Created Entity);
-        Add Health Pool To Player((Event Player).Mod_Effect_Target, Health, Multiply(Health(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 3, 2)), True, True);
+        Add Health Pool To Player((Event Player).Mod_Effect_Target, Health, Multiply(Health(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 3, 1.5)), True, True);
         Set Player Variable((Event Player).Mod_Effect_Target, Health_Temp, Last Created Health Pool);
         Heal((Event Player).Mod_Effect_Target, Null, ((Event Player).Mod_Effect_Target).Health_Temp);
         "eventPlayer.Mod_Effect_Target.setHealth(eventPlayer.getHealth() + eventPlayer.Mod_Effect_Target.getHealth())"
-        Set Status(Event Player, Null, Stunned, Subtract(9, Multiply((Event Player).Optimize, 1.75)));
+        Set Status(Event Player, Null, Stunned, Subtract(9, Multiply((Event Player).Optimize, 1.5)));
         Communicate(Event Player, With You);
         Wait(0.032, Ignore Condition);
         If(Compare((Event Player).Mod_Menu_Select, !=, 3));
@@ -3323,7 +3352,7 @@ rule ("Active Mods 36 - Healthing Hand") {
         Destroy Effect((Event Player).Active_Mod_FX);
         Wait(8, Ignore Condition);
         Remove Health Pool From Player(((Event Player).Mod_Effect_Target).Health_Temp);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(11, Multiply((Event Player).Optimize, 2)));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(11, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -3379,7 +3408,7 @@ rule ("Active Mods 37 - Anti-Injure") {
         Stop Heal Over Time((Event Player).HoT_Var);
         Set Player Variable(Event Player, HoT_Var, Null);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(2, Multiply((Event Player).Optimize, 0.333)));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(6, Multiply((Event Player).Optimize, 0.333)));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -3468,7 +3497,6 @@ rule ("Active Mods 39 - Med-E-Port") {
     }
     actions {
         Set Player Variable(Event Player, Current_Target_A, Random Value In Array(Remove From Array(All Players(Team Of(Event Player)), Array(Null, Event Player))));
-        Wait(0.5, Abort When False);
         Wait(0.032, Ignore Condition);
         If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
@@ -3609,7 +3637,7 @@ rule ("Active Mods 41 - Soul Link") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
-        Add Health Pool To Player(Event Player, Health, 150, True, False);
+        Add Health Pool To Player(Event Player, Health, 100, True, True);
         Set Player Variable(Event Player, Active_Index, Last Created Health Pool);
         Set Player Variable(Event Player, Mod_Effect_Target, Player Closest To Reticle(Event Player, Team Of(Event Player)));
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Linked, 0, Event Player);
@@ -3636,7 +3664,7 @@ rule ("Active Mods 41 - Soul Link") {
         Set Player Variable At Index((Event Player).Mod_Effect_Target, Linked, 1, False);
         Destroy Effect(First Of((Event Player).Active_Mod_FX_Array));
         Remove Health Pool From Player((Event Player).Active_Index);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(7, Multiply((Event Player).Optimize, 0.75)));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(10, Multiply((Event Player).Optimize, 0.75)));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -3687,8 +3715,8 @@ rule ("Active Mods 42 - Pyroblast") {
         "start time"
         Set Player Variable At Index(Event Player, Projectile, 1, Total Time Elapsed);
         "initial velocity"
-        Set Player Variable At Index(Event Player, Projectile, 3, Multiply(7, Facing Direction Of(Event Player)));
-        Set Player Variable At Index(Event Player, Projectile, 4, Vector(0, -0.25, 0));
+        Set Player Variable At Index(Event Player, Projectile, 3, Multiply(8.5, Facing Direction Of(Event Player)));
+        Set Player Variable At Index(Event Player, Projectile, 4, Vector(0, -0.5, 0));
         Create Effect(All Players(All Teams), Orb, Color(Orange), (Event Player).Projectile_Position, (Event Player).Projectile_Duration, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Create Effect(All Players(All Teams), Bad Aura, Color(Red), (Event Player).Projectile_Position, (Event Player).Projectile_Duration, Visible To Position and Radius);
@@ -3702,7 +3730,7 @@ rule ("Active Mods 42 - Pyroblast") {
             Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), (Event Player).Projectile_Position, 35);
             Set Player Variable(Event Player, Active_Affected_Players, Append To Array((Event Player).Active_Affected_Players, Remove From Array(Players Within Radius((Event Player).Projectile_Position, Add((Event Player).Projectile_Duration, 2), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), (Event Player).Active_Affected_Players)));
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
-            Damage((Event Player).Active_Affected_Players, Event Player, Multiply((Event Player).Projectile_Duration, 35));
+            Damage((Event Player).Active_Affected_Players, Event Player, Multiply((Event Player).Projectile_Duration, 40));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Orange), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
@@ -3718,8 +3746,8 @@ rule ("Active Mods 42 - Pyroblast") {
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Play Effect(All Players(All Teams), Bad Explosion, Color(Team 2), (Event Player).Projectile_Position, (Event Player).Projectile_Duration);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), (Event Player).Projectile_Position, 100);
-        Damage(Players Within Radius((Event Player).Projectile_Position, (Event Player).Projectile_Duration, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply((Event Player).Projectile_Duration, 55));
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(7, (Event Player).Optimize));
+        Damage(Players Within Radius((Event Player).Projectile_Position, (Event Player).Projectile_Duration, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Multiply((Event Player).Projectile_Duration, 60));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(9, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -3774,7 +3802,7 @@ rule ("Active Mods 43 - Meteor Shower") {
         Else;
             Abort;
         End;
-        Wait(1.5, Ignore Condition);
+        Wait(1.25, Ignore Condition);
         For Player Variable(Event Player, Active_Index, 0, 6, 1);
             Set Player Variable At Index(Event Player, Target_Area_A, 0, Nearest Walkable Position(Add((Event Player).Target_Position, Vector(Random Integer(-10, 10), 0, Random Integer(-10, 10)))));
             While(Compare(Ray Cast Hit Position(First Of((Event Player).Target_Area_A), Add(First Of((Event Player).Target_Area_A), Vector(0, 200, 0)), Null, Null, False), !=, Add(First Of((Event Player).Target_Area_A), Vector(0, 200, 0))));
@@ -3797,15 +3825,15 @@ rule ("Active Mods 43 - Meteor Shower") {
             Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), First Of((Event Player).Target_Area_A), 150);
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), First Of((Event Player).Target_Area_A), 5);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Red), First Of((Event Player).Target_Area_A), 6);
-            Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
             Damage(First Of((Event Player).Active_Affected_Players), Event Player, Random Integer(75, 125));
             For Player Variable(Event Player, Active_Index_2, 0, Count Of(First Of((Event Player).Active_Affected_Players)), 1);
                 Start Damage Over Time(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, 5, Random Integer(8, 10));
                 Set Status(Value In Array(First Of((Event Player).Active_Affected_Players), (Event Player).Active_Index_2), Event Player, Burning, 5);
                 Wait(0.016, Ignore Condition);
             End;
+            Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
             Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, Add((Event Player).Active_Index, 3)));
-            Wait(Random Integer(0.5, 1.3), Ignore Condition);
+            Wait(Random Integer(0.5, 1), Ignore Condition);
         End;
         Wait Until(Compare((Event Player).Boolean, ==, False), 99999);
         Set Player Variable(Event Player, Is_In_Meteor_Shower, False);
@@ -3862,13 +3890,14 @@ rule ("Active Mods 43 - Meteor Shower (Concurrent)") {
             Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Color(Team 2), Value In Array((Event Player).Target_Area_A, 1), 150);
             Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 5);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Value In Array((Event Player).Target_Area_A, 1), 6);
-            Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
             Damage(Value In Array((Event Player).Active_Affected_Players, 1), Event Player, 150);
             For Player Variable(Event Player, Active_Index_5, 0, Count Of(Value In Array((Event Player).Active_Affected_Players, 1)), 1);
                 Start Damage Over Time(Value In Array(Value In Array((Event Player).Active_Affected_Players, 1), (Event Player).Active_Index_5), Event Player, 5, Random Integer(10, 15));
                 Set Status(Value In Array(Value In Array((Event Player).Active_Affected_Players, 1), (Event Player).Active_Index_5), Event Player, Burning, 5);
+                Wait(0.016, Ignore Condition);
             End;
-            Wait(Random Integer(0.2, 1), Ignore Condition);
+            Play Effect(All Players(All Teams), Sigma Accretion Impact Effect, Color(Team 2), First Of((Event Player).Target_Area_A), 1);
+            Wait(Random Integer(0.2, 0.8), Ignore Condition);
         End;
         Set Player Variable(Event Player, Boolean, False);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
@@ -3951,7 +3980,7 @@ rule ("Active Mods 44 - Thunderstorm") {
                 Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Stunned, 0.65);
                 Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Active_Index));
             End;
-            Wait(Random Integer(0.5, 1.2), Ignore Condition);
+            Wait(Random Integer(0.7, 1.2), Ignore Condition);
         End;
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Wait Until(Compare((Event Player).Boolean, ==, False), 99999);
@@ -3963,7 +3992,7 @@ rule ("Active Mods 44 - Thunderstorm") {
         Set Player Variable(Event Player, Num_4, 0);
         Destroy Effect((Event Player).Active_Mod_FX);
         Set Player Variable(Event Player, Active_Mod_FX_Array, Empty Array);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(16, (Event Player).Optimize));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(15, (Event Player).Optimize));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -4057,12 +4086,12 @@ rule ("Active Mods 45 - Shockwave") {
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Sky Blue), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
                     Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Min(200, Multiply(100, Divide(2, Square Root((Event Player).Radius)))));
                     Apply Impulse(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Vector(0, 1, 0), Min(16, Multiply(10, Divide(2.75, Square Root((Event Player).Radius)))), To World, Cancel Contrary Motion);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(3.25, Add(1, Divide(3, Square Root((Event Player).Radius)))));
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Knocked Down, Min(2.25, Add(0.75, Divide(3, Square Root((Event Player).Radius)))));
                     Set Player Variable(Event Player, Other_Players, Append To Array((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index)));
                 End;
                 Wait(0.1, Ignore Condition);
             End;
-            Wait(0.35, Ignore Condition);
+            Wait(0.4, Ignore Condition);
         End;
         Stop Chasing Player Variable(Event Player, Radius);
         Set Player Variable(Event Player, Radius, 0);
@@ -4116,7 +4145,7 @@ rule ("Active Mods 46 - Trap Gun") {
         "start time"
         Set Player Variable At Index(Event Player, Projectile, 1, Total Time Elapsed);
         "initial velocity"
-        Set Player Variable At Index(Event Player, Projectile, 3, Multiply(Add(12, (Event Player).Optimize), Facing Direction Of(Event Player)));
+        Set Player Variable At Index(Event Player, Projectile, 3, Multiply(Add(14, (Event Player).Optimize), Facing Direction Of(Event Player)));
         Set Player Variable At Index(Event Player, Projectile, 4, Vector(0, -7, 0));
         Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Color(Team 1), (Event Player).Projectile_Position, 100);
         Create Beam Effect(All Players(All Teams), Junkrat Trap Chain Beam, Event Player, (Event Player).Projectile_Position, Color(Team 1), Visible To Position and Radius);
@@ -4334,11 +4363,11 @@ rule ("Begin Match... and start a time-out every 3 minutes.") {
             Wait(0.016, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
-            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
+            Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
             Wait(0.05, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 2), 1);
-            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
+            Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
             Wait(0.05, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
@@ -4447,10 +4476,10 @@ rule ("Once you've spawned, if in 'setup', TP to your teammates.") {
         Wait(0.25, Abort When False);
         If(And(And(Global.Intermission_In_Progress, Compare(Match Time, >, 12)), Compare(Distance Between(Event Player, If-Then-Else(Compare(Team Of(Event Player), ==, Team 1), Global.Team_1_Spawns, Global.Team_2_Spawns)), >, 12)));
             If(Compare(Team Of(Event Player), ==, Team 1));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
             End;
             If(Compare(Team Of(Event Player), ==, Team 2));
-                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-4, 4), 0, Random Real(-5, 5)))));
+                Teleport(Event Player, Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
             End;
             Set Status(Event Player, Null, Rooted, 99999);
             Set Status(Event Player, Null, Phased Out, 99999);
@@ -4520,7 +4549,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("50% Gravity + 133% movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Recklessness: 30% Max HP, but 160% Speed and damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("Boots of Mobility: After 3 sec. of not taking damage, get 200% speed and 5% HP regen. per sec.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 7, Custom String("Resilient: Take 33% less damage from primary/secondary fire.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 7, Custom String("Resilient: Take 50% less damage from primary/secondary fire.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 8, Custom String("Raid Boss: 225% HP, 125% damage, but lose 75% speed and reveal your location.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 9, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 10, Custom String("150% Healing Dealt/Received", Null, Null, Null));
@@ -4583,7 +4612,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 11, Custom String("Fear: Melee forces a target enemy to run away from you (30m range, 10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 12, Custom String("Taunt: Melee forces your target to chase and attack you (30m range, 8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 13, Custom String("Duel: Root yourself and an enemy for 2.5 seconds. You both take double damage. (10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Cleanse: Press melee to clear any CC and become invulnerable for 4 sec. (6 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 14, Custom String("Cleanse: Press melee to clear any CC and become invulnerable for 3 sec. (6 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 15, Custom String("Devour: Melee an enemy to eat them, then spit them out after 2.5 sec. (8 sec. CD) (excl. Sombra hero)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 16, Custom String("Hex: Melee turns target enemy into Torbjorn for 8 sec. (30m range, 14 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 17, Custom String("Spectralize: Melee phases out target enemy for 3.5 seconds. (8 sec. CD)", Null, Null, Null));
@@ -4597,22 +4626,22 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 25, Custom String("Goomba Stomp: Land on an enemy's head to deal 50% of your Max HP in damage", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 26, Custom String("Thunderbolt: Press Melee to deal 75 damage to an enemy (30m range, costs 20% ult, 3 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 27, Custom String("Corruption: Melee deals 40% of an enemy's max HP over 4 sec. (30m range) (10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area. (7 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 28, Custom String("Railgun: Hold F to charge a railgun shot that deals massive damage or burns an area. (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 29, Custom String("Pocket Poison: Throw a gas bomb. Enemies in it take 200 damage over 7 seconds. (11 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 30, Custom String("ORA ORA!: Punch an enemy to lock them in place and punch them 20 more times before sending them flying. (~12 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (7 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Elemental Charge: Interact to switch between your next damage burning, freeze, or pushing an enemy. (7 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (9 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Elemental Charge: Interact to switch between your next damage burning, freeze, or pushing an enemy. (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 33, Custom String("Bouncing Blades: For 10 seconds, damage you deal chains to other enemies. (Melee to activate) (9 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Vs. Goliath: Melee to toggle between (dealing more/taking less) damage from enemies with more health than you.", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Vs. Goliath: Melee toggles between dealing 40% more/taking 40$ less damage from higher-health enemies.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 35, Custom String("Ghosted: Melee in the air to become invisible and get 200% speed for 2 seconds. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 36, Custom String("Life Tap: Press the Ultimate button to trade 30% HP for 20% ultimate charge (Excl. Echo hero)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 37, Custom String("Healthing Hand: Melee at a teammate to add twice your HP to theirs for 8 seconds - but stun yourself. (11 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 38, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 4 seconds. (8 sec. CD, starts on cast)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 37, Custom String("Healthing Hand: Melee at a teammate to add 1.5x your HP to theirs for 8 seconds - but stun yourself. (11 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 38, Custom String("Anti-injure: Melee a teammate close to you to restore their health over 4 seconds. (10 sec. CD, starts on cast)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 39, Custom String("Get down: Melee at a critically injured teammate to swap places and health with them. (8 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 40, Custom String("Med-E-Port: Hold Melee to teleport to a random teammate. Heal them and nearby teammates for half their max HP. (8 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 40, Custom String("Med-E-Port: Melee to teleport to a random teammate. Heal them and nearby teammates for half their max HP. (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 41, Custom String("Armor Field: Melee to drop a 3m field that gives teammates 75 armor over 5 seconds. (10 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 42, Custom String("Soul Link: Melee at a teammate. Gain 150HP. Non-fatal damage they take is redirected to you. (7 sec. CD on death)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 43, Custom String("Pyroblast: Melee fires a slow-moving fireball that gets more powerful over time. (6 sec. CD)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 42, Custom String("Soul Link: Melee at a teammate. Gain 100HP. Non-fatal damage they take is redirected to you. (10 sec. CD on death)", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 43, Custom String("Pyroblast: Melee fires a slow-moving fireball that gets more powerful over time. (9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 44, Custom String("Meteor shower: Target an open-air area with melee. Meteors rain down, dealing damage to those in LOS. (15 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 45, Custom String("Thunderstorm: In the open air, melee to call a thunderstorm. Lightning zaps enemies, hacking them. (15 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 46, Custom String("Shockwave: Melee sends out a shockwave that stuns and damages players (effect weakens with distance). (13.5 sec. CD)", Null, Null, Null));
@@ -4625,10 +4654,12 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 53, Custom String("53", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 54, Custom String("54", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 55, Custom String("55", Null, Null, Null));
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0}, {1}", Server Load, Server Load Average, Null), Null, Left, 0, Null, Color(Gray), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.4: 33CCY", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("[you must be out of combat to open menu]", Null, Null, Null), Left, 3, Null, Null, Color(White), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("If you're stuck.................Hold Reload only", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("If you're stuck.................Hold down Reload", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu", Icon String(Warning), Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
     }
 }
 
@@ -5344,7 +5375,7 @@ rule ("Close out of Mod Menu") {
                     Clear Status(Event Player, Rooted);
                     Clear Status(Event Player, Phased Out);
                     Clear Status(Event Player, Hacked);
-                    If(Not(Array Contains(Array(0, 12, 20, 22, 25, 32, 34), (Event Player).Active_Mod)));
+                    If(Not(Array Contains(Array(0, 15, 19, 20, 21, 22, 25, 32, 34, 36), (Event Player).Active_Mod)));
                         Set Player Variable(Event Player, Cd_Visible_To, Event Player);
                         Set Player Variable(Event Player, Cd_Color, Color(Green));
                         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
@@ -5857,7 +5888,7 @@ rule ("Active Mods 30 - Power Glove") {
             Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 0.2, 0)), If-Then-Else(Compare((Event Player).Optimize, >, 0), 45, 30), To World, Cancel Contrary Motion);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Sound, Null, Position Of(Victim), 100);
             Play Effect(All Players(All Teams), Doomfist Rising Uppercut Impact Effect, Color(Team 2), Victim, 1);
-            Set Player Variable(Event Player, Cooldown_Chase, Subtract(7, (Event Player).Optimize));
+            Set Player Variable(Event Player, Cooldown_Chase, Subtract(9, (Event Player).Optimize));
             Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
             Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
             Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -5884,18 +5915,18 @@ rule ("Active Mods 31 - Elemental Charge") {
             Wait(0.05, Ignore Condition);
             If(Compare((Attacker).Num_4, ==, Color(Rose)));
                 Set Status(Victim, Attacker, Burning, Add(3, (Event Player).Optimize));
-                Start Damage Over Time(Victim, Attacker, 3, 25);
+                Start Damage Over Time(Victim, Attacker, Add(3, (Event Player).Optimize), 25);
             Else If(Compare((Attacker).Num_4, ==, Color(Sky Blue)));
-                Set Status(Victim, Attacker, Frozen, Add(1.25, Multiply((Event Player).Optimize, 0.33)));
+                Set Status(Victim, Attacker, Frozen, Add(0.7, Multiply((Event Player).Optimize, 0.2)));
                 Damage(Victim, Attacker, 25);
             Else If(Compare((Attacker).Num_4, ==, Color(Green)));
-                Apply Impulse(Victim, Vector(0, 0.2, 0), 15, To World, Cancel Contrary Motion);
+                Apply Impulse(Victim, Vector(0, 0.2, 0), Add(15, (Event Player).Optimize), To World, Cancel Contrary Motion);
                 Damage(Victim, Attacker, If-Then-Else(Compare((Event Player).Optimize, >, 0), 70, 35));
             End;
             Wait(0.25, Ignore Condition);
             Set Player Variable(Attacker, Active_String_2, Custom String("(NOT READY)", Null, Null, Null));
         End;
-        Wait(Subtract(7, Multiply((Event Player).Optimize, 0.33)), Ignore Condition);
+        Wait(Subtract(8, Multiply((Event Player).Optimize, 0.5)), Ignore Condition);
         Set Player Variable(Attacker, Active_String_2, Custom String("(READY)", Null, Null, Null));
         Play Effect(Attacker, Brigitte Whip Shot Heal Area Sound, Null, Position Of(Attacker), 100);
     }
@@ -5907,8 +5938,8 @@ rule ("Active Mods 33 - Vs. Goliath (Dealt Damage)") {
         VsGoliathDealtDmg;
     }
     actions {
-        If(Compare(Health(Victim), >, Health(Attacker)));
-            Damage(Victim, Null, Multiply(Event Damage, 0.33));
+        If(And(Compare(Health(Victim), >, Health(Attacker)), Compare(Event Ability, !=, Null)));
+            Damage(Victim, Null, Multiply(Event Damage, 0.4));
             Wait(0.016, Ignore Condition);
     }
 }
@@ -6131,8 +6162,8 @@ rule ("Passive Mods - Resilient") {
         ResilientDamaged;
     }
     actions {
-        If(Or(Not(Compare(Event Ability, ==, Button(Primary Fire))), Compare(Event Ability, ==, Button(Secondary Fire))));
-            Damage(Victim, Null, Multiply(Event Damage, 0.33));
+        If(And(Not(Or(Compare(Event Ability, ==, Button(Primary Fire)), Compare(Event Ability, ==, Button(Secondary Fire)))), Compare(Event Ability, !=, Null)));
+            Damage(Victim, Null, Event Damage);
             Wait(0.016, Ignore Condition);
     }
 }
@@ -6144,7 +6175,7 @@ rule ("Active Mods 39 - Vs. Goliath (Took Damage)") {
     }
     actions {
         If(And(Compare(Attacker, !=, Null), Compare(Health(Victim), <, Health(Attacker))));
-            Heal(Victim, Null, Multiply(Event Damage, 0.33));
+            Heal(Victim, Null, Multiply(Event Damage, 0.4));
             Wait(0.016, Ignore Condition);
     }
 }
