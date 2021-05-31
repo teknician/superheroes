@@ -3704,7 +3704,7 @@ rule ("Active Mods 42 - Pyroblast") {
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
             Damage((Event Player).Active_Affected_Players, Event Player, Multiply((Event Player).Projectile_Duration, 35));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                If(Compare(Count Of((Event Ability).Active_Affected_Players), >, 0));
+                If(Compare(Count Of((Event Player).Active_Affected_Players), >, 0));
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Orange), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
                 End;
             End;
