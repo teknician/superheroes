@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.2, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.3, by ĿUCKYNUMBER. Players pick an Active and Passive mod that benefits them and their team. There's plenty of OP ways to mix and match your mods! Original Author: PainRelievers."
 	}
 	lobby
 	{
@@ -3278,7 +3278,7 @@ rule ("Active Mods 35 - Life Tap") {
         Hero Of(Event Player) != Hero(Echo);
     }
     actions {
-        If(Compare((Event Player).Passive_Mod, !=, 34));
+        If(Compare((Event Player).Passive_Mod, !=, 29));
             Damage(Event Player, Null, Multiply(Max Health(Event Player), 0.3));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 20));
         Else If(Compare((Event Player).Omega_Charge, <, 90));
@@ -3704,7 +3704,9 @@ rule ("Active Mods 42 - Pyroblast") {
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
             Damage((Event Player).Active_Affected_Players, Event Player, Multiply((Event Player).Projectile_Duration, 35));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Orange), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
+                If(Compare(Count Of((Event Ability).Active_Affected_Players), >, 0));
+                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Orange), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), 1);
+                End;
             End;
             Set Player Variable(Event Player, Other_Players, (Event Player).Active_Affected_Players);
             Wait(0.2, Ignore Condition);
