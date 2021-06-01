@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.5, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.6, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -4633,7 +4633,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 31, Custom String("Power Glove: Reload primes your next punch to deal 20x knockback and 3x damage. (9 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 32, Custom String("Elemental Charge: Interact to switch between your next damage burning, freeze, or pushing an enemy. (8 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 33, Custom String("Bouncing Blades: For 10 seconds, damage you deal chains to other enemies. (Melee to activate) (9 sec. CD)", Null, Null, Null));
-        Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Vs. Goliath: Melee toggles between dealing 40% more/taking 40% less damage from higher-health enemies.", Null, Null, Null));
+        Set Global Variable At Index(Active_Mod_Strings, 34, Custom String("Vs. Goliath: Interact toggles between dealing 40% more/taking 40% less damage from higher-health enemies.", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 35, Custom String("Ghosted: Melee in the air to become invisible and get 200% speed for 2 seconds. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 36, Custom String("Life Tap: Press the Ultimate button to trade 30% HP for 20% ultimate charge (Excl. Echo hero)", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 37, Custom String("Healthing Hand: Melee at a teammate to add 1.5x your HP to theirs for 8 seconds - but stun yourself. (11 sec. CD)", Null, Null, Null));
@@ -5951,9 +5951,11 @@ rule ("Passive Mods 44 - Pummel") {
         Pummel;
     }
     actions {
-        Modify Player Variable(Event Player, Num_5, Append To Array, Victim);
+        If(Not(Array Contains((Event Player).Num_5, Victim)));
+            Modify Player Variable(Event Player, Num_5, Append To Array, Victim);
+        End;
         If(Compare(First Of((Event Player).Num_0), <, 5));
-            If(Compare(First Of((Event Player).Num_5), ==, Value In Array((Event Player).Num_5, First Of((Event Player).Num_0))));
+            If(Compare(Victim, ==, First Of((Event Player).Num_5)));
                 Modify Player Variable At Index(Event Player, Num_0, 0, Add, 1);
                 Play Effect(Event Player, Ring Explosion, Color(Red), Victim, 3);
                 If(Compare(First Of((Event Player).Num_0), >=, 5));
@@ -5965,7 +5967,7 @@ rule ("Passive Mods 44 - Pummel") {
                 End;
                 Wait(0.66, Ignore Condition);
             Else;
-                Set Player Variable(Event Player, Num_5, Empty Array);
+                Set Player Variable(Event Player, Num_5, Remove From Array((Event Player).Num_5, All Players(All Teams)));
                 Wait(0.66, Ignore Condition);
     }
 }
@@ -5982,7 +5984,7 @@ rule ("Mods PlayerDealtDamage Events") {
     actions {
         "personal space"
         If(Compare((Event Player).Passive_Mod, ==, 42));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Max(3, Divide(Event Damage, 25)), To World, Incorporate Contrary Motion);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Max(5, Divide(Event Damage, 20)), To World, Incorporate Contrary Motion);
             Wait(0.1, Ignore Condition);
         End;
         "Pummel"
