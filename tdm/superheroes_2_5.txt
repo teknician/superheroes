@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.6, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.7, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -505,7 +505,7 @@ rule ("Passive Mods 7 - Raid Boss") {
             Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
             Start Forcing Player Outlines(Event Player, All Players(All Teams), True, Color(Purple), Always);
             Set Move Speed(Event Player, 75);
-            Set Max Health(Event Player, 225);
+            Set Max Health(Event Player, 200);
             Set Damage Dealt(Event Player, 125);
     }
 }
@@ -1483,8 +1483,8 @@ rule ("Passive Mods - Level Up (Active)") {
         LevelUpDing;
     }
     actions {
-        Abort If(Compare(Divide((Event Player).Player_ATK_SPD_HP, 4), ==, 15));
-        Modify Player Variable(Event Player, Player_ATK_SPD_HP, Add, 4);
+        Abort If(Compare(Divide((Event Player).Player_ATK_SPD_HP, 5), ==, 10));
+        Modify Player Variable(Event Player, Player_ATK_SPD_HP, Add, 3.5);
         Set Damage Dealt(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Set Move Speed(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
         Set Max Health(Event Player, Add(100, (Event Player).Player_ATK_SPD_HP));
@@ -1508,24 +1508,24 @@ rule ("Passive Mods - Killstreak (Active)") {
             Set Damage Dealt(Event Player, 110);
             Set Max Health(Event Player, 110);
             Set Move Speed(Event Player, 110);
-            Heal(Event Player, Null, 100);
+            Heal(Event Player, Null, 300);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
         Else If(Compare((Event Player).Num_2, ==, 2));
             "eventPlayer.Num_3[1] = iconString(Icon.SKULL)"
             Set Player Variable At Index(Event Player, Num_3, 1, Custom String("I ", Null, Null, Null));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
-            Set Damage Dealt(Event Player, 125);
-            Set Max Health(Event Player, 125);
-            Set Move Speed(Event Player, 120);
-            Heal(Event Player, Null, 200);
+            Set Damage Dealt(Event Player, 130);
+            Set Max Health(Event Player, 130);
+            Set Move Speed(Event Player, 130);
+            Heal(Event Player, Null, 300);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
         Else If(Compare((Event Player).Num_2, ==, 3));
             "eventPlayer.Num_3[2] = iconString(Icon.SKULL)"
             Set Player Variable At Index(Event Player, Num_3, 2, Custom String("I", Null, Null, Null));
             Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 25));
-            Set Damage Dealt(Event Player, 140);
-            Set Max Health(Event Player, 140);
-            Set Move Speed(Event Player, 130);
+            Set Damage Dealt(Event Player, 150);
+            Set Max Health(Event Player, 150);
+            Set Move Speed(Event Player, 150);
             Heal(Event Player, Null, 300);
             Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 60);
         Else If(Compare((Event Player).Num_2, ==, 4));
@@ -1636,7 +1636,7 @@ rule ("Active Mods 2 - Human Cannonball") {
         End;
         Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Team Of(Event Player), Position Of(Event Player), 1);
         Play Effect(All Players(All Teams), Bastion Tank Cannon Explosion Sound, Team Of(Event Player), Position Of(Event Player), 85);
-        Damage(Players Within Radius(Position Of(Event Player), 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, Multiply(Min((Event Player).Active_Time, 150), Multiply((Event Player).Optimize, 0.66))));
+        Damage(Players Within Radius(Position Of(Event Player), 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player, Add(35, Multiply(Min((Event Player).Active_Time, 150), Multiply((Event Player).Optimize, 0.5))));
         Damage(Event Player, Null, Add(25, Min(Divide((Event Player).Active_Time, 2), 80)));
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Event Player, 5.5, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers));
         For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
@@ -3962,7 +3962,7 @@ rule ("Active Mods 44 - Thunderstorm") {
         End;
         Wait(1.75, Ignore Condition);
         Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Target_Position, 22, Opposite Team Of(Team Of(Event Player)), Surfaces));
-        For Player Variable(Event Player, Active_Index_3, 0, 3, 1);
+        For Player Variable(Event Player, Active_Index_3, 0, 2, 1);
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 Set Player Variable At Index(Event Player, Num_1, 0, Position Of(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index)));
                 Set Player Variable At Index(Event Player, Num_1, 1, Vector(0, Distance Between(Add((Event Player).Target_Position, Vector(0, 18, 0)), First Of((Event Player).Num_1)), 0));
@@ -3976,7 +3976,7 @@ rule ("Active Mods 44 - Thunderstorm") {
                     Play Effect(All Players(All Teams), Bad Explosion, Color(White), First Of((Event Player).Num_1), 3);
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(White), First Of((Event Player).Num_1), 3);
                     Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, 75);
-                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Hacked, 2.5);
+                    Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Event Player, Hacked, 2);
                     Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Active_Index));
                 End;
                 Wait(Random Integer(0.7, 1.2), Ignore Condition);
@@ -3992,7 +3992,7 @@ rule ("Active Mods 44 - Thunderstorm") {
         Set Player Variable(Event Player, Num_4, 0);
         Destroy Effect((Event Player).Active_Mod_FX);
         Set Player Variable(Event Player, Active_Mod_FX_Array, Empty Array);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(15, (Event Player).Optimize));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(20, Multiply((Event Player).Optimize, 2)));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -4036,11 +4036,11 @@ rule ("Active Mods 43 - Thunderstorm (Concurrent)") {
                     Play Effect(All Players(All Teams), Pharah Concussive Blast Sound, Null, First Of((Event Player).Num_1), 200);
                     Play Effect(All Players(All Teams), Bad Explosion, Color(White), First Of((Event Player).Num_1), 3);
                     Play Effect(All Players(All Teams), Bad Pickup Effect, Color(White), First Of((Event Player).Num_1), 3);
-                    Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, 75);
+                    Damage(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, 50);
                     Set Status(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), Event Player, Hacked, 2);
                     Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, Add((Event Player).Active_Index_2, 10)));
                 End;
-                Wait(Random Integer(0.3, 0.9), Ignore Condition);
+                Wait(Random Integer(0.3, 1), Ignore Condition);
             End;
         End;
         Destroy Effect((Event Player).Active_Mod_FX_Array);
@@ -4551,7 +4551,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Recklessness: 30% Max HP, but 160% Speed and damage", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("Boots of Mobility: After 3 sec. of not taking damage, get 200% speed and 5% HP regen. per sec.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 7, Custom String("Resilient: Take 50% less damage from primary/secondary fire.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 8, Custom String("Raid Boss: 225% HP, 125% damage, but lose 75% speed and reveal your location.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 8, Custom String("Raid Boss: 200% HP, 125% damage, but lose 75% speed and reveal your location.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 9, Custom String("150% HP + 150% Healing Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 10, Custom String("150% Healing Dealt/Received", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 11, Custom String("Rejuvenation: Regenerate 10% of your Max HP per sec.", Null, Null, Null));
@@ -4568,8 +4568,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 22, Custom String("Revenge: Respawn instantly at your killer's location (24 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 23, Custom String("Cheat Death: Fatal damage makes you unkillable for 3 sec. (10 sec. CD)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 24, Custom String("Victory Rush: Eliminations refresh your cooldowns, heal you, and grant a speed boost", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 25, Custom String("Level Up: +4% damage/speed/max HP each final blow (resets if you swap mods, lvl. cap 15)", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 26, Custom String("Killstreak: Start at 75% damage/speed/HP. 110%/125%/140% each final blow up to 3. Resets on death.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 25, Custom String("Level Up: +3.5% damage/speed/max HP each final blow (resets if you swap mods, lvl. cap 10)", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 26, Custom String("Killstreak: Start at 75% damage/speed/HP. 110%/130%/150% each final blow up to 3. Resets on death.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 27, Custom String("Dark Ritual: 75% Max HP. +15% ult charge every 4 sec. (excl. Echo hero)", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 28, Custom String("+2.5% ultimate charge every second.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 29, Custom String("Omega Boost: Your ultimate becomes omega boost - supercharge a teammate! (Spray to display ult status)", Null, Null, Null));
@@ -4655,12 +4655,14 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 53, Custom String("53", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 54, Custom String("54", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 55, Custom String("55", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Custom String("{0}, {1}", Server Load, Server Load Average, Null), Null, Left, 0, Null, Color(Gray), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.4: 33CCY", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("Change Camera..............Hold Crouch + Interact", Null, Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("If you're stuck.................Hold down Reload", Null, Null, Null), Null, Left, 5, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.7", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} Mod Menu...............Hold Reload + Interact", Icon String(Circle), Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu", Icon String(Warning), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Change Camera..............Hold Crouch + Interact", Icon String(Eye), Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Stuck?.................Hold down Reload", Icon String(Sad), Null, Null), Null, Left, 5, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("CODE: 33CCY", Null, Null, Null), Null, Left, 6, Null, Color(Gray), Null, Visible To, Default Visibility);
+        Create HUD Text(Host Player, Null, Custom String("[{0}, {1}]", Server Load, Server Load Average, Null), Null, Left, 7, Null, Color(Gray), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Null, Custom String("Text, Entity: [{0}, {1}]", Text Count, Entity Count, Null), Null, Left, 8, Null, Color(Gray), Null, Visible To and String, Default Visibility);
     }
 }
 
