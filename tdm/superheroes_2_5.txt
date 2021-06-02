@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.8_5, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.8_6, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -2980,36 +2980,29 @@ rule ("Active Mods 28 - Pocket Poison") {
         Chase Player Variable At Rate(Event Player, Active_Time, 7, 1, Destination and Rate);
         While(Compare((Event Player).Active_Time, <, 7));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Target_Area_A), 1);
-                If(Not((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Boolean));
-                    If(Compare((Event Player).DoT_Var, !=, Null));
-                        Start Damage Over Time(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), Event Player, 7, If-Then-Else(Compare((Event Player).Optimize, >, 0), 42.8, 28.5));
-                        Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Var, Last Damage Over Time ID);
-                    End;
-                    Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Green), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 1);
-                    Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Sound, Null, Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 100);
+                Play Effect(All Players(All Teams), Bad Pickup Effect, Color(Green), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 1);
+                Play Effect(All Players(All Teams), Widowmaker Venom Mine Explosion Sound, Null, Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), 100);
+                If(Compare((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Boolean, ==, False));
+                    Start Damage Over Time(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), Event Player, 7, If-Then-Else(Compare((Event Player).Optimize, >, 0), 42.8, 28.5));
+                    Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Var, Last Damage Over Time ID);
                     Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, True);
-                    Wait(0.032, Ignore Condition);
-                    If(Not(Array Contains((Event Player).Target_Area_A, Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index))));
-                        Stop Damage Over Time((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Var);
-                        Set Player Variable(Event Player, DoT_Var, Null);
-                        Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, False);
-                    End;
+                    Wait(0.016, Ignore Condition);
                 End;
-                Set Player Variable(Event Player, Active_Affected_Players, Append To Array((Event Player).Active_Affected_Players, Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index_1)));
-                Wait(0.032, Ignore Condition);
-                Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Projectile_Position, Add(6.75, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off));
+                If(Not(Array Contains(Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off), Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index))));
+                    Stop Damage Over Time((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Var);
+                    Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Var, Null);
+                    Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, False);
+                End;
+                Wait(0.1, Ignore Condition);
+                Set Player Variable(Event Player, Target_Area_A, Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off));
             End;
             Wait(0.1, Ignore Condition);
-        End;
-        For Player Variable(Event Player, Active_Index_2, 0, Count Of((Event Player).Active_Affected_Players), 1);
-            Stop Damage Over Time((Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2)).DoT_Var);
-            Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_2), DoT_Var, Null);
-            Wait(0.016, Ignore Condition);
         End;
         Stop Chasing Player Variable(Event Player, Active_Time);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         For Player Variable(Event Player, Active_Index, 0, Count Of(Players Within Radius((Event Player).Projectile_Position, Add(10, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off)), 1);
             Set Player Variable(Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index), DoT_Boolean, False);
+            Stop Damage Over Time((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Var);
         End;
         Set Player Variable(Event Player, Active_Affected_Players, Empty Array);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 9, 11));
@@ -4081,13 +4074,13 @@ rule ("Active Mods 45 - Shockwave") {
             Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 1), Position Of(Event Player), 200);
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Position Of(Event Player), (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Surfaces));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                If(And(Compare((Event Player).Radius, >, 5), Compare((Event Player).Radius, <, 10)));
+                If(And(And(Compare((Event Player).Radius, >, 5), Compare((Event Player).Radius, <, 10)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 1)))));
                     Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 10), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-                Else If(And(Compare((Event Player).Radius, >, 10), Compare((Event Player).Radius, <, 15)));
+                Else If(And(And(Compare((Event Player).Radius, >, 10), Compare((Event Player).Radius, <, 15)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 2)))));
                     Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 20), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
-                Else If(And(Compare((Event Player).Radius, >, 15), Compare((Event Player).Radius, <, 20)));
+                Else If(And(And(Compare((Event Player).Radius, >, 15), Compare((Event Player).Radius, <, 20)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 3)))));
                     Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 30), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
                 End;
@@ -5994,8 +5987,8 @@ rule ("Mods PlayerDealtDamage Events") {
     actions {
         "personal space"
         If(Compare((Event Player).Passive_Mod, ==, 42));
-            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Min(5, Divide(Event Damage, 20)), To World, Incorporate Contrary Motion);
-            Wait(0.2, Ignore Condition);
+            Apply Impulse(Victim, Add(Facing Direction Of(Attacker), Vector(0, 1, 0)), Min(5, Divide(Event Damage, 7)), To World, Incorporate Contrary Motion);
+            Wait(0.1, Ignore Condition);
         End;
         "Pummel"
         If(Compare((Event Player).Passive_Mod, ==, 44));
