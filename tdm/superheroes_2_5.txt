@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.7, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.7_5, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -2820,13 +2820,8 @@ rule ("Active Mods 27 - Railgun") {
     }
     actions {
         Wait(0.75, Abort When False);
-        If(Compare((Event Player).Optimize, >, 0));
-            Set Player Variable At Index(Event Player, Num_4, 4, 45);
-        Else;
-            Set Player Variable At Index(Event Player, Num_4, 4, 33);
-        End;
         Set Player Variable(Event Player, Railgun_Charge, 0);
-        Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, Value In Array((Event Player).Num_4, 4), Destination and Rate);
+        Chase Player Variable At Rate(Event Player, Railgun_Charge, 100, 33, Destination and Rate);
         Create Progress Bar HUD Text(Event Player, (Event Player).Railgun_Charge, Custom String("RAILGUN CHARGE", Null, Null, Null), Top, 3, Color(White), Color(Orange), Visible To Values and Color, Default Visibility);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Melee Enabled(Event Player, False);
@@ -2858,6 +2853,8 @@ rule ("Active Mods 27 - Railgun") {
             End;
             Modify Player Variable(Event Player, Num_1, Add, 0.125);
             If(Compare((Event Player).Railgun_Charge, ==, 100));
+                Disallow Button(Event Player, Button(Interact));
+                Wait(0.016, Ignore Condition);
                 Break;
             End;
             Wait(0.15, Ignore Condition);
@@ -2869,6 +2866,7 @@ rule ("Active Mods 27 - Railgun") {
         Set Primary Fire Enabled(Event Player, True);
         Set Secondary Fire Enabled(Event Player, True);
         Set Move Speed(Event Player, 100);
+        Allow Button(Event Player, Button(Interact));
         Stop Chasing Player Variable(Event Player, Railgun_Charge);
         Play Effect(All Players(All Teams), Zarya Particle Cannon Explosion Sound, Color(Team 1), Eye Position(Event Player), 200);
         Wait(0.016, Ignore Condition);
@@ -4655,11 +4653,11 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 53, Custom String("53", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 54, Custom String("54", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 55, Custom String("55", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.7", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("{0} Mod Menu...............Hold Reload + Interact", Icon String(Circle), Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.7_5", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu", Icon String(Warning), Null, Null), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Change Camera..............Hold Crouch + Interact", Icon String(Eye), Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Stuck?.................Hold down Reload", Icon String(Sad), Null, Null), Null, Left, 5, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Change Camera................Hold Crouch + Interact", Icon String(Eye), Null, Null), Null, Left, 4, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Stuck?.......................Hold down Reload", Icon String(Sad), Null, Null), Null, Left, 5, Null, Color(White), Null, Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("CODE: 33CCY", Null, Null, Null), Null, Left, 6, Null, Color(Gray), Null, Visible To, Default Visibility);
         Create HUD Text(Host Player, Null, Custom String("[{0}, {1}]", Server Load, Server Load Average, Null), Null, Left, 7, Null, Color(Gray), Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Null, Custom String("Text, Entity: [{0}, {1}]", Text Count, Entity Count, Null), Null, Left, 8, Null, Color(Gray), Null, Visible To and String, Default Visibility);
