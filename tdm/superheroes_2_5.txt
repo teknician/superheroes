@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.4.8_7, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.4.8_8, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -130,50 +130,51 @@ variables {
         47: Num_4
         48: Num_5
         49: Radius
-        50: Mod_Effect_Caster
-        51: Mod_Effect_Target
-        52: CastMelee_Mod_Conditions
-        53: CastMelee_Mod_Conditions_Ally
-        54: CastUltimate_Mod_Conditions_Ally
-        55: LoS_Mod_Conditions
-        56: Third_Person_Camera_Toggle
-        57: Player_ATK_SPD_HP
-        58: Player_Position
-        59: Player_Foot_Position
-        60: Player_Health
-        61: Vertical_Speed
-        62: Affected_Players
-        63: Active_Affected_Players
-        64: Other_Players
-        65: Current_Hero
-        66: Current_Hero_2
-        67: Current_Hero_3
-        68: Distance_Num
-        69: Temp_Index
-        70: Facing_Direction
-        71: Is_Colossus
-        72: Is_Blind
-        73: Is_Visible
-        74: Target
-        75: Target_Area_A
-        76: Target_Position
-        77: Boolean
-        78: Railgun_Charge
-        79: OraOra
-        80: Omega_Charge
-        81: Blade_Chase
-        82: Blade_Victim
-        83: Victim_Chain
-        84: Projectile
-        85: Projectile_Position
-        86: Projectile_Duration
-        87: DoT_Var
-        88: DoT_Boolean
-        89: HoT_Var
-        90: Linked
-        91: Optimize
-        92: Is_In_Meteor_Shower
-        93: Crowd_Controlled
+        50: Radius_2
+        51: Mod_Effect_Caster
+        52: Mod_Effect_Target
+        53: CastMelee_Mod_Conditions
+        54: CastMelee_Mod_Conditions_Ally
+        55: CastUltimate_Mod_Conditions_Ally
+        56: LoS_Mod_Conditions
+        57: Third_Person_Camera_Toggle
+        58: Player_ATK_SPD_HP
+        59: Player_Position
+        60: Player_Foot_Position
+        61: Player_Health
+        62: Vertical_Speed
+        63: Affected_Players
+        64: Active_Affected_Players
+        65: Other_Players
+        66: Current_Hero
+        67: Current_Hero_2
+        68: Current_Hero_3
+        69: Distance_Num
+        70: Temp_Index
+        71: Facing_Direction
+        72: Is_Colossus
+        73: Is_Blind
+        74: Is_Visible
+        75: Target
+        76: Target_Area_A
+        77: Target_Position
+        78: Boolean
+        79: Railgun_Charge
+        80: OraOra
+        81: Omega_Charge
+        82: Blade_Chase
+        83: Blade_Victim
+        84: Victim_Chain
+        85: Projectile
+        86: Projectile_Position
+        87: Projectile_Duration
+        88: DoT_Var
+        89: DoT_Boolean
+        90: HoT_Var
+        91: Linked
+        92: Optimize
+        93: Is_In_Meteor_Shower
+        94: Crowd_Controlled
 }
 subroutines {
     0: MoveSpeed160
@@ -671,7 +672,7 @@ rule ("Passive Mods 14 - Archmage (Ability 1)") {
                 If(Compare(Hero Of(Event Player), ==, Hero(Ana)));
                     Wait(6, Ignore Condition);
                 Else;
-                    Wait(1.25, Ignore Condition);
+                    Wait(1, Ignore Condition);
                 End;
                 Set Ability Cooldown(Event Player, Button(Ability 1), 0);
                 Wait(0.032, Ignore Condition);
@@ -690,7 +691,7 @@ rule ("Passive Mods 14 - Archmage (Ability 2)") {
                 If(Compare(Hero Of(Event Player), ==, Hero(Baptiste)));
                     Wait(10, Ignore Condition);
                 Else;
-                    Wait(1.25, Ignore Condition);
+                    Wait(1, Ignore Condition);
                 End;
                 Set Ability Cooldown(Event Player, Button(Ability 2), 0);
                 Wait(0.032, Ignore Condition);
@@ -758,7 +759,7 @@ rule ("Passive Mods 14 - Archmage (Secondary Fire)") {
     actions {
         If(Compare((Event Player).Passive_Mod, ==, 15));
             While(And(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)));
-                Wait(1.25, Ignore Condition);
+                Wait(1, Ignore Condition);
                 Set Ability Cooldown(Event Player, Button(Secondary Fire), 0);
                 Wait(0.05, Ignore Condition);
             End;
@@ -773,7 +774,7 @@ rule ("Passive Mods 14 - Archmage (Primary Fire)") {
     actions {
         If(Compare((Event Player).Passive_Mod, ==, 15));
             While(Compare(Ability Cooldown(Event Player, Button(Primary Fire)), >, 0));
-                Wait(1.25, Ignore Condition);
+                Wait(1, Ignore Condition);
                 Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
                 Wait(0.05, Ignore Condition);
             End;
@@ -1587,7 +1588,7 @@ rule ("Active Mods 1 - Blink") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1654,7 +1655,7 @@ rule ("Active Mods 2 - Human Cannonball") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1695,7 +1696,7 @@ rule ("Active Mods 3 - Shadowstep") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1736,7 +1737,7 @@ rule ("Active Mods 4 - Translocate") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1770,7 +1771,7 @@ rule ("Active Mods 5 - Telekinesis") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1806,7 +1807,7 @@ rule ("Active Mods 6 - Death Grip") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1859,7 +1860,7 @@ rule ("Active Mods 7 - Entangling Roots") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1929,7 +1930,7 @@ rule ("Active Mods 8 - Shift Burden") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -1998,7 +1999,7 @@ rule ("Active Mods 9 - Blind") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         "if player dies before beam disconnects"
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
@@ -2048,7 +2049,7 @@ rule ("Active Mods 10 - Fear") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2098,7 +2099,7 @@ rule ("Active Mods 11 - Taunt") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2162,7 +2163,7 @@ rule ("Active Mods 12 - Duel") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2221,7 +2222,7 @@ rule ("Active Mods 13 - Cleanse") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2266,7 +2267,7 @@ rule ("Active Mods 15 - Hex") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2320,7 +2321,7 @@ rule ("Active Mods 16 - Spectralize") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2353,7 +2354,7 @@ rule ("Active Mods 17 - Preparation") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2483,7 +2484,7 @@ rule ("Active Mods 20 - Save Disc Teleport") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Wait(0.016, Ignore Condition);
@@ -2573,7 +2574,7 @@ rule ("Active Mods 22 - Feign Death") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
@@ -2678,7 +2679,7 @@ rule ("Active Mods 23 - Colossus") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         If(Not(Is Game In Progress));
             Start Rule(Colossus_Reset, Do Nothing);
@@ -2766,7 +2767,7 @@ rule ("Active Mods 25 - Thunderbolt") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2800,7 +2801,7 @@ rule ("Active Mods 26 - Corruption") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         Destroy Effect((Event Player).Active_Mod_FX);
     }
@@ -2916,7 +2917,7 @@ rule ("Active Mods 27 - Railgun") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -2983,7 +2984,10 @@ rule ("Active Mods 28 - Pocket Poison") {
                 Set Player Variable(Event Player, DoT_Var, Last Damage Over Time ID);
             End;
             Wait(0.1, Ignore Condition);
-            If(And(Compare(Count Of(Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off)), !=, Count Of((Event Player).Target_Area_A)), Compare((Event Player).DoT_Var, !=, Null)));
+            If(And(And(Compare(Count Of(Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off)), <, Count Of((Event Player).Target_Area_A)), Compare((Event Player).DoT_Var, !=, Null)), Compare(Count Of(Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off)), !=, 0)));
+                Stop Damage Over Time((Event Player).DoT_Var);
+                Set Player Variable(Event Player, DoT_Var, Null);
+            Else If(Compare(Count Of(Players Within Radius((Event Player).Projectile_Position, Add(6.25, (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Off)), ==, 0));
                 Stop Damage Over Time((Event Player).DoT_Var);
                 Set Player Variable(Event Player, DoT_Var, Null);
             End;
@@ -2993,6 +2997,7 @@ rule ("Active Mods 28 - Pocket Poison") {
         Stop Chasing Player Variable(Event Player, Active_Time);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Stop Damage Over Time((Value In Array((Event Player).Target_Area_A, (Event Player).Active_Index)).DoT_Var);
+        Set Player Variable(Event Player, DoT_Var, Null);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 9, 11));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
@@ -3004,7 +3009,7 @@ rule ("Active Mods 28 - Pocket Poison") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3153,7 +3158,7 @@ rule ("Active Mods 32 - Bouncing Blades") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3263,7 +3268,7 @@ rule ("Active Mods 34 - Ghosted") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3343,7 +3348,7 @@ rule ("Active Mods 36 - Healthing Hand") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3399,7 +3404,7 @@ rule ("Active Mods 37 - Anti-Injure") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3458,7 +3463,7 @@ rule ("Active Mods 38 - Get Down") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3517,7 +3522,7 @@ rule ("Active Mods 39 - Med-E-Port") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3589,7 +3594,7 @@ rule ("Active Mods 40 - Armor Field") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3656,7 +3661,7 @@ rule ("Active Mods 41 - Soul Link") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
@@ -3738,7 +3743,7 @@ rule ("Active Mods 42 - Pyroblast") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3830,7 +3835,7 @@ rule ("Active Mods 43 - Meteor Shower") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -3987,7 +3992,7 @@ rule ("Active Mods 44 - Thunderstorm") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -4059,8 +4064,10 @@ rule ("Active Mods 45 - Shockwave") {
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
         Set Player Variable(Event Player, Radius, 0);
+        Set Player Variable(Event Player, Radius_2, 0);
         Set Player Variable(Event Player, Other_Players, Empty Array);
         Chase Player Variable At Rate(Event Player, Radius, 35, 18, Destination and Rate);
+        Chase Player Variable At Rate(Event Player, Radius_2, 70, 18, Destination and Rate);
         Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), (Event Player).Radius, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         While(Compare((Event Player).Radius, <, 35));
@@ -4068,14 +4075,14 @@ rule ("Active Mods 45 - Shockwave") {
             Play Effect(All Players(All Teams), Hanzo Sonic Arrow Initial Pulse Sound, Color(Team 1), Position Of(Event Player), 200);
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius(Position Of(Event Player), (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Surfaces));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                If(And(And(Compare((Event Player).Radius, >, 7), Compare((Event Player).Radius, <, 15)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 1)))));
-                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 10), Visible To Position and Radius);
+                If(And(And(Compare((Event Player).Radius, >, 5), Compare((Event Player).Radius, <, 15)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 1)))));
+                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius_2, 5), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
-                Else If(And(And(Compare((Event Player).Radius, >, 15), Compare((Event Player).Radius, <, 23)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 2)))));
-                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 20), Visible To Position and Radius);
+                Else If(And(And(Compare((Event Player).Radius, >, 15), Compare((Event Player).Radius, <, 25)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 2)))));
+                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius_2, 15), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
-                Else If(And(And(Compare((Event Player).Radius, >, 23), Compare((Event Player).Radius, <, 30)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 3)))));
-                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius, 30), Visible To Position and Radius);
+                Else If(And(And(Compare((Event Player).Radius, >, 25), Compare((Event Player).Radius, <, 35)), Not(Entity Exists(Value In Array((Event Player).Active_Mod_FX_Array, 3)))));
+                    Create Effect(All Players(All Teams), Ring, Color(Sky Blue), Eye Position(Event Player), Subtract((Event Player).Radius_2, 25), Visible To Position and Radius);
                     Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 3, Last Created Entity);
                 End;
                 If(Not(Array Contains((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index))));
@@ -4089,14 +4096,17 @@ rule ("Active Mods 45 - Shockwave") {
                 End;
                 Wait(0.1, Ignore Condition);
             End;
-            Wait(0.016, Ignore Condition);
+            Wait(0.1, Ignore Condition);
         End;
         Stop Chasing Player Variable(Event Player, Radius);
         Set Player Variable(Event Player, Radius, 0);
+        Wait(1.38, Ignore Condition);
+        Stop Chasing Player Variable(Event Player, Radius_2);
+        Set Player Variable(Event Player, Radius_2, 0);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Set Player Variable(Event Player, Active_Affected_Players, Empty Array);
         Set Player Variable(Event Player, Active_Index_1, Empty Array);
-        Set Player Variable(Event Player, Cooldown_Chase, Subtract(14, (Event Player).Optimize));
+        Set Player Variable(Event Player, Cooldown_Chase, Subtract(14, Multiply((Event Player).Optimize, 1.5)));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
@@ -4107,7 +4117,7 @@ rule ("Active Mods 45 - Shockwave") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -4184,7 +4194,7 @@ rule ("Active Mods 46 - Trap Gun") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -4246,7 +4256,7 @@ rule ("Active Mods 47 - Mimic") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -4555,7 +4565,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 12, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 13, Custom String("Lifesplit: Heal nearby teammates for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 14, Custom String("Spellslinger: 70% max HP; refresh cooldowns every 3 seconds.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 15, Custom String("Archmage: 40% max HP, refresh cooldowns every 1.5 seconds.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 15, Custom String("Archmage: 40% max HP, refresh cooldowns every second.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 16, Custom String("300% Projectile Speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 17, Custom String("Aimbot on targets below 50% HP", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 18, Custom String("Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G, Colossus)", Null, Null, Null));
@@ -4652,7 +4662,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Active_Mod_Strings, 53, Custom String("53", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 54, Custom String("54", Null, Null, Null));
         Set Global Variable At Index(Active_Mod_Strings, 55, Custom String("55", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.8_7", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.4.8_8", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu...............Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera................Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?.......................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -5018,7 +5028,7 @@ rule ("Create cooldown indicator for each player") {
     }
     actions {
         Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready:", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
         Set Player Variable(Event Player, Cd_Color, Color(Green));
         Create In-World Text((Event Player).Cd_Visible_To, Custom String("{0} {1}", (Event Player).Cooldown_String_1, (Event Player).Cooldown_Chase, Null), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.7, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.43, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 1.5, Do Not Clip, Visible To Position String and Color, (Event Player).Cd_Color, Default Visibility);
@@ -5374,7 +5384,7 @@ rule ("Close out of Mod Menu") {
                     If(Not(Array Contains(Array(0, 15, 19, 20, 21, 22, 25, 32, 34, 36), (Event Player).Active_Mod)));
                         Set Player Variable(Event Player, Cd_Visible_To, Event Player);
                         Set Player Variable(Event Player, Cd_Color, Color(Green));
-                        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+                        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
                         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
                     End;
                 End;
@@ -5644,7 +5654,7 @@ rule ("Active Mods 14 - Devour (Active)") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -5811,7 +5821,7 @@ rule ("Active Mods 29 - ORA ORA!") {
         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Cd_Color, Color(Green));
-        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+        Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
@@ -5897,7 +5907,7 @@ rule ("Active Mods 30 - Power Glove") {
             Stop Chasing Player Variable(Event Player, Cooldown_Chase);
             Wait(0.016, Ignore Condition);
             Set Player Variable(Event Player, Cd_Color, Color(Green));
-            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ready", Null, Null, Null));
+            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
             Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
             Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
