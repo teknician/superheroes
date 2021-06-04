@@ -323,14 +323,20 @@ rule ("Optional - Debugging") {
     }
     actions {
         "hudHeader(hostPlayer, \"MU1: {0}\".format(eventPlayer.Menu_Element[1]), HudPosition.LEFT, 15, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.DEFAULT)"
-        Create HUD Text(Host Player, Custom String("PIndex: {0}", (Event Player).Passive_Mod_Index, Null, Null), Null, Null, Left, 16, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("AIndex: {0}", (Event Player).Active_Mod_Index, Null, Null), Null, Null, Left, 17, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("PNum0: {0}", First Of((Event Player).Page_Number), Null, Null), Null, Null, Left, 18, Color(Green), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("PNum1: {0}", Value In Array((Event Player).Page_Number, 1), Null, Null), Null, Null, Left, 19, Color(Orange), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("MMS: {0}", (Event Player).Mod_Menu_Select, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("Radius: {0}", (Event Player).Radius, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("AAP: {0}", (Event Player).Active_Affected_Players, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
-        Create HUD Text(Host Player, Custom String("OP: {0}", (Event Player).Other_Players, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("MaxHealth: {0}", (Event Player).Max_Health, Null, Null), Null, Null, Left, 16, Color(Green), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("MoveSpeed: {0}", (Event Player).Move_Speed, Null, Null), Null, Null, Left, 17, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("DmgDealt: {0}", (Event Player).Damage_Dealt, Null, Null), Null, Null, Left, 18, Color(Green), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("DmgTaken: {0}", (Event Player).Damage_Received, Null, Null), Null, Null, Left, 19, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("HealDealt: {0}", (Event Player).Healing_Dealt, Null, Null), Null, Null, Left, 20, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("HealTaken: {0}", (Event Player).Healing_Received, Null, Null), Null, Null, Left, 21, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("PIndex: {0}", (Event Player).Passive_Mod_Index, Null, Null), Null, Null, Left, 22, Color(Green), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("AIndex: {0}", (Event Player).Active_Mod_Index, Null, Null), Null, Null, Left, 23, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("PNum0: {0}", First Of((Event Player).Page_Number), Null, Null), Null, Null, Left, 24, Color(Green), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("PNum1: {0}", Value In Array((Event Player).Page_Number, 1), Null, Null), Null, Null, Left, 25, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("MMS: {0}", (Event Player).Mod_Menu_Select, Null, Null), Null, Null, Left, 26, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("Radius: {0}", (Event Player).Radius, Null, Null), Null, Null, Left, 27, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("AAP: {0}", (Event Player).Active_Affected_Players, Null, Null), Null, Null, Left, 28, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Custom String("OP: {0}", (Event Player).Other_Players, Null, Null), Null, Null, Left, 29, Color(Sky Blue), Null, Null, Visible To and String, Default Visibility);
     }
 }
 
