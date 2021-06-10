@@ -4659,8 +4659,8 @@ rule ("Active Mods 40 - Armor Pool (Each player loses armor)") {
     }
     actions {
         Wait(10, Ignore Condition);
-        Remove Health Pool From Player((Event Ability).Armor_Pool);
-        Set Player Variable(Event Ability, Armor_Pool, Null);
+        Remove Health Pool From Player((Event Player).Armor_Pool);
+        Set Player Variable(Event Player, Armor_Pool, Null);
     }
 }
 
