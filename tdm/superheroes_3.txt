@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.5.4, by ĿUCKYNUMBER. Players pick one of over 40 Active and Passive abilities. Over 70,000 hero/ability combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.5.5, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -828,9 +828,9 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.5.4", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.5.5", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu.....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera................Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?.......................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?...................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
         Create HUD Text(Host Player, Null, Custom String("[{0}, {1}]", Server Load, Server Load Average, Null), Null, Left, 7, Null, Color(Gray), Null, Visible To and String, Default Visibility);
         Create HUD Text(Host Player, Null, Custom String("Text, Entity: [{0}, {1}]", Text Count, Entity Count, Null), Null, Left, 8, Null, Color(Gray), Null, Visible To and String, Default Visibility);
@@ -865,6 +865,37 @@ rule ("Player Welcome Message - Joined") {
         Wait(12, Ignore Condition);
         Play Effect(Event Player, Hanzo Sonic Arrow Initial Pulse Sound, Null, Position Of(Event Player), 4000);
         Big Message(Event Player, Custom String("Welcome to SUPERPOWERS! Hold {0} + {1} to get started and build your hero!", Input Binding String(Button(Reload)), Input Binding String(Button(Interact)), Null));
+    }
+}
+
+rule ("Show Optimized Active Mod Strings") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Game In Progress == True;
+        (Event Player).Mod_Menu_Select != 0;
+    }
+    actions {
+        "Optimize == 0"
+        If(Compare((Event Player).Passive_Mod, !=, 43));
+            If(Not((Event Player).Optimized_Text));
+                "wait until optimize is picked"
+                Wait Until(Compare((Event Player).Passive_Mod, ==, 43), 99999);
+                Set Player Variable(Event Player, Optimized_Text, True);
+                Wait(0.016, Ignore Condition);
+                Loop;
+            End;
+        "Optimize > 0"
+        Else If(Compare((Event Player).Passive_Mod, ==, 43));
+            If((Event Player).Optimized_Text);
+                "wait until optimize is no longer the mod"
+                Wait Until(Compare((Event Player).Passive_Mod, !=, 43), 99999);
+                Set Player Variable(Event Player, Optimized_Text, False);
+                Wait(0.016, Ignore Condition);
+                Loop;
     }
 }
 
@@ -931,37 +962,6 @@ rule ("Initialize Active Mod Strings") {
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 55, Custom String("", Null, Null, Null));
-    }
-}
-
-rule ("Show Optimized Active Mod Strings") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Is Game In Progress == True;
-        (Event Player).Mod_Menu_Select != 0;
-    }
-    actions {
-        "Optimize == 0"
-        If(Compare((Event Player).Passive_Mod, !=, 43));
-            If(Not((Event Player).Optimized_Text));
-                "wait until optimize is picked"
-                Wait Until(Compare((Event Player).Passive_Mod, ==, 43), 99999);
-                Set Player Variable(Event Player, Optimized_Text, True);
-                Wait(0.016, Ignore Condition);
-                Loop;
-            End;
-        "Optimize > 0"
-        Else If(Compare((Event Player).Passive_Mod, ==, 43));
-            If((Event Player).Optimized_Text);
-                "wait until optimize is no longer the mod"
-                Wait Until(Compare((Event Player).Passive_Mod, !=, 43), 99999);
-                Set Player Variable(Event Player, Optimized_Text, False);
-                Wait(0.016, Ignore Condition);
-                Loop;
     }
 }
 
@@ -2227,12 +2227,13 @@ rule ("Passive Mods 47 - Leech") {
                         Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 1.25));
                         Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 1.25));
                     End;
-                    If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 5));
-                        Heal(Event Player, Null, 5);
-                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 5));
+                    If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 10));
+                        Heal(Event Player, Null, 2.5);
+                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 51.5));
                     End;
+                    Wait(0.016, Ignore Condition);
                 End;
-                Wait(0.5, Ignore Condition);
+                Wait(0.016, Ignore Condition);
             End;
             Wait(0.1, Ignore Condition);
         End;
@@ -3643,7 +3644,11 @@ rule ("Active Mods 23 - Colossus") {
         Add Health Pool To Player(Event Player, Armor, 1500, False, True);
         Set Player Variable(Event Player, Is_Colossus, True);
         Start Scaling Player(Event Player, 3, True);
-        Set Player Variable(Event Player, Active_Index_1, If-Then-Else(Compare((Event Player).Optimize, >, 0), 15, 30));
+        If(Compare((Event Player).Passive_Mod, ==, 43));
+            Set Player Variable(Event Player, Active_Index_1, 15);
+        Else;
+            Set Player Variable(Event Player, Active_Index_1, 30);
+        End;
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Player_Position, Position Of(Event Player));
         Start Forcing Player Position(Event Player, (Event Player).Player_Position, True);
@@ -5426,6 +5431,7 @@ rule ("Active Mods 48 - Developer Update") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 49;
         Is Button Held(Event Player, Button(Interact)) == True;
+        Is Button Held(Event Player, Button(Reload)) == False;
         (Event Player).Active_Mod_Skill_Toggle == 0;
     }
     actions {
@@ -5449,7 +5455,7 @@ rule ("Active Mods 48 - Developer Update") {
             Set Player Variable At Index(Event Player, Num_4, 1, 13);
         End;
         Wait(0.025, Ignore Condition);
-        Set Player Variable(Event Player, Random_Stats, Array(Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(2, Value In Array((Event Player).Num_4, 1)), Random Integer(2, Value In Array((Event Player).Num_4, 1)), Random Integer(0.75, 1.25)));
+        Set Player Variable(Event Player, Random_Stats, Array(Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(First Of((Event Player).Num_4), 40), Random Integer(2, Value In Array((Event Player).Num_4, 1)), Random Integer(2, Value In Array((Event Player).Num_4, 1)), Random Integer(0.9, 1.1)));
         "Health, damage dealt, damage received, healing dealt, healing received, move speed, ability 1 cooldown, ability 2 cooldown"
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
@@ -5461,24 +5467,24 @@ rule ("Active Mods 48 - Developer Update") {
         Modify Player Variable(Event Player, Move_Speed, Add, Value In Array((Event Player).Random_Stats, 5));
         If(Compare((Event Player).Passive_Mod, !=, 17));
             Start Scaling Player(Event Player, Value In Array((Event Player).Random_Stats, 8), True);
-            Start Modifying Hero Voice Lines(Event Player, Value In Array((Event Player).Random_Stats, 8), True);
+            Start Modifying Hero Voice Lines(Event Player, Divide(1, Value In Array((Event Player).Random_Stats, 8)), True);
         End;
         Play Effect(Event Player, Brigitte Whip Shot Heal Area Sound, Color(Team 1), Position Of(Event Player), 100);
         Play Effect(Event Player, Buff Impact Sound, Null, Position Of(Event Player), 100);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Violet), Position Of(Event Player), 3);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Null, Position Of(Event Player), 100);
-        Create In-World Text(Event Player, Custom String("HP: {0}\nDmg Dealt:{1}\nDmg Taken: {2}", (Event Player).Max_Health, (Event Player).Damage_Dealt, Custom String("{0}\nHeal Dealt: {1}\nHeal Taken: {2}", (Event Player).Damage_Received, (Event Player).Healing_Dealt, Custom String("{0}\nSpeed: {1}", (Event Player).Healing_Received, (Event Player).Move_Speed, Null))), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.7, World Vector Of(Right, Event Player, Rotation)), Multiply(-1.12, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 1.3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
+        Create In-World Text(Event Player, Custom String("HP: {0}\nDmg Dealt:{1}\nDmg Taken: {2}", (Event Player).Max_Health, (Event Player).Damage_Dealt, Custom String("{0}\nHeal Dealt: {1}\nHeal Taken: {2}", (Event Player).Damage_Received, (Event Player).Healing_Dealt, Custom String("{0}\nSpeed: {1}", (Event Player).Healing_Received, (Event Player).Move_Speed, Null))), Update Every Frame(Add(Eye Position(Event Player), Multiply(100, Add(Add(Multiply(2.8, World Vector Of(Right, Event Player, Rotation)), Multiply(-0.32, Direction From Angles(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Subtract(Vertical Angle From Direction(Facing Direction Of(Event Player)), 90)))), Multiply(3, Facing Direction Of(Event Player)))))), 1.3, Do Not Clip, Visible To Position and String, Color(Orange), Default Visibility);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Text ID);
         Set Player Variable At Index(Event Player, Active_Time, 0, Total Time Elapsed);
         If(Compare((Event Player).Optimize, >, 0));
             While(Compare(Add(First Of((Event Player).Active_Time), 20), >, Total Time Elapsed));
-                Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, !=, 3)), 18.5);
-                If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+                Wait Until(Or(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Active_Mod, ==, 0)), 18.5);
+                If(Compare((Event Player).Active_Mod, ==, 0));
                     Break;
                 End;
                 Set Player Variable At Index(Event Player, Active_Time, 1, Total Time Elapsed);
-                Wait Until(Or(Not(Is Button Held(Event Player, Button(Interact))), Compare((Event Player).Mod_Menu_Select, !=, 3)), 1.5);
-                If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+                Wait Until(Or(Not(Is Button Held(Event Player, Button(Interact))), Compare((Event Player).Active_Mod, ==, 0)), 1.5);
+                If(Compare((Event Player).Active_Mod, ==, 0));
                     Break;
                 End;
                 If(Compare(Subtract(Total Time Elapsed, Value In Array((Event Player).Active_Time, 1)), >=, 1.5));
@@ -5487,7 +5493,7 @@ rule ("Active Mods 48 - Developer Update") {
                 Wait(0.016, Ignore Condition);
             End;
         Else;
-            Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 20);
+            Wait Until(Compare((Event Player).Active_Mod, ==, 0), 20);
         End;
         Modify Player Variable(Event Player, Max_Health, Subtract, First Of((Event Player).Random_Stats));
         Modify Player Variable(Event Player, Damage_Dealt, Subtract, Value In Array((Event Player).Random_Stats, 1));
@@ -5616,7 +5622,7 @@ rule ("Active Mods 49 - Gamechanger") {
                     Set Ability 2 Enabled(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), False);
                     Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Move_Speed, 75);
                     Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Max_Health, 10);
-                    Wait(0.05, Ignore Condition);
+                    Wait(0.1, Ignore Condition);
                 End;
                 Wait(0.5, Ignore Condition);
             End;
@@ -5649,8 +5655,8 @@ rule ("Active Mods 49 - Gamechanger") {
             End;
             While(Compare((Event Player).Active_Chase_1, <, 30));
                 For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
-                    Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Move_Speed, 500);
-                    Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Damage_Dealt, 500);
+                    Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Move_Speed, 300);
+                    Set Player Variable(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Damage_Dealt, 800);
                     If(Compare(Ability Cooldown(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Button(Ability 1)), >, 2));
                         Set Ability Cooldown(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Button(Ability 1), 2);
                     End;
@@ -5661,7 +5667,7 @@ rule ("Active Mods 49 - Gamechanger") {
                     Set Primary Fire Enabled(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), False);
                     Set Secondary Fire Enabled(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), False);
                     Set Ultimate Charge(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Value In Array((Event Player).Active_Affected_Players, Add(Ultimate Charge Percent((Event Player).Active_Index_1), 5)));
-                    Wait(0.05, Ignore Condition);
+                    Wait(0.1, Ignore Condition);
                 End;
                 Wait(0.5, Ignore Condition);
             End;
@@ -5690,6 +5696,7 @@ rule ("Active Mods 49 - Gamechanger") {
         Wait(0.064, Ignore Condition);
         Set Player Variable(Event Player, Active_Affected_Players, Empty Array);
         Set Player Variable(Event Player, Other_Players, Empty Array);
+        Set Global Variable(Mode_Changed, False);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 180, 240));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
