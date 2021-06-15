@@ -5240,12 +5240,12 @@ rule ("Active Mods 46 - Orbital Laser") {
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Active_Time, Add(Total Time Elapsed, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8.5, 6)));
-        While(And(And(And(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, ==, 3)), Compare(Ray Cast Hit Position(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0)), Null, Null, False), ==, Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0)))), Compare((Event Player).Active_Time, >, Total Time Elapsed)));
+        While(And(And(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, ==, 3)), Compare((Event Player).Active_Time, >, Total Time Elapsed)));
             Wait(0.032, Ignore Condition);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Null, (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Null, (Event Player).Target_Position, 100);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Red), (Event Player).Target_Position, 5);
-            Damage(Players Within Radius((Event Player).Target_Position, 2, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 25, 18.75));
+            Damage(Players Within Radius((Event Player).Target_Position, 2, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 20, 15));
             Wait(0.125, Ignore Condition);
         End;
         Set Aim Speed(Event Player, 100);
