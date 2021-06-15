@@ -5211,10 +5211,10 @@ rule ("Active Mods 46 - Orbital Laser") {
         (Event Player).Mod_Menu_Select == 3;
         (Event Player).Active_Mod == 47;
         Is Button Held(Event Player, Button(Interact)) == True;
+        (Event Player).Active_Mod_Skill_Toggle == 0;
         Ray Cast Hit Position(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0)), Null, Null, False) == Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0));
     }
     actions {
-        Set Player Variable At Index(Event Player, Num_0, 0, 4);
         Wait(0.032, Ignore Condition);
         If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Set Player Variable(Event Player, Cd_Visible_To, Array(Null));
@@ -5224,30 +5224,33 @@ rule ("Active Mods 46 - Orbital Laser") {
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Active", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Ability Icon String(Hero(Soldier: 76), Button(Ability 1)));
         Wait(0.032, Ignore Condition);
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 1);
+        Set Player Variable At Index(Event Player, Num_0, 0, 4);
         Set Aim Speed(Event Player, 75);
         Modify Player Variable(Event Player, Move_Speed, Subtract, 20);
-        Play Effect(All Players(All Teams), Bad Explosion, Color(Red), Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), 3);
-        Create Effect(All Players(All Teams), Ring, Color(Red), Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), 3, Visible To Position and Radius);
+        Wait(0.032, Ignore Condition);
+        Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Target_Position, 3);
+        Create Effect(All Players(All Teams), Ring, Color(Red), (Event Player).Target_Position, 3, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 0, Last Created Entity);
         Wait(0.016, Ignore Condition);
-        Create Effect(All Players(All Teams), Light Shaft, Color(Red), Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), 0.1, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Light Shaft, Color(Red), (Event Player).Target_Position, 0.1, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.016, Ignore Condition);
-        Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Add(Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), Vector(0, 200, 0)), Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), Null, Visible To Position and Radius);
+        Create Beam Effect(All Players(All Teams), Omnic Slicer Beam, Add((Event Player).Target_Position, Vector(0, 200, 0)), (Event Player).Target_Position, Null, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 2, Last Created Entity);
         Wait(0.016, Ignore Condition);
         Set Player Variable(Event Player, Active_Time, Add(Total Time Elapsed, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 5)));
         While(And(And(And(Is Button Held(Event Player, Button(Interact)), Compare((Event Player).Mod_Menu_Select, ==, 3)), Compare(Ray Cast Hit Position(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0)), Null, Null, False), ==, Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False), Vector(0, 200, 0)))), Compare((Event Player).Active_Time, >, Total Time Elapsed)));
-            Set Player Variable(Event Player, Target_Position, Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)));
             Wait(0.032, Ignore Condition);
             Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Null, (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Null, (Event Player).Target_Position, 100);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Red), (Event Player).Target_Position, 4);
-            Damage(Players Within Radius(Update Every Frame(Ray Cast Hit Position(Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0))), Null, Event Player, False), Vector(0, 1, 0)), Add(Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Multiply(Facing Direction Of(Event Player), First Of((Event Player).Num_0)), 10)), Null, Event Player, False), Vector(0, 50, 0)), Null, Event Player, False)), 3, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 25, 18.75));
+            Damage(Players Within Radius((Event Player).Target_Position, 3, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 25, 18.75));
             Wait(0.125, Ignore Condition);
         End;
         Set Aim Speed(Event Player, 100);
         Modify Player Variable(Event Player, Move_Speed, Add, 20);
+        Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Target_Position, 3);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 7, 10));
@@ -5263,6 +5266,26 @@ rule ("Active Mods 46 - Orbital Laser") {
         Set Player Variable(Event Player, Cd_Color, Color(Green));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
+    }
+}
+
+rule ("Active Mods 46 - Orbital Laster (Targeting)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Intermission_In_Progress == False;
+        (Event Player).Mod_Menu_Select == 3;
+        (Event Player).Active_Mod == 47;
+        (Event Player).Active_Mod_Skill_Toggle == 1;
+    }
+    actions {
+        While(Compare((Event Player).Active_Mod_Skill_Toggle, ==, 1));
+            Set Player Variable(Event Player, Target_Position, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 50)), All Players(Opposite Team Of(Team Of(Event Player))), Null, False));
+            Wait(0.064, Ignore Condition);
+        End;
     }
 }
 
