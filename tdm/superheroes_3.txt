@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.6.5, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.6.6, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -839,7 +839,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.5", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.6", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu.....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -1678,7 +1678,7 @@ rule ("Passive Mods 17 - Smol Mode") {
         SmolMode;
     }
     actions {
-        While(Compare((Event Player).Passive_Mod, ==, 17));
+        While(Compare((Event Player).Passive_Mod, ==, 18));
             Wait(0.016, Ignore Condition);
             Wait Until(Or(Is Crouching(Event Player), Compare((Event Player).Mod_Menu_Select, !=, 3)), 99999);
             Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
@@ -2278,17 +2278,17 @@ rule ("Passive Mods 47 - Leech") {
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
                     If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1));
-                        Set Player Variable(Event Player, Passive_Index_1, Ultimate Charge Percent(Event Player));
-                        Wait(0.032, Ignore Condition);
-                        Set Ultimate Charge(Event Player, Add((Event Player).Passive_Index_1, 0.25));
-                        Set Player Variable(Event Player, Passive_Index_2, Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)));
-                        Wait(0.032, Ignore Condition);
-                        Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract((Event Player).Passive_Index_2, 0.25));
+                        Set Player Variable(Event Player, Passive_Index_1, Add(Ultimate Charge Percent(Event Player), 0.25));
+                        Wait(0.048, Ignore Condition);
+                        Set Ultimate Charge(Event Player, (Event Player).Passive_Index_1);
+                        Set Player Variable(Event Player, Passive_Index_2, Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 0.25));
+                        Wait(0.048, Ignore Condition);
+                        Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), (Event Player).Passive_Index_2);
                     End;
                     If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 10));
                         Heal(Event Player, Null, 1);
                         Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 1));
-                        Wait(0.08, Ignore Condition);
+                        Wait(0.084, Ignore Condition);
                     End;
                     Wait(0.016, Ignore Condition);
                 End;
@@ -2308,10 +2308,10 @@ rule ("Passive Mods 50 - Clipless") {
         "Clipless: Infinite ammo."
         While(Compare((Event Player).Passive_Mod, ==, 51));
             "waitUntil(eventPlayer.getAmmo(0) < eventPlayer.getMaxAmmo(0) or eventPlayer.getAmmo(1) < eventPlayer.getMaxAmmo(1), 99999)"
-            Wait Until(Or(Compare(Ammo(Event Player, 0), <=, 5), Compare(Ammo(Event Player, 1), <=, 5)), 99999);
+            Wait Until(Or(Compare(Ammo(Event Player, 0), <=, 8), Compare(Ammo(Event Player, 1), <=, 8)), 99999);
             Set Ammo(Event Player, 0, Max Ammo(Event Player, 0));
             Set Ammo(Event Player, 1, Max Ammo(Event Player, 1));
-            Wait(1, Ignore Condition);
+            Wait(0.8, Ignore Condition);
         End;
     }
 }
@@ -5527,14 +5527,17 @@ rule ("Active Mods 49 - Void Creep") {
             Modify Player Variable(Event Player, Radius, Add, 0.1);
             If(Array Contains(Array(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8), (Event Player).Radius));
                 Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Team 1), Add((Event Player).Player_Position, Vector(Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)), -0.5, Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)))), 1);
+                Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), Event Player, 25);
             End;
             Wait(0.032, Ignore Condition);
         End;
         Wait Until(Compare((Event Player).Active_Time, >, Total Time Elapsed), 8);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
+        Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(Team 2), (Event Player).Player_Position, Add(100, Multiply(10, (Event Player).Radius)));
+        Play Effect(All Players(All Teams), Bad Explosion, Color(Black), (Event Player).Player_Position, (Event Player).Radius);
+        Play Effect(All Players(All Teams), Ring Explosion, Color(Black), (Event Player).Player_Position, Add((Event Player).Radius, 3));
         Chase Player Variable Over Time(Event Player, Radius, 0, 1, Destination and Duration);
         Set Player Variable(Event Player, Active_Affected_Players, Empty Array);
-        Set Player Variable(Event Player, Other_Players, Empty Array);
         Wait(1, Ignore Condition);
         Stop Chasing Player Variable(Event Player, Radius);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 9, 12));
@@ -5550,6 +5553,8 @@ rule ("Active Mods 49 - Void Creep") {
         Set Player Variable(Event Player, Cd_Color, Color(Green));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
         Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
+        Set Player Variable(Event Player, Active_Affected_Players, Empty Array);
+        Set Player Variable(Event Player, Other_Players, Empty Array);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
     }
 }
@@ -6942,8 +6947,9 @@ rule ("Passive Mods - Mana Shield (Drain)") {
     }
     actions {
         If(Compare(Ultimate Charge Percent(Event Player), >=, 15));
-            Heal(Event Player, Null, Event Damage);
-            Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), Multiply(Event Damage, 0.25)));
+            Wait(0.016, Ignore Condition);
+            Heal(Event Player, Null, Absolute Value(Event Damage));
+            Set Ultimate Charge(Event Player, Subtract(Ultimate Charge Percent(Event Player), Absolute Value(Multiply(Event Damage, 0.25))));
             Wait(0.016, Ignore Condition);
     }
 }
@@ -6989,7 +6995,7 @@ rule ("Active Mods - Pain To Gain (Damaged)") {
     actions {
         Set Player Variable(Event Player, Active_Index, If-Then-Else(Compare(Ultimate Charge Percent(Event Player), >, 0), Ultimate Charge Percent(Event Player), 1));
         Wait(0.016, Ignore Condition);
-        Set Ultimate Charge(Event Player, Add((Event Player).Active_Index, Divide(Event Damage, 50)));
+        Set Ultimate Charge(Event Player, Add((Event Player).Active_Index, Absolute Value(Divide(Event Damage, 50))));
         Wait(0.016, Ignore Condition);
     }
 }
