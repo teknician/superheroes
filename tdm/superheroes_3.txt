@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.6.4, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.6.5, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -839,7 +839,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.4", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.5", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu.....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -2277,22 +2277,22 @@ rule ("Passive Mods 47 - Leech") {
             While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 7)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
-                    If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 0.25));
+                    If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1));
                         Set Player Variable(Event Player, Passive_Index_1, Ultimate Charge Percent(Event Player));
-                        Wait(0.016, Ignore Condition);
+                        Wait(0.032, Ignore Condition);
                         Set Ultimate Charge(Event Player, Add((Event Player).Passive_Index_1, 0.25));
-                        Wait(0.016, Ignore Condition);
                         Set Player Variable(Event Player, Passive_Index_2, Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)));
-                        Wait(0.016, Ignore Condition);
+                        Wait(0.032, Ignore Condition);
                         Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract((Event Player).Passive_Index_2, 0.25));
                     End;
                     If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 10));
                         Heal(Event Player, Null, 1);
                         Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 1));
+                        Wait(0.08, Ignore Condition);
                     End;
-                    Wait(0.032, Ignore Condition);
+                    Wait(0.016, Ignore Condition);
                 End;
-                Wait(0.064, Ignore Condition);
+                Wait(0.016, Ignore Condition);
             End;
             Wait(0.1, Ignore Condition);
         End;
@@ -2308,10 +2308,10 @@ rule ("Passive Mods 50 - Clipless") {
         "Clipless: Infinite ammo."
         While(Compare((Event Player).Passive_Mod, ==, 51));
             "waitUntil(eventPlayer.getAmmo(0) < eventPlayer.getMaxAmmo(0) or eventPlayer.getAmmo(1) < eventPlayer.getMaxAmmo(1), 99999)"
-            Wait Until(Or(Compare(Ammo(Event Player, 0), <=, 4), Compare(Ammo(Event Player, 1), <=, 4)), 99999);
+            Wait Until(Or(Compare(Ammo(Event Player, 0), <=, 5), Compare(Ammo(Event Player, 1), <=, 5)), 99999);
             Set Ammo(Event Player, 0, Max Ammo(Event Player, 0));
             Set Ammo(Event Player, 1, Max Ammo(Event Player, 1));
-            Wait(0.032, Ignore Condition);
+            Wait(1, Ignore Condition);
         End;
     }
 }
@@ -6987,9 +6987,9 @@ rule ("Active Mods - Pain To Gain (Damaged)") {
         PainToGainDamaged;
     }
     actions {
-        Set Player Variable(Event Player, Active_Index, Ultimate Charge Percent(Event Player));
+        Set Player Variable(Event Player, Active_Index, If-Then-Else(Compare(Ultimate Charge Percent(Event Player), >, 0), Ultimate Charge Percent(Event Player), 1));
         Wait(0.016, Ignore Condition);
-        Set Ultimate Charge(Event Player, Add((Event Player).Active_Index, Divide(Event Damage, 100)));
+        Set Ultimate Charge(Event Player, Add((Event Player).Active_Index, Divide(Event Damage, 50)));
         Wait(0.016, Ignore Condition);
     }
 }
@@ -7031,7 +7031,7 @@ rule ("Passive Mods - Resilient") {
     }
 }
 
-rule ("Active Mods 39 - Vs. Goliath (Took Damage)") {
+rule ("Active Mods 33 - Vs. Goliath (Took Damage)") {
     event {
         Subroutine;
         VsGoliathDamaged;
