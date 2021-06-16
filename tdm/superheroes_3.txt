@@ -80,7 +80,6 @@ variables {
         9: Time_To_Intermission
         10: Intermission_In_Progress
         11: Intermission_Array
-        12: Gamechase
     player:
         0: Max_Health
         1: Move_Speed
@@ -970,7 +969,7 @@ rule ("Subroutine - Active Mod Strings") {
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 33, Custom String("Bouncing Blades: For {0} seconds, damage you deal chains to other enemies ({1}% each chain). (Melee to activate) ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*10*", Null, Null, Null), 7), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*100*", Null, Null, Null), 80), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*7*", Null, Null, Null), 10)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 34, Custom String("Vs. Goliath: Interact toggles between dealing 40% more/taking 40% less damage from {0}", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*any enemy.*", Null, Null, Null), Custom String("higher-health enemies.", Null, Null, Null)), Null, Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 35, Custom String("Ghosted: Melee in the air to become invisible and get {0}% speed for {1} seconds. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*300*", Null, Null, Null), 200), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*3.5*", Null, Null, Null), 2.5), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*9*", Null, Null, Null), 10)));
-        Set Player Variable At Index(Event Player, Active_Mod_Strings, 36, Custom String("Life Tap: Press the Ultimate button to trade {0}% HP for 20% ultimate charge (Excl. Echo hero, Mana shield)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*20*", Null, Null, Null), 30), Null, Null));
+        Set Player Variable At Index(Event Player, Active_Mod_Strings, 36, Custom String("Life Tap: Press the Ultimate button to trade {0}% HP for 20% ultimate charge (Excl. Echo hero)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*20*", Null, Null, Null), 30), Null, Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 37, Custom String("Healthing Hand: Melee at a teammate to add {0}your HP to theirs for {1} seconds - but stun yourself. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*twice* ", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*10*", Null, Null, Null), 8), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*10*", Null, Null, Null), 13)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 38, Custom String("Anti-injure: Melee at a teammate close to you to fully heal {0}over 4 seconds. ({1} sec. CD, starts on cast)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*both of you* ", Null, Null, Null), Custom String("them ", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*9*", Null, Null, Null), 10), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 39, Custom String("Get down: Melee at a critically injured teammate to swap places {0} health with them. ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*but not*", Null, Null, Null), Custom String("and", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 10), Null));
@@ -2090,13 +2089,13 @@ rule ("Passive Mods 30 - Mana Shield FX") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 31));
-            If(Compare(Ultimate Charge Percent(Event Player), >=, 15));
-                Destroy Effect((Event Player).Passive_Mod_FX);
-                Create Effect(All Players(All Teams), Good Aura, Color(Blue), Event Player, 1, Visible To Position and Radius);
-                Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
-            Else If(Compare(Ultimate Charge Percent(Event Player), <, 15));
-                Destroy Effect((Event Player).Passive_Mod_FX);
-            End;
+            Wait Until(Compare(Ultimate Charge Percent(Event Player), >=, 15), 99999);
+            Destroy Effect((Event Player).Passive_Mod_FX);
+            Create Effect(All Players(All Teams), Good Aura, Color(Blue), Event Player, 1, Visible To Position and Radius);
+            Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+            Wait Until(Compare(Ultimate Charge Percent(Event Player), <, 15), 99999);
+            Destroy Effect((Event Player).Passive_Mod_FX);
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -5298,11 +5297,12 @@ rule ("Active Mods 46 - Orbital Laser") {
             Damage(Players Within Radius((Event Player).Target_Position, 2, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 20, 15));
             Wait(0.125, Ignore Condition);
         End;
-        Set Aim Speed(Event Player, 100);
-        Modify Player Variable(Event Player, Move_Speed, Add, 20);
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
         Play Effect(All Players(All Teams), Bad Explosion, Color(Red), (Event Player).Target_Position, 3);
+        Wait(0.016, Ignore Condition);
+        Set Aim Speed(Event Player, 100);
+        Modify Player Variable(Event Player, Move_Speed, Add, 40);
         Set Player Variable(Event Player, Cooldown_Chase, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 11));
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
@@ -6213,7 +6213,7 @@ rule ("Close out of Mod Menu") {
                 Set Player Variable At Index(Event Player, Menu_Misc, 5, 1);
             End;
             "Incompatible mods"
-            If(Or(Or(Or(Or(Or(And(Compare((Event Player).Passive_Mod, ==, 18), Array Contains(Array(19, 23), (Event Player).Active_Mod)), And(Compare((Event Player).Passive_Mod, ==, 39), Array Contains(Array(2, 4), (Event Player).Active_Mod))), And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 27))), And(Compare((Event Player).Passive_Mod, ==, 29), Compare((Event Player).Active_Mod, ==, 22))), And(Compare((Event Player).Active_Mod, ==, 36), Compare(Hero Of(Event Player), ==, Hero(Echo)))), And(Compare((Event Player).Passive_Mod, ==, 31), Compare((Event Player).Active_Mod, ==, 36))));
+            If(Or(Or(Or(Or(And(Compare((Event Player).Passive_Mod, ==, 18), Array Contains(Array(19, 23), (Event Player).Active_Mod)), And(Compare((Event Player).Passive_Mod, ==, 39), Array Contains(Array(2, 4), (Event Player).Active_Mod))), And(Compare(Hero Of(Event Player), ==, Hero(Echo)), Compare((Event Player).Passive_Mod, ==, 27))), And(Compare((Event Player).Passive_Mod, ==, 29), Compare((Event Player).Active_Mod, ==, 22))), And(Compare((Event Player).Active_Mod, ==, 36), Compare(Hero Of(Event Player), ==, Hero(Echo)))));
                 Play Effect(Event Player, Debuff Impact Sound, Null, Position Of(Event Player), 100);
                 Small Message(Event Player, Custom String("Incompatible mods! Choose again.", Null, Null, Null));
                 Set Player Variable(Event Player, Mod_Menu_Select, 1);
@@ -6248,12 +6248,6 @@ rule ("Close out of Mod Menu") {
                     Clear Status(Event Player, Hacked);
                     If(Not(Array Contains(Array(0, 15, 19, 20, 21, 22, 25, 32, 34, 36), (Event Player).Active_Mod)));
                         Set Player Variable(Event Player, Cd_Visible_To, Event Player);
-                        If(And(Compare((Event Player).Active_Mod, ==, 50), Compare(Global.Gamechase, >, 0)));
-                            Set Player Variable(Event Player, Cooldown_Chase, Global.Gamechase);
-                            Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
-                            Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
-                            Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
-                        End;
                         Set Player Variable(Event Player, Cd_Color, Color(Green));
                         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
                         Stop Chasing Player Variable(Event Player, Cooldown_Chase);
@@ -6264,12 +6258,6 @@ rule ("Close out of Mod Menu") {
                 Clear Status(Event Player, Hacked);
                 Wait(1, Ignore Condition);
                 Set Player Variable(Event Player, Mod_Menu_Select, 3);
-                If(Compare((Event Player).Active_Mod, ==, 50));
-                    Wait Until(Compare(Global.Gamechase, ==, 0), 99999);
-                    Set Player Variable(Event Player, Cd_Color, Color(Green));
-                    Set Player Variable(Event Player, Cooldown_String_1, Custom String("Ability Ready", Null, Null, Null));
-                    Stop Chasing Player Variable(Event Player, Cooldown_Chase);
-                    Set Player Variable(Event Player, Cooldown_Chase, Icon String(Checkmark));
     }
 }
 
