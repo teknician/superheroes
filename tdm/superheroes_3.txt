@@ -242,74 +242,75 @@ subroutines {
     40: SelfSacrifice
     41: Bleed
     42: Leech
-    43: Clipless
-    44: Blink
-    45: DeathGrip
-    46: Preparation
-    47: ZeroG
-    48: Corruption
-    49: Translocate
-    50: EntanglingRoots
-    51: Blind
-    52: Fear
-    53: Shadowstep
-    54: GoombaStomp
-    55: SaveDisc
-    56: SaveDiscTeleport
-    57: Telekinesis
-    58: FeignDeath
-    59: Sneak
-    60: Hex
-    61: Taunt
-    62: Cleanse
-    63: LifeTap
-    64: LightningBolt
-    65: HealthingHand
-    66: Railgun
-    67: ArmorField
-    68: Immolation
-    69: Ambush
-    70: Knockout
-    71: BoxerDealtDmg
-    72: Devour
-    73: Infection
-    74: BoxerBrig
-    75: BoxerRein
-    76: Disruption
-    77: Lifesteal
-    78: OraOra
-    79: BouncingBlade
-    80: Lifesplit
-    81: PowerGlove
-    82: ElementalCharge
-    83: VsGoliathDealtDmg
-    84: Mastery
-    85: Pummel
-    86: SpeedLimiter
-    87: ManaShieldDamaged
-    88: ThornsDamaged
-    89: FrostArmorDamaged
-    90: BootsOfMobilityDamaged
-    91: InfectionDamaged
-    92: PainToGainDamaged
-    93: FuryDamaged
-    94: ResilientDamaged
-    95: VsGoliathDamaged
-    96: RemoveFXOnDeath
-    97: SmolModeDeath
-    98: CorpseExplosion
-    99: Revenge
-    100: ZeroGDeath
-    101: KillstreakDeath
-    102: LevelUpDing
-    103: KillstreakFinalBlow
-    104: VictoryRush
-    105: Defile
-    106: ActiveModStrings
-    107: RandomPassive
-    108: RandomActive
-    109: PlayerReset
-    110: MovementReset
+    43: LeechUlt
+    44: Clipless
+    45: Blink
+    46: DeathGrip
+    47: Preparation
+    48: ZeroG
+    49: Corruption
+    50: Translocate
+    51: EntanglingRoots
+    52: Blind
+    53: Fear
+    54: Shadowstep
+    55: GoombaStomp
+    56: SaveDisc
+    57: SaveDiscTeleport
+    58: Telekinesis
+    59: FeignDeath
+    60: Sneak
+    61: Hex
+    62: Taunt
+    63: Cleanse
+    64: LifeTap
+    65: LightningBolt
+    66: HealthingHand
+    67: Railgun
+    68: ArmorField
+    69: Immolation
+    70: Ambush
+    71: Knockout
+    72: BoxerDealtDmg
+    73: Devour
+    74: Infection
+    75: BoxerBrig
+    76: BoxerRein
+    77: Disruption
+    78: Lifesteal
+    79: OraOra
+    80: BouncingBlade
+    81: Lifesplit
+    82: PowerGlove
+    83: ElementalCharge
+    84: VsGoliathDealtDmg
+    85: Mastery
+    86: Pummel
+    87: SpeedLimiter
+    88: ManaShieldDamaged
+    89: ThornsDamaged
+    90: FrostArmorDamaged
+    91: BootsOfMobilityDamaged
+    92: InfectionDamaged
+    93: PainToGainDamaged
+    94: FuryDamaged
+    95: ResilientDamaged
+    96: VsGoliathDamaged
+    97: RemoveFXOnDeath
+    98: SmolModeDeath
+    99: CorpseExplosion
+    100: Revenge
+    101: ZeroGDeath
+    102: KillstreakDeath
+    103: LevelUpDing
+    104: KillstreakFinalBlow
+    105: VictoryRush
+    106: Defile
+    107: ActiveModStrings
+    108: RandomPassive
+    109: RandomActive
+    110: PlayerReset
+    111: MovementReset
 }
 rule ("Workshop settings") {
     event {
@@ -2277,22 +2278,39 @@ rule ("Passive Mods 47 - Leech") {
             While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 7)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
-                    If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1));
-                        Set Player Variable(Event Player, Passive_Index_1, Absolute Value(Add(Ultimate Charge Percent(Event Player), 0.25)));
-                        Wait(0.048, Ignore Condition);
-                        Set Ultimate Charge(Event Player, (Event Player).Passive_Index_1);
-                        Set Player Variable(Event Player, Passive_Index_2, Absolute Value(Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 0.25)));
-                        Wait(0.048, Ignore Condition);
-                        Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), (Event Player).Passive_Index_2);
-                    End;
                     If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 10));
                         Heal(Event Player, Null, 1);
                         Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 1));
-                        Wait(0.084, Ignore Condition);
+                        Wait(0.016, Ignore Condition);
                     End;
                     Wait(0.016, Ignore Condition);
                 End;
-                Wait(0.016, Ignore Condition);
+                Wait(0.1, Ignore Condition);
+            End;
+            Wait(0.1, Ignore Condition);
+        End;
+    }
+}
+
+rule ("Passive Mods 47 - Leech") {
+    event {
+        Subroutine;
+        LeechUlt;
+    }
+    actions {
+        "Drain 10 HP and 4% ult charge from enemies within 7 meters/sec."
+        While(Compare((Event Player).Passive_Mod, ==, 48));
+            While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 7)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
+                Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
+                For Player Variable(Event Player, Passive_Index_1, 0, Count Of((Event Player).Affected_Players), 1);
+                    If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index_1)), >, 2));
+                        Set Ultimate Charge(Event Player, Add(Ultimate Charge Percent(Event Player), 2));
+                        Wait(0.016, Ignore Condition);
+                        Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index_1), Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index_1)), 2));
+                    End;
+                    Wait(0.016, Ignore Condition);
+                End;
+                Wait(0.5, Ignore Condition);
             End;
             Wait(0.1, Ignore Condition);
         End;
