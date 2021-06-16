@@ -2278,10 +2278,10 @@ rule ("Passive Mods 47 - Leech") {
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
                     If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1));
-                        Set Player Variable(Event Player, Passive_Index_1, Add(Ultimate Charge Percent(Event Player), 0.25));
+                        Set Player Variable(Event Player, Passive_Index_1, Absolute Value(Add(Ultimate Charge Percent(Event Player), 0.25)));
                         Wait(0.048, Ignore Condition);
                         Set Ultimate Charge(Event Player, (Event Player).Passive_Index_1);
-                        Set Player Variable(Event Player, Passive_Index_2, Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 0.25));
+                        Set Player Variable(Event Player, Passive_Index_2, Absolute Value(Subtract(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 0.25)));
                         Wait(0.048, Ignore Condition);
                         Set Ultimate Charge(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), (Event Player).Passive_Index_2);
                     End;
@@ -2308,10 +2308,9 @@ rule ("Passive Mods 50 - Clipless") {
         "Clipless: Infinite ammo."
         While(Compare((Event Player).Passive_Mod, ==, 51));
             "waitUntil(eventPlayer.getAmmo(0) < eventPlayer.getMaxAmmo(0) or eventPlayer.getAmmo(1) < eventPlayer.getMaxAmmo(1), 99999)"
-            Wait Until(Or(Compare(Ammo(Event Player, 0), <=, 8), Compare(Ammo(Event Player, 1), <=, 8)), 99999);
             Set Ammo(Event Player, 0, Max Ammo(Event Player, 0));
             Set Ammo(Event Player, 1, Max Ammo(Event Player, 1));
-            Wait(0.8, Ignore Condition);
+            Wait(1, Ignore Condition);
         End;
     }
 }
