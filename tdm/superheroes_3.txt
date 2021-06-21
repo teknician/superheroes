@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.6.7, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.6.8, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -839,7 +839,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.7", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.8", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu.....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -1046,6 +1046,7 @@ rule ("Max Health automator") {
     }
     actions {
         Set Player Variable At Index(Event Player, Max_Health, 1, First Of((Event Player).Max_Health));
+        Wait(0.016, Ignore Condition);
         Set Max Health(Event Player, Value In Array((Event Player).Max_Health, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1063,6 +1064,7 @@ rule ("Movement Speed automator") {
     }
     actions {
         Set Player Variable At Index(Event Player, Move_Speed, 1, First Of((Event Player).Move_Speed));
+        Wait(0.016, Ignore Condition);
         Set Move Speed(Event Player, Value In Array((Event Player).Move_Speed, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1080,6 +1082,7 @@ rule ("Damage Dealt automator") {
     }
     actions {
         Set Player Variable At Index(Event Player, Damage_Dealt, 1, First Of((Event Player).Damage_Dealt));
+        Wait(0.016, Ignore Condition);
         Set Damage Dealt(Event Player, Value In Array((Event Player).Damage_Dealt, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1097,6 +1100,7 @@ rule ("Damage Received") {
     }
     actions {
         Set Player Variable At Index(Event Player, Damage_Received, 1, First Of((Event Player).Damage_Received));
+        Wait(0.016, Ignore Condition);
         Set Damage Received(Event Player, Value In Array((Event Player).Damage_Received, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1114,6 +1118,7 @@ rule ("Healing Dealt automator") {
     }
     actions {
         Set Player Variable At Index(Event Player, Healing_Dealt, 1, First Of((Event Player).Healing_Dealt));
+        Wait(0.016, Ignore Condition);
         Set Healing Dealt(Event Player, Value In Array((Event Player).Healing_Dealt, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1131,6 +1136,7 @@ rule ("Healing Received automator") {
     }
     actions {
         Set Player Variable At Index(Event Player, Healing_Received, 1, First Of((Event Player).Healing_Received));
+        Wait(0.016, Ignore Condition);
         Set Healing Received(Event Player, Value In Array((Event Player).Healing_Received, 1));
         Wait(0.032, Ignore Condition);
         Loop If Condition Is True;
@@ -1306,13 +1312,15 @@ rule ("Passive Mods 4 - Recklessness") {
         Recklessness;
     }
     actions {
+        Modify Player Variable(Event Player, Move_Speed, Add, 75);
+        Modify Player Variable(Event Player, Damage_Dealt, Add, 75);
+        Modify Player Variable(Event Player, Max_Health, Subtract, 70);
         While(Compare((Event Player).Passive_Mod, ==, 5));
-            Modify Player Variable(Event Player, Move_Speed, Add, 75);
-            Modify Player Variable(Event Player, Damage_Dealt, Add, 75);
-            Modify Player Variable(Event Player, Max_Health, Subtract, 70);
-            Wait Until(Compare((Event Player).Passive_Mod, !=, 5), 99999);
-            Abort If(Compare((Event Player).Passive_Mod, !=, 5));
-            Wait(0.5, Ignore Condition);
+            Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
+            Create Effect(All Players(All Teams), Mercy Damage Boosted Effect, Color(Team 2), Event Player, 1, Position and Radius);
+            Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+            Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
+            Destroy Effect((Event Player).Passive_Mod_FX);
         End;
     }
 }
@@ -2314,7 +2322,7 @@ rule ("Passive Mods 50 - Clipless") {
             "waitUntil(eventPlayer.getAmmo(0) < eventPlayer.getMaxAmmo(0) or eventPlayer.getAmmo(1) < eventPlayer.getMaxAmmo(1), 99999)"
             Set Ammo(Event Player, 0, Max Ammo(Event Player, 0));
             Set Ammo(Event Player, 1, Max Ammo(Event Player, 1));
-            Wait(1, Ignore Condition);
+            Wait(0.5, Ignore Condition);
         End;
     }
 }
