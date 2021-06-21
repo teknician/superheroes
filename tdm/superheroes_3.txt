@@ -605,12 +605,13 @@ rule ("Begin Match... and start a time-out every 6 minutes.") {
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 1), 1);
             Teleport(Value In Array(All Players(Team 1), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_1_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
-            Wait(0.05, Ignore Condition);
+            Wait(0.03, Ignore Condition);
         End;
         For Global Variable(Global_Index, 0, Number Of Players(Team 2), 1);
             Teleport(Value In Array(All Players(Team 2), Global.Global_Index), Nearest Walkable Position(Add(Global.Team_2_Spawns, Vector(Random Real(-3, 3), 0, Random Real(-3, 3)))));
-            Wait(0.05, Ignore Condition);
+            Wait(0.03, Ignore Condition);
         End;
+        Wait(2, Ignore Condition);
         For Global Variable(Global_Index, 0, Number Of Players(All Teams), 1);
             Start Holding Button(Value In Array(All Players(All Teams), Global.Global_Index), Button(Reload));
             Start Holding Button(Value In Array(All Players(All Teams), Global.Global_Index), Button(Interact));
@@ -980,7 +981,7 @@ rule ("Subroutine - Active Mod Strings") {
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 44, Custom String("Meteor shower: Target an open-air area with melee. {0}Meteors rain down, dealing damage to those in LOS. ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*More *", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*15*", Null, Null, Null), 18), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 45, Custom String("Thunderstorm: In the open air, melee to call a thunderstorm. {0}Lightning zaps enemies, hacking them. ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*2x* the ", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*17*", Null, Null, Null), 20), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 46, Custom String("Shockwave: Melee sends out a shockwave that stuns and damages players {0}(effect weakens with distance). ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*more* ", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 15), Null));
-        Set Player Variable At Index(Event Player, Active_Mod_Strings, 47, Custom String("Orbital Laser: Hold Interact to Call down a laser that lasts up to {0} sec. and deals {1} dps. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8.5* ", Null, Null, Null), 6), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*200*", Null, Null, Null), 150), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 11)));
+        Set Player Variable At Index(Event Player, Active_Mod_Strings, 47, Custom String("Orbital Laser: Hold Interact to Call down a laser that lasts up to {0} sec. and deals {1} dps. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8.5* ", Null, Null, Null), 6), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*250*", Null, Null, Null), 200), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 11)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 48, Custom String("Mimic: Melee at an enemy to become their hero for {0} seconds. ({1} sec. CD, excl. Echo hero)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*20*", Null, Null, Null), 12), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 24), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 49, Custom String("Savior: Melee at a dead teammate. Lose health equal to {0} max health to resurrect them. ({1} sec. CD, {2} sec. cast time)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("half their", Null, Null, Null), Custom String("their", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*10*", Null, Null, Null), 15), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*1*", Null, Null, Null), 1.75)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 50, Custom String("Void Creep: Keep holding Interact to grow a void. Enemies in it fall to their doom. (max {0}m. Lasts {1} seconds. {2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 6), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 9), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 12)));
@@ -2319,10 +2320,9 @@ rule ("Passive Mods 50 - Clipless") {
     actions {
         "Clipless: Infinite ammo."
         While(Compare((Event Player).Passive_Mod, ==, 51));
-            "waitUntil(eventPlayer.getAmmo(0) < eventPlayer.getMaxAmmo(0) or eventPlayer.getAmmo(1) < eventPlayer.getMaxAmmo(1), 99999)"
-            Set Ammo(Event Player, 0, Max Ammo(Event Player, 0));
-            Set Ammo(Event Player, 1, Max Ammo(Event Player, 1));
-            Wait(0.5, Ignore Condition);
+            Set Ammo(Event Player, 0, 999);
+            Set Ammo(Event Player, 1, 999);
+            Wait Until(Or(Compare(Ammo(Event Player, 0), <, 500), Compare(Ammo(Event Player, 1), <, 500)), 99999);
         End;
     }
 }
@@ -5301,10 +5301,10 @@ rule ("Active Mods 46 - Orbital Laser") {
             Wait(0.032, Ignore Condition);
             Play Effect(All Players(All Teams), Junkrat Frag Launcher Explosion Effect, Color(Team 2), (Event Player).Target_Position, 1);
             Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Effect, Color(Team 2), (Event Player).Target_Position, 1);
-            Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Null, (Event Player).Target_Position, 75);
+            Play Effect(All Players(All Teams), Reinhardt Fire Strike Target Impact Sound, Null, (Event Player).Target_Position, 35);
             Play Effect(All Players(All Teams), Ring Explosion, Color(Red), (Event Player).Target_Position, 3.5);
-            Damage(Players Within Radius((Event Player).Target_Position, 2, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 20, 15));
-            Wait(0.125, Ignore Condition);
+            Damage(Players Within Radius((Event Player).Target_Position, 2, Opposite Team Of(Team Of(Event Player)), Surfaces), Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 25, 20));
+            Wait(0.1, Ignore Condition);
         End;
         Set Player Variable(Event Player, Active_Mod_Skill_Toggle, 0);
         Destroy Effect((Event Player).Active_Mod_FX_Array);
