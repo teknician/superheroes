@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.6.8, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.6.9, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -580,7 +580,7 @@ rule ("Begin Match... and start a time-out every 6 minutes.") {
             Wait(1.5, Ignore Condition);
             Set Global Variable(Start_Intermission, 0);
         Else;
-            Wait(360, Ignore Condition);
+            Wait(420, Ignore Condition);
             Set Global Variable(Time_To_Intermission, 10);
             Wait(0.016, Ignore Condition);
             Chase Global Variable Over Time(Time_To_Intermission, 0, 10, Destination and Duration);
@@ -832,7 +832,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 45, Custom String("Punisher: 2x damage to enemies below 50% HP. Take 2x damage when below 50% hp.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 46, Custom String("Mastery: Your default hero abilities deal double damage.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 47, Custom String("Self Sacrifice: Take 5% of your max HP as damage/sec. Heal teammates within 15m for 15% their max HP/sec.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 48, Custom String("Leech: Drain 10 HP and 2.5% ult charge per second from enemies within 7 meters.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 48, Custom String("Leech: Drain 30 HP and 5% ult charge /sec. from enemies within 9 meters.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 49, Custom String("Defile: Eliminations deal 40% of the victim's Max HP to nearby enemies after they die.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 50, Custom String("Speed Limiter: 2x Knockback dealt. Deal extra damage based on enemy speed.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 51, Custom String("Clipless: Infinite ammo.", Null, Null, Null));
@@ -840,7 +840,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.8", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.6.9", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("Mod Menu.....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -981,7 +981,7 @@ rule ("Subroutine - Active Mod Strings") {
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 44, Custom String("Meteor shower: Target an open-air area with melee. {0}Meteors rain down, dealing damage to those in LOS. ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*More *", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*15*", Null, Null, Null), 18), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 45, Custom String("Thunderstorm: In the open air, melee to call a thunderstorm. {0}Lightning zaps enemies, hacking them. ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*2x* the ", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*17*", Null, Null, Null), 20), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 46, Custom String("Shockwave: Melee sends out a shockwave that stuns and damages players {0}(effect weakens with distance). ({1} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*more* ", Null, Null, Null), Custom String("", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 15), Null));
-        Set Player Variable At Index(Event Player, Active_Mod_Strings, 47, Custom String("Orbital Laser: Hold Interact to Call down a laser that lasts up to {0} sec. and deals {1} dps. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8.5* ", Null, Null, Null), 6), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*250*", Null, Null, Null), 200), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 11)));
+        Set Player Variable At Index(Event Player, Active_Mod_Strings, 47, Custom String("Orbital Laser: Hold Interact to Call down a laser that lasts up to {0} sec. and deals {1} dps. ({2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8* ", Null, Null, Null), 5), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*250*", Null, Null, Null), 200), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 11)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 48, Custom String("Mimic: Melee at an enemy to become their hero for {0} seconds. ({1} sec. CD, excl. Echo hero)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*20*", Null, Null, Null), 12), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 24), Null));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 49, Custom String("Savior: Melee at a dead teammate. Lose health equal to {0} max health to resurrect them. ({1} sec. CD, {2} sec. cast time)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("half their", Null, Null, Null), Custom String("their", Null, Null, Null)), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*10*", Null, Null, Null), 15), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*1*", Null, Null, Null), 1.75)));
         Set Player Variable At Index(Event Player, Active_Mod_Strings, 50, Custom String("Void Creep: Keep holding Interact to grow a void. Enemies in it fall to their doom. (max {0}m. Lasts {1} seconds. {2} sec. CD)", If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 6), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*12*", Null, Null, Null), 9), If-Then-Else(Compare((Event Player).Passive_Mod, ==, 43), Custom String("*8*", Null, Null, Null), 12)));
@@ -2238,7 +2238,7 @@ rule ("Passive Mods 40 - Superhero Landing") {
                 End;
                 If(Compare((Event Player).Vertical_Speed, <, -9));
                     If(Compare(Hero Of(Event Player), ==, Hero(Wrecking Ball)));
-                        Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.28);
+                        Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.2);
                     Else If(Or(Compare(Hero Of(Event Player), ==, Hero(Winston)), Compare(Hero Of(Event Player), ==, Hero(Pharah))));
                         Modify Player Variable(Event Player, Vertical_Speed, Multiply, 0.9);
                     End;
@@ -2266,7 +2266,12 @@ rule ("Passive Mods 46 - Self Sacrifice") {
                 Create Effect(All Players(Team Of(Event Player)), Ring, Color(Green), Event Player, 15, Visible To Position Radius and Color);
                 Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
             End;
-            While(And(Is Alive(Event Player), Compare((Event Player).Passive_Mod, ==, 47)));
+            While(And(And(Is Alive(Event Player), Compare((Event Player).Passive_Mod, ==, 47)), Compare((Event Player).Mod_Menu_Select, ==, 3)));
+                If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+                    Stop Damage Over Time((Event Player).Passive_Index_1);
+                    Set Player Variable(Event Player, Passive_Index_1, Null);
+                    Abort;
+                End;
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 15, Team Of(Event Player), Surfaces), Event Player));
                 If(Compare((Event Player).Passive_Index_1, ==, Null));
                     Start Damage Over Time(Event Player, Null, 99999, Multiply(Max Health(Event Player), 0.05));
@@ -2290,14 +2295,14 @@ rule ("Passive Mods 47 - Leech") {
         Leech;
     }
     actions {
-        "Drain 10 HP and 3.33% ult charge from enemies within 7 meters/sec."
+        "Drain 30 HP and 5% ult charge from enemies within 9 meters/sec."
         While(Compare((Event Player).Passive_Mod, ==, 48));
-            While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 7)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
-                Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 7, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
+            While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 9)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
+                Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Event Player, 9, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
-                    If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 3.333));
-                        Heal(Event Player, Null, 3.333);
-                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 3.333));
+                    If(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >=, 6));
+                        Heal(Event Player, Null, 6);
+                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 6));
                     End;
                     If(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1));
                         Set Ultimate Charge(Event Player, Round To Integer(Add(Ultimate Charge Percent(Event Player), 1), Up));
@@ -2305,7 +2310,7 @@ rule ("Passive Mods 47 - Leech") {
                     End;
                     Wait(0.016, Ignore Condition);
                 End;
-                Wait(0.333, Ignore Condition);
+                Wait(0.2, Ignore Condition);
             End;
             Wait(0.1, Ignore Condition);
         End;
@@ -2322,7 +2327,7 @@ rule ("Passive Mods 50 - Clipless") {
         While(Compare((Event Player).Passive_Mod, ==, 51));
             Set Ammo(Event Player, 0, 999);
             Set Ammo(Event Player, 1, 999);
-            Wait Until(Or(Compare(Ammo(Event Player, 0), <, 500), Compare(Ammo(Event Player, 1), <, 500)), 99999);
+            Wait Until(Or(Compare(Ammo(Event Player, 0), <, 900), And(Array Contains(Array(Hero(Baptiste), Hero(Bastion)), Hero Of(Event Player)), Compare(Ammo(Event Player, 1), <, 900))), 99999);
         End;
     }
 }
@@ -3605,7 +3610,7 @@ rule ("Active Mods 21 - Inner Power") {
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.15, Ignore Condition);
         "eventPlayer.isHoldingButton(Button.MELEE) or (eventPlayer.getCurrentHero() in [Hero.BRIGITTE, Hero.REINHARDT] and eventPlayer.isHoldingButton(Button.RELOAD))"
-        Add Health Pool To Player(Event Player, Shields, Multiply(Ultimate Charge Percent(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 3, 2)), False, False);
+        Add Health Pool To Player(Event Player, Shields, Multiply(Ultimate Charge Percent(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 4, 3)), False, False);
         Set Player Variable(Event Player, Health_Temp, Last Created Health Pool);
         Set Ultimate Charge(Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 33.33, 0));
         Wait(3, Ignore Condition);
@@ -3669,7 +3674,7 @@ rule ("Active Mods 22 - Feign Death") {
     }
 }
 
-rule ("Active Mods 23 - Gain to Pain") {
+rule ("Active Mods 23 - Pain to Gain") {
     event {
         Ongoing - Each Player;
         All;
@@ -4832,7 +4837,7 @@ rule ("Active Mods 42 - Pyroblast") {
         Chase Player Variable At Rate(Event Player, Projectile_Position, Add(Add(Multiply(Value In Array((Event Player).Projectile, 3), Subtract(Total Time Elapsed, Value In Array((Event Player).Projectile, 1))), First Of((Event Player).Projectile)), Multiply(Multiply(Multiply(0.5, Value In Array((Event Player).Projectile, 4)), Subtract(Total Time Elapsed, Value In Array((Event Player).Projectile, 1))), Subtract(Total Time Elapsed, Value In Array((Event Player).Projectile, 1)))), 999999, Destination and Rate);
         While(And(And(Compare((Event Player).Projectile_Duration, <, Add(5, (Event Player).Optimize)), Compare(Ray Cast Hit Position((Event Player).Projectile_Position, Subtract((Event Player).Projectile_Position, Vector(0, 0.5, 0)), Null, Event Player, True), ==, Subtract((Event Player).Projectile_Position, Vector(0, 0.5, 0)))), Compare(Ray Cast Hit Position((Event Player).Projectile_Position, Add((Event Player).Projectile_Position, Vector(0, 0, 1)), Null, Event Player, True), ==, Add((Event Player).Projectile_Position, Vector(0, 0, 1)))));
             Play Effect(All Players(All Teams), Wrecking Ball Minefield Explosion Effect, Color(Team 2), (Event Player).Projectile_Position, 1);
-            Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), (Event Player).Projectile_Position, 35);
+            Play Effect(All Players(All Teams), Pharah Rocket Launcher Explosion Sound, Color(Team 2), (Event Player).Projectile_Position, 45);
             Set Player Variable(Event Player, Active_Affected_Players, Append To Array((Event Player).Active_Affected_Players, Remove From Array(Players Within Radius((Event Player).Projectile_Position, Add(Add(2, (Event Player).Projectile_Duration), (Event Player).Optimize), Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), (Event Player).Active_Affected_Players)));
             Set Player Variable(Event Player, Active_Affected_Players, Remove From Array((Event Player).Active_Affected_Players, (Event Player).Other_Players));
             Damage((Event Player).Active_Affected_Players, Event Player, Multiply((Event Player).Projectile_Duration, If-Then-Else(Compare((Event Player).Optimize, >, 0), 62.5, 50)));
@@ -7008,7 +7013,7 @@ rule ("Active Mods - Pain To Gain (Damaged)") {
     actions {
         Set Player Variable(Event Player, Active_Index, If-Then-Else(Compare(Ultimate Charge Percent(Event Player), >, 0), Ultimate Charge Percent(Event Player), 1));
         Wait(0.016, Ignore Condition);
-        Set Ultimate Charge(Event Player, Round To Integer(Add((Event Player).Active_Index, Divide(Event Damage, 40)), To Nearest));
+        Set Ultimate Charge(Event Player, If-Then-Else(Compare(Event Damage, >, 20), Round To Integer(Add((Event Player).Active_Index, Divide(Event Damage, 40)), To Nearest), Round To Integer(Add((Event Player).Active_Index, 1), To Nearest)));
         Wait(0.016, Ignore Condition);
     }
 }
