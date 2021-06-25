@@ -1780,7 +1780,7 @@ rule ("Passive Mods 19 - Forcefield FX") {
         Abort If(Entity Exists((Event Player).Passive_Mod_FX_Array));
         Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 7, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-        Create Effect(All Players(All Teams), L√∫cio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
+        Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
@@ -6505,7 +6505,7 @@ rule ("Passive Mods - Mastery (Damage Dealt)") {
         Mastery;
     }
     actions {
-        If(Or(Or(Or(Or(Or(And(Array Contains(Array(Hero(Doomfist), Hero(Echo), Hero(Soldier: 76), Hero(L√∫cio), Hero(Wrecking Ball)), Hero Of(Event Player)), Compare(Event Ability, ==, Button(Secondary Fire))), Compare(Event Ability, ==, Button(Ability 1))), Compare(Event Ability, ==, Button(Ability 2))), Compare(Event Ability, ==, Button(Ultimate))), Compare(Event Ability, ==, Button(Crouch))), And(And(Compare(Hero Of(Event Player), ==, Hero(Brigitte)), Is Firing Secondary(Event Player)), Compare(Event Ability, ==, Button(Primary Fire)))));
+        If(Or(Or(Or(Or(Or(And(Array Contains(Array(Hero(Doomfist), Hero(Echo), Hero(Soldier: 76), Hero(Lúcio), Hero(Wrecking Ball)), Hero Of(Event Player)), Compare(Event Ability, ==, Button(Secondary Fire))), Compare(Event Ability, ==, Button(Ability 1))), Compare(Event Ability, ==, Button(Ability 2))), Compare(Event Ability, ==, Button(Ultimate))), Compare(Event Ability, ==, Button(Crouch))), And(And(Compare(Hero Of(Event Player), ==, Hero(Brigitte)), Is Firing Secondary(Event Player)), Compare(Event Ability, ==, Button(Primary Fire)))));
             Damage(Victim, Attacker, Event Damage);
             Wait(0.016, Ignore Condition);
     }
