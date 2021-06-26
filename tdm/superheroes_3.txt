@@ -5563,12 +5563,10 @@ rule ("Active Mods 49 - Void Creep") {
         Play Effect(All Players(All Teams), McCree Flashbang Explosion Sound, Null, (Event Player).Player_Position, 100);
         Chase Player Variable At Rate(Event Player, Radius, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6), 2, Destination and Rate);
         While(And(Compare((Event Player).Radius, <, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6)), And(And(Is Button Held(Event Player, Button(Interact)), Not(Is Button Held(Event Player, Button(Crouch)))), Not(Is Button Held(Event Player, Button(Reload))))));
-            If(Array Contains(Array(0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5, 5.25, 5.5, 5.75, 6, 6.25, 6.5, 6.75, 7, 7.25, 7.5, 7.75, 8), (Event Player).Radius));
-                Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Team 1), Add((Event Player).Player_Position, Vector(Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)), 0.25, Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)))), 1);
-                Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), (Event Player).Player_Position, 30);
-                Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(Team 2), (Event Player).Player_Position, 80);
-            End;
-            Wait(0.016, Ignore Condition);
+            Play Effect(All Players(All Teams), Moira Fade Disappear Effect, Color(Team 1), Add((Event Player).Player_Position, Vector(Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)), 0.25, Random Real(Subtract(-1, (Event Player).Radius), Add(1, (Event Player).Radius)))), 1);
+            Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 2), (Event Player).Player_Position, 30);
+            Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(Team 2), (Event Player).Player_Position, 80);
+            Wait(0.25, Ignore Condition);
         End;
         Wait Until(Or(Or(Or(Not(Is Button Held(Event Player, Button(Interact))), Is Button Held(Event Player, Button(Crouch))), Is Button Held(Event Player, Button(Reload))), Compare((Event Player).Radius, ==, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6))), 99999);
         Stop Chasing Player Variable(Event Player, Radius);
@@ -5613,6 +5611,7 @@ rule ("Active Mods 49 - Void Creep (enemies die)") {
         (Event Player).Active_Mod_Skill_Toggle == 1;
     }
     actions {
+        Wait Until(Compare((Event Player).Radius, >, 0), 99999);
         While(Not(Array Contains(Array(If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6), 0), (Event Player).Radius)));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 If(Not(Array Contains(Players Within Radius((Event Player).Player_Position, (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Off), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index))));
@@ -5623,10 +5622,12 @@ rule ("Active Mods 49 - Void Creep (enemies die)") {
             Wait(0.016, Ignore Condition);
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Off));
             For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
+                "smallMessage(hostPlayer, \"Entering void radius loop\")"
                 If(Not(Array Contains((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1))));
                     Set Player Variable(Event Player, Other_Players, Append To Array((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1)));
                 End;
                 If(Array Contains(Array(0, 3), (Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1)).Mod_Menu_Select));
+                    "smallMessage(hostPlayer, \"Disabling collision\")"
                     Disable Movement Collision With Environment(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), True);
                     Set Environment Credit Player(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1), Event Player);
                     Wait(0.016, Ignore Condition);
