@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.7.3, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.7.4, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -792,7 +792,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 3, Custom String("160% Movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 4, Custom String("50% Gravity + 133% movement speed", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 5, Custom String("Recklessness: +75% Speed/Damage, -70% HP", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("Boots of Mobility: After 2.5 sec. of not taking damage, get 200% speed and 5% HP regen. per sec.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 6, Custom String("Boots of Mobility: After 3 sec. of not taking damage, get 180% speed and 5% HP regen. per sec.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 7, Custom String("Resilient: Take 50% less damage from primary/secondary fire.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 8, Custom String("Raid Boss: 200% HP, +30% damage: -30% speed, + 30% size, and become visible through walls.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 9, Custom String("160% HP + 160% Healing Received", Null, Null, Null));
@@ -800,8 +800,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 11, Custom String("Rejuvenation: Regenerate 10% of your Max HP per sec.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 12, Custom String("Lifesteal: Heal for half the damage you deal.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 13, Custom String("Lifesplit: Heal nearby teammates for 3/4 the damage you deal.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 14, Custom String("Spellslinger: 70% max HP; refresh cooldowns every 3 seconds.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 15, Custom String("Archmage: 40% max HP, refresh cooldowns every second.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 14, Custom String("Spellslinger: 75% max HP; refresh cooldowns every 3 seconds.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 15, Custom String("Archmage: 50% max HP, refresh cooldowns every second.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 16, Custom String("300% Projectile Speed, 0% Projectile Gravity", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 17, Custom String("Aimbot on targets below 50% HP", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 18, Custom String("Smol Mode: You become tiny! (crouch to toggle) (excl. Zero-G)", Null, Null, Null));
@@ -842,8 +842,8 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.3", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("GET POWERS...................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.4", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("GET POWERS....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
         Create HUD Text(Host Player, Null, Custom String("[{0}, {1}]", Server Load, Server Load Average, Null), Null, Left, 7, Null, Color(Gray), Null, Visible To and String, Default Visibility);
@@ -1339,7 +1339,7 @@ rule ("Passive Mods 5 - Boots of Mobility") {
             If(Compare((Event Player).Passive_Mod, !=, 6));
                 Break;
             End;
-            Modify Player Variable(Event Player, Move_Speed, Add, 100);
+            Modify Player Variable(Event Player, Move_Speed, Add, 80);
             Start Heal Over Time(Event Player, Event Player, 9999, Multiply(Max Health(Event Player), 0.05));
             Set Player Variable(Event Player, Passive_Index, Last Heal Over Time ID);
             Set Player Variable(Event Player, Player_Health, Health(Event Player));
@@ -2393,7 +2393,7 @@ rule ("Choose/Check Passive Mod") {
             Call Subroutine(RejuvenationFX);
             Else;
             //__label_switch_2_12__:
-            Modify Player Variable(Event Player, Max_Health, Subtract, 30);
+            Modify Player Variable(Event Player, Max_Health, Subtract, 25);
             Start Rule(Spellslinger1, Do Nothing);
             Start Rule(Spellslinger2, Do Nothing);
             Start Rule(Spellslinger3, Do Nothing);
@@ -2402,7 +2402,7 @@ rule ("Choose/Check Passive Mod") {
             Start Rule(Spellslinger6, Do Nothing);
             Else;
             //__label_switch_2_13__:
-            Modify Player Variable(Event Player, Max_Health, Subtract, 60);
+            Modify Player Variable(Event Player, Max_Health, Subtract, 50);
             Start Rule(Archmage1, Do Nothing);
             Start Rule(Archmage2, Do Nothing);
             Start Rule(Archmage3, Do Nothing);
@@ -4608,13 +4608,16 @@ rule ("Active Mods 39 - Med-E-Port") {
         Play Effect(All Players(All Teams), Sigma Hypersphere Implosion Sound, Color(Team 1), Event Player, 150);
         Wait(0.3, Ignore Condition);
         Teleport(Event Player, Nearest Walkable Position(World Vector Of(Vector(0, 0.5, -3.5), (Event Player).Current_Target_A, Rotation And Translation)));
-        Wait(0.2, Ignore Condition);
+        Wait(0.1, Ignore Condition);
+        Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position((Event Player).Current_Target_A)), 3000, To World, Direction and Turn Rate);
+        Wait(0.3, Ignore Condition);
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Color(Team 1), (Event Player).Current_Target_A, 1);
         Play Effect(All Players(All Teams), Ana Biotic Grenade Explosion Effect, Color(Team 1), Event Player, 1);
         Play Effect(All Players(All Teams), Ana Biotic Grenade Increased Healing Sound, Color(Team 1), Event Player, 100);
         Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Event Player, 12);
         Play Effect(All Players(All Teams), Heal Target Active Effect, Color(Team 1), Event Player, 1);
         Set Player Variable(Event Player, Active_Affected_Players, Remove From Array(Players Within Radius(Event Player, 12, Team Of(Event Player), Surfaces), Event Player));
+        Stop Facing(Event Player);
         Wait(0.2, Ignore Condition);
         For Player Variable(Event Player, Active_Index, 0, If-Then-Else(Compare((Event Player).Optimize, ==, 0), Count Of((Event Player).Active_Affected_Players), Number Of Players(Team Of(Event Player))), 1);
             Heal(If-Then-Else(Compare((Event Player).Optimize, ==, 0), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Value In Array(All Players(Team Of(Event Player)), (Event Player).Active_Index)), Event Player, Multiply(Max Health(If-Then-Else(Compare((Event Player).Optimize, ==, 0), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index), Value In Array(All Players(Team Of(Event Player)), (Event Player).Active_Index))), 0.5));
@@ -5610,13 +5613,14 @@ rule ("Active Mods 49 - Void Creep (enemies die)") {
         (Event Player).Active_Mod_Skill_Toggle == 1;
     }
     actions {
-        While(And(Compare((Event Player).Radius, >, 0), Compare((Event Player).Radius, <, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6))));
+        While(Not(Array Contains(Array(If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6), 0), (Event Player).Radius)));
             For Player Variable(Event Player, Active_Index, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 If(Not(Array Contains(Players Within Radius((Event Player).Player_Position, (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Off), Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index))));
                     Enable Movement Collision With Environment(Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_4));
                 End;
                 Wait(0.016, Ignore Condition);
             End;
+            Wait(0.016, Ignore Condition);
             Set Player Variable(Event Player, Active_Affected_Players, Players Within Radius((Event Player).Player_Position, (Event Player).Radius, Opposite Team Of(Team Of(Event Player)), Off));
             For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Active_Affected_Players), 1);
                 If(Not(Array Contains((Event Player).Other_Players, Value In Array((Event Player).Active_Affected_Players, (Event Player).Active_Index_1))));
@@ -7129,7 +7133,7 @@ rule ("Passive Mods 5 - Boots of Mobility") {
             Modify Player Variable(Event Player, Move_Speed, Subtract, 100);
             Stop Heal Over Time((Event Player).Passive_Index);
             Set Player Variable(Event Player, Passive_Index, Null);
-            Wait(2.5, Ignore Condition);
+            Wait(3, Ignore Condition);
             Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
     }
 }
