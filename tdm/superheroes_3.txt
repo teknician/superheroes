@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.7.4, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.7.5, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -842,7 +842,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.4", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.5", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("GET POWERS....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -1439,7 +1439,6 @@ rule ("Passive Mods 13 - Spellslinger (Ability 2)") {
             Wait(3, Ignore Condition);
             Set Ability Cooldown(Event Player, Button(Ability 2), 0);
             Wait(0.05, Ignore Condition);
-            Wait(0.5, Ignore Condition);
         End;
     }
 }
@@ -1506,7 +1505,7 @@ rule ("Passive Mods 13 - Spellslinger (Secondary Fire)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 14));
-            Wait Until(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), 99999);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 14)), 99999);
             Wait(3, Ignore Condition);
             Set Ability Cooldown(Event Player, Button(Secondary Fire), 0);
             Wait(0.016, Ignore Condition);
@@ -1521,7 +1520,7 @@ rule ("Passive Mods 13 - Spellslinger (Primary Fire)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 14));
-            Wait Until(Compare(Ability Cooldown(Event Player, Button(Primary Fire)), >, 0), 99999);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Primary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 14)), 99999);
             Wait(3, Ignore Condition);
             Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
             Wait(0.016, Ignore Condition);
@@ -1536,16 +1535,14 @@ rule ("Passive Mods 14 - Archmage (Ability 1)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(And(Compare(Ability Cooldown(Event Player, Button(Ability 1)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)));
-                If(Compare(Hero Of(Event Player), ==, Hero(Ana)));
-                    Wait(6, Ignore Condition);
-                Else;
-                    Wait(1, Ignore Condition);
-                End;
-                Set Ability Cooldown(Event Player, Button(Ability 1), 0);
-                Wait(0.032, Ignore Condition);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Ability 1)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            If(Compare(Hero Of(Event Player), ==, Hero(Ana)));
+                Wait(6.5, Ignore Condition);
+            Else;
+                Wait(1, Ignore Condition);
             End;
-            Wait(0.5, Ignore Condition);
+            Set Ability Cooldown(Event Player, Button(Ability 1), 0);
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -1557,16 +1554,14 @@ rule ("Passive Mods 14 - Archmage (Ability 2)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(And(Compare(Ability Cooldown(Event Player, Button(Ability 2)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)));
-                If(Compare(Hero Of(Event Player), ==, Hero(Baptiste)));
-                    Wait(10, Ignore Condition);
-                Else;
-                    Wait(1, Ignore Condition);
-                End;
-                Set Ability Cooldown(Event Player, Button(Ability 2), 0);
-                Wait(0.032, Ignore Condition);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Ability 2)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            If(Compare(Hero Of(Event Player), ==, Hero(Baptiste)));
+                Wait(10, Ignore Condition);
+            Else;
             End;
-            Wait(0.5, Ignore Condition);
+            Wait(1, Ignore Condition);
+            Set Ability Cooldown(Event Player, Button(Ability 2), 0);
+            Wait(0.05, Ignore Condition);
         End;
     }
 }
@@ -1578,23 +1573,21 @@ rule ("Passive Mods 14 - Archmage (Resource)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(And(Or(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), Compare(Ability Resource(Event Player, Button(Secondary Fire)), <, 100)), Compare((Event Player).Passive_Mod, ==, 15)));
+            Wait Until(And(Compare(Ability Resource(Event Player, Button(Secondary Fire)), <, 100), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            Wait(1.25, Ignore Condition);
+            If(Compare(Hero Of(Event Player), ==, Hero(D.Va)));
+                Set Ability Resource(Event Player, Button(Secondary Fire), 100);
                 Wait(1.25, Ignore Condition);
-                If(Compare(Hero Of(Event Player), ==, Hero(D.Va)));
-                    Set Ability Resource(Event Player, Button(Secondary Fire), 100);
-                    Wait(1.25, Ignore Condition);
-                End;
-                If(Compare(Hero Of(Event Player), ==, Hero(Bastion)));
-                    Set Ability Resource(Event Player, Button(Secondary Fire), 100);
-                    Wait(1.25, Ignore Condition);
-                End;
-                If(Compare(Hero Of(Event Player), ==, Hero(Moira)));
-                    Set Ability Resource(Event Player, Button(Primary Fire), 100);
-                    Wait(5.5, Ignore Condition);
-                End;
-                Wait(0.032, Ignore Condition);
             End;
-            Wait(0.5, Ignore Condition);
+            If(Compare(Hero Of(Event Player), ==, Hero(Bastion)));
+                Set Ability Resource(Event Player, Button(Secondary Fire), 100);
+                Wait(1.25, Ignore Condition);
+            End;
+            If(Compare(Hero Of(Event Player), ==, Hero(Moira)));
+                Set Ability Resource(Event Player, Button(Primary Fire), 100);
+                Wait(5.5, Ignore Condition);
+            End;
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -1606,23 +1599,23 @@ rule ("Passive Mods 14 - Archmage (Ability Charge)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(And(Or(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 3), Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3)), Compare((Event Player).Passive_Mod, ==, 14)));
-                Wait(1.25, Ignore Condition);
-                If(Compare(Hero Of(Event Player), ==, Hero(Brigitte)));
-                    Set Ability Charge(Event Player, Button(Ability 2), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3), Add(Ability Charge(Event Player, Button(Ability 2)), 1), 3));
-                End;
-                If(Compare(Hero Of(Event Player), ==, Hero(Junkrat)));
-                    Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 2), Add(Ability Charge(Event Player, Button(Ability 1)), 1), 2));
-                End;
-                If(Compare(Hero Of(Event Player), ==, Hero(Symmetra)));
-                    Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 3), Add(Ability Charge(Event Player, Button(Ability 1)), 1), 3));
-                End;
-                If(Compare(Hero Of(Event Player), ==, Hero(Tracer)));
-                    Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3), Add(Ability Charge(Event Player, Button(Ability 2)), 1), 3));
-                End;
-                Wait(0.05, Ignore Condition);
+            Wait Until(And(Or(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 3), Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3)), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            If(Compare(Hero Of(Event Player), ==, Hero(Brigitte)));
+                Wait(1, Ignore Condition);
+                Set Ability Charge(Event Player, Button(Ability 2), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3), Add(Ability Charge(Event Player, Button(Ability 2)), 1), 3));
             End;
-            Wait(0.5, Ignore Condition);
+            If(Compare(Hero Of(Event Player), ==, Hero(Junkrat)));
+                Wait(1, Ignore Condition);
+                Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 2), Add(Ability Charge(Event Player, Button(Ability 1)), 1), 2));
+            End;
+            If(Compare(Hero Of(Event Player), ==, Hero(Symmetra)));
+                Wait(1, Ignore Condition);
+                Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 1)), <, 3), Add(Ability Charge(Event Player, Button(Ability 1)), 1), 3));
+            End;
+            If(Compare(Hero Of(Event Player), ==, Hero(Tracer)));
+                Set Ability Charge(Event Player, Button(Ability 1), If-Then-Else(Compare(Ability Charge(Event Player, Button(Ability 2)), <, 3), Add(Ability Charge(Event Player, Button(Ability 2)), 1), 3));
+            End;
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -1634,12 +1627,10 @@ rule ("Passive Mods 14 - Archmage (Secondary Fire)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(And(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)));
-                Wait(1, Ignore Condition);
-                Set Ability Cooldown(Event Player, Button(Secondary Fire), 0);
-                Wait(0.05, Ignore Condition);
-            End;
-            Wait(0.5, Ignore Condition);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Secondary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            Wait(1, Ignore Condition);
+            Set Ability Cooldown(Event Player, Button(Secondary Fire), 0);
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -1651,12 +1642,10 @@ rule ("Passive Mods 14 - Archmage (Primary Fire)") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 15));
-            While(Compare(Ability Cooldown(Event Player, Button(Primary Fire)), >, 0));
-                Wait(1, Ignore Condition);
-                Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
-                Wait(0.05, Ignore Condition);
-            End;
-            Wait(0.5, Ignore Condition);
+            Wait Until(And(Compare(Ability Cooldown(Event Player, Button(Primary Fire)), >, 0), Compare((Event Player).Passive_Mod, ==, 15)), 99999);
+            Wait(1, Ignore Condition);
+            Set Ability Cooldown(Event Player, Button(Primary Fire), 0);
+            Wait(0.016, Ignore Condition);
         End;
     }
 }
@@ -1690,7 +1679,7 @@ rule ("Passive Mods 17 - Smol Mode") {
             Abort If(Compare((Event Player).Mod_Menu_Select, !=, 3));
             Wait(0.05, Ignore Condition);
             Start Scaling Player(Event Player, 0.4, True);
-            Modify Player Variable(Event Player, Damage_Dealt, Subtract, 60);
+            Modify Player Variable(Event Player, Damage_Dealt, Subtract, 50);
             Modify Player Variable(Event Player, Move_Speed, Add, 50);
             Start Modifying Hero Voice Lines(Event Player, 1.5, True);
             Modify Player Variable(Event Player, Max_Health, Subtract, 50);
@@ -1698,12 +1687,12 @@ rule ("Passive Mods 17 - Smol Mode") {
             Set Crouch Enabled(Event Player, False);
             Wait(0.75, Ignore Condition);
             Set Crouch Enabled(Event Player, True);
-            Wait Until(And(Is Button Held(Event Player, Button(Crouch)), Not(Is Button Held(Event Player, Button(Interact)))), 99999);
+            Wait Until(Or(And(Is Button Held(Event Player, Button(Crouch)), Not(Is Button Held(Event Player, Button(Interact)))), Is Dead(Event Player)), 99999);
             Wait(0.05, Ignore Condition);
             Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
             Set Crouch Enabled(Event Player, False);
             Start Scaling Player(Event Player, 1, True);
-            Modify Player Variable(Event Player, Damage_Dealt, Add, 60);
+            Modify Player Variable(Event Player, Damage_Dealt, Add, 50);
             Modify Player Variable(Event Player, Move_Speed, Subtract, 50);
             Start Modifying Hero Voice Lines(Event Player, 1, True);
             Modify Player Variable(Event Player, Max_Health, Add, 50);
@@ -1720,9 +1709,9 @@ rule ("Passive Mods 17 - Smol Mode FX") {
         SmolModeFX;
     }
     actions {
-        Abort If(Entity Exists((Event Player).Passive_Mod_FX));
-        Create Icon(All Players(All Teams), World Vector Of(Vector(0, 0.5, 0), Event Player, Rotation And Translation), Happy, Visible To and Position, Color(Turquoise), False);
-        Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
+        If(Not(Entity Exists((Event Player).Passive_Mod_FX)));
+            Create Icon(All Players(All Teams), World Vector Of(Vector(0, 0.5, 0), Event Player, Rotation And Translation), Happy, Visible To and Position, Color(Turquoise), False);
+            Set Player Variable(Event Player, Passive_Mod_FX, Last Created Entity);
     }
 }
 
@@ -5558,7 +5547,6 @@ rule ("Active Mods 49 - Void Creep") {
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 4, Last Created Entity);
         Create Effect(All Players(All Teams), Ring, Color(Black), Add((Event Player).Player_Position, Vector(0, 0.25, 0)), Add((Event Player).Radius, 0.75), Visible To Position and Radius);
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 5, Last Created Entity);
-        Wait(0.65, Ignore Condition);
         Play Effect(All Players(All Teams), Bad Explosion, Color(Black), (Event Player).Player_Position, 6);
         Play Effect(All Players(All Teams), McCree Flashbang Explosion Sound, Null, (Event Player).Player_Position, 100);
         Chase Player Variable At Rate(Event Player, Radius, If-Then-Else(Compare((Event Player).Optimize, >, 0), 8, 6), 2, Destination and Rate);
@@ -6369,23 +6357,6 @@ rule ("Mods - Remove FX/Etc. on Death") {
     }
 }
 
-rule ("Passive Mods - Smol Mode (Deactivate) 2") {
-    event {
-        Subroutine;
-        SmolModeDeath;
-    }
-    actions {
-        Wait(0.5, Ignore Condition);
-        Start Scaling Player(Event Player, 1, True);
-        Set Player Variable(Event Player, Passive_Mod_Skill_Toggle, 0);
-        Wait(1, Ignore Condition);
-        Start Modifying Hero Voice Lines(Event Player, 1, True);
-        Set Player Variable(Event Player, Max_Health, 100);
-        Set Player Variable(Event Player, Damage_Dealt, 100);
-        Set Player Variable(Event Player, Move_Speed, 100);
-    }
-}
-
 rule ("Passive Mods - Corpse Explosion (Active)") {
     event {
         Subroutine;
@@ -6467,9 +6438,6 @@ rule ("Mods PlayerDied Events") {
     actions {
         If(Compare((Event Player).Active_Mod, ==, 19));
             Call Subroutine(ZeroGDeath);
-        End;
-        If(Compare((Event Player).Passive_Mod, ==, 18));
-            Start Rule(SmolModeDeath, Do Nothing);
         Else If(Compare((Event Player).Passive_Mod, ==, 21));
             Call Subroutine(CorpseExplosion);
         Else If(And(And(Compare((Event Player).Passive_Mod, ==, 22), Compare(Attacker, !=, Victim)), Compare(Filtered Array(All Players(All Teams), Compare(Current Array Element, ==, Attacker)), ==, True)));
