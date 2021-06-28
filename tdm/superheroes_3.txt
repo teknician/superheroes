@@ -239,79 +239,80 @@ subroutines {
     35: FrostArmorFX
     36: BootsOfMobility
     37: Boxer
-    38: Punisher
-    39: EvilEye
-    40: SuperheroLanding
-    41: SelfSacrifice
-    42: Bleed
-    43: Leech
-    44: Clipless
-    45: Blink
-    46: DeathGrip
-    47: Preparation
-    48: ZeroG
-    49: Corruption
-    50: Translocate
-    51: EntanglingRoots
-    52: Blind
-    53: Fear
-    54: Shadowstep
-    55: GoombaStomp
-    56: SaveDisc
-    57: SaveDiscTeleport
-    58: Telekinesis
-    59: FeignDeath
-    60: Sneak
-    61: Hex
-    62: Taunt
-    63: Cleanse
-    64: LifeTap
-    65: LightningBolt
-    66: HealthingHand
-    67: Railgun
-    68: ArmorField
-    69: Immolation
-    70: Ambush
-    71: Knockout
-    72: BoxerDealtDmg
-    73: Devour
-    74: Infection
-    75: BoxerBrig
-    76: BoxerRein
-    77: Disruption
-    78: Lifesteal
-    79: OraOra
-    80: BouncingBlade
-    81: Lifesplit
-    82: PowerGlove
-    83: ElementalCharge
-    84: VsGoliathDealtDmg
-    85: Mastery
-    86: Pummel
-    87: SpeedLimiter
-    88: ManaShieldDamaged
-    89: ThornsDamaged
-    90: FrostArmorDamaged
-    91: BootsOfMobilityDamaged
-    92: InfectionDamaged
-    93: PainToGainDamaged
-    94: FuryDamaged
-    95: ResilientDamaged
-    96: VsGoliathDamaged
-    97: RemoveFXOnDeath
-    98: SmolModeDeath
-    99: CorpseExplosion
-    100: Revenge
-    101: ZeroGDeath
-    102: LevelUpDing
-    103: KillstreakFinalBlow
-    104: VictoryRush
-    105: Defile
-    106: ActiveModStrings
-    107: RandomPassive
-    108: RandomActive
-    109: PlayerReset
-    110: MovementReset
+    38: Fury
+    39: Punisher
+    40: EvilEye
+    41: SuperheroLanding
+    42: SelfSacrifice
+    43: Bleed
+    44: Leech
+    45: Clipless
+    46: Blink
+    47: DeathGrip
+    48: Preparation
+    49: ZeroG
+    50: Corruption
+    51: Translocate
+    52: EntanglingRoots
+    53: Blind
+    54: Fear
+    55: Shadowstep
+    56: GoombaStomp
+    57: SaveDisc
+    58: SaveDiscTeleport
+    59: Telekinesis
+    60: FeignDeath
+    61: Sneak
+    62: Hex
+    63: Taunt
+    64: Cleanse
+    65: LifeTap
+    66: LightningBolt
+    67: HealthingHand
+    68: Railgun
+    69: ArmorField
+    70: Immolation
+    71: Ambush
+    72: Knockout
+    73: BoxerDealtDmg
+    74: Devour
+    75: Infection
+    76: BoxerBrig
+    77: BoxerRein
+    78: Disruption
+    79: Lifesteal
+    80: OraOra
+    81: BouncingBlade
+    82: Lifesplit
+    83: PowerGlove
+    84: ElementalCharge
+    85: VsGoliathDealtDmg
+    86: Mastery
+    87: Pummel
+    88: SpeedLimiter
+    89: ManaShieldDamaged
+    90: ThornsDamaged
+    91: FrostArmorDamaged
+    92: BootsOfMobilityDamaged
+    93: InfectionDamaged
+    94: PainToGainDamaged
+    95: FuryDamaged
+    96: ResilientDamaged
+    97: VsGoliathDamaged
+    98: RemoveFXOnDeath
+    99: SmolModeDeath
+    100: CorpseExplosion
+    101: Revenge
+    102: ZeroGDeath
+    103: LevelUpDing
+    104: KillstreakFinalBlow
+    105: VictoryRush
+    106: Defile
+    107: ActiveModStrings
+    108: RandomPassive
+    109: RandomActive
+    110: PlayerReset
+    111: MovementReset
 }
 rule ("Workshop settings") {
     event {
@@ -2175,6 +2176,36 @@ rule ("Passive Mods 32 - Frost Armor FX") {
     }
 }
 
+rule ("Passive Mods 32 - Frost Armor FX") {
+    event {
+        Subroutine;
+        Fury;
+    }
+    actions {
+        While(Compare((Event Player).Passive_Mod, ==, 34));
+            Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
+            For Player Variable(Event Player, Passive_Index, 0, 5, 1);
+                Set Player Variable At Index(Event Player, Num_2, (Event Player).Passive_Index, Health(Event Player));
+                If(Compare(Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index)), <=, Multiply((Event Player).Passive_Index_1, 0.8)));
+                    Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
+                    Set Player Variable(Event Player, Passive_Index_2, True);
+                    Wait Until(Compare((Event Player).Passive_Index_2, ==, False), 5);
+                    Set Player Variable(Event Player, Passive_Index_2, False);
+                    Skip(8);
+                End;
+                Wait(0.5, Ignore Condition);
+            End;
+            If(Compare(Subtract(First Of((Event Player).Num_2), Value In Array((Event Player).Num_2, 4)), >=, Multiply(0.2, First Of((Event Player).Num_2))));
+                Set Player Variable(Event Player, Passive_Index_2, True);
+            Else;
+                Set Player Variable(Event Player, Passive_Index_2, False);
+            End;
+            //lbl_0:
+            Wait(0.5, Ignore Condition);
+        End;
+    }
+}
+
 rule ("Passive Mods 38 - Boxer") {
     event {
         Subroutine;
@@ -2398,7 +2429,7 @@ rule ("Choose/Check Passive Mod") {
         Else;
             Wait(0.032, Ignore Condition);
             If(True);
-            Skip(Value In Array(Array(94, 0, 1, 2, 4, 6, 9, 11, 13, 18, 20, 23, 26, 29, 37, 45, 48, 50, 53, 55, 58, 60, 62, 64, 66, 68, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 39, 40, 41, 43, 47, 48, 50, 51), (Event Player).Passive_Mod))));
+            Skip(Value In Array(Array(97, 0, 1, 2, 4, 6, 9, 11, 13, 18, 20, 23, 26, 29, 37, 45, 48, 50, 53, 55, 58, 60, 62, 64, 66, 68, 71, 73, 75, 77, 79, 80, 82, 84, 86, 88, 90, 92, 94, 96), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 39, 40, 41, 43, 45, 47, 48, 50, 51), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
             Else;
             //__label_switch_2_1__:
@@ -2407,7 +2438,7 @@ rule ("Choose/Check Passive Mod") {
             Modify Player Variable(Event Player, Damage_Dealt, Add, 40);
             Else;
             //__label_switch_2_3__:
-            Call Subroutine(MoveSpeed160);
+            Start Rule(MoveSpeed160, Do Nothing);
             Else;
             //__label_switch_2_4__:
             Modify Player Variable(Event Player, Move_Speed, Add, 33);
@@ -2415,7 +2446,7 @@ rule ("Choose/Check Passive Mod") {
             Else;
             //__label_switch_2_5__:
             "@Name \"Passive Mods 8 - Recklessness\""
-            Call Subroutine(Recklessness);
+            Start Rule(Recklessness, Do Nothing);
             Else;
             //__label_switch_2_6__:
             Start Rule(BootsOfMobility, Do Nothing);
@@ -2439,7 +2470,7 @@ rule ("Choose/Check Passive Mod") {
             Else;
             //__label_switch_2_11__:
             Start Rule(Rejuvenation, Do Nothing);
-            Call Subroutine(RejuvenationFX);
+            Start Rule(RejuvenationFX, Do Nothing);
             Else;
             //__label_switch_2_12__:
             Modify Player Variable(Event Player, Max_Health, Subtract, 25);
@@ -2468,14 +2499,14 @@ rule ("Choose/Check Passive Mod") {
             Else;
             //__label_switch_2_16__:
             Start Rule(SmolMode, Do Nothing);
-            Call Subroutine(SmolModeFX);
+            Start Rule(SmolModeFX, Do Nothing);
             Else;
             //__label_switch_2_17__:
             Start Rule(ImmolationAura, Do Nothing);
             Else;
             //__label_switch_2_18__:
             Start Rule(Forcefield, Do Nothing);
-            Call Subroutine(ForcefieldFX);
+            Start Rule(ForcefieldFX, Do Nothing);
             Else;
             //__label_switch_2_19__:
             Start Rule(CheatDeath, Do Nothing);
@@ -2484,7 +2515,7 @@ rule ("Choose/Check Passive Mod") {
             Start Rule(LevelUp, Do Nothing);
             Else;
             //__label_switch_2_21__:
-            Call Subroutine(Killstreak);
+            Start Rule(Killstreak, Do Nothing);
             Else;
             //__label_switch_2_22__:
             Start Rule(DarkRitual, Do Nothing);
@@ -2497,39 +2528,44 @@ rule ("Choose/Check Passive Mod") {
             Start Rule(OmegaBoost, Do Nothing);
             Else;
             //__label_switch_2_25__:
-            Call Subroutine(MaxMight);
+            Start Rule(MaxMight, Do Nothing);
             Else;
             //__label_switch_2_26__:
-            Call Subroutine(ManaShield);
+            Start Rule(ManaShield, Do Nothing);
             Else;
             //__label_switch_2_27__:
-            Call Subroutine(ThornsFX);
+            Start Rule(ThornsFX, Do Nothing);
             Else;
             //__label_switch_2_28__:
-            Call Subroutine(FrostArmorFX);
+            Start Rule(FrostArmorFX, Do Nothing);
             Else;
             //__label_switch_2_29__:
+            Start Rule(Fury, Do Nothing);
+            //__label_switch_2_30__:
             Call Subroutine(Boxer);
             Else;
-            //__label_switch_2_30__:
+            //__label_switch_2_31__:
             Start Rule(EvilEye, Do Nothing);
             Else;
-            //__label_switch_2_31__:
+            //__label_switch_2_32__:
             Start Rule(SuperheroLanding, Do Nothing);
             Else;
-            //__label_switch_2_32__:
+            //__label_switch_2_33__:
             Set Player Variable(Event Player, Optimize, 3);
             Else;
-            //__label_switch_2_33__:
-            Start Rule(SelfSacrifice, Do Nothing);
-            Else;
             //__label_switch_2_34__:
-            Start Rule(Leech, Do Nothing);
+            Start Rule(Punisher, Do Nothing);
             Else;
             //__label_switch_2_35__:
-            Set Knockback Dealt(Event Player, 200);
+            Start Rule(SelfSacrifice, Do Nothing);
             Else;
             //__label_switch_2_36__:
+            Start Rule(Leech, Do Nothing);
+            Else;
+            //__label_switch_2_37__:
+            Set Knockback Dealt(Event Player, 200);
+            Else;
+            //__label_switch_2_38__:
             Start Rule(Clipless, Do Nothing);
             //__label_switch_2_default__:
             End;
@@ -2629,7 +2665,7 @@ rule ("Active Mods 1 - Blink") {
     actions {
         Play Effect(All Players(All Teams), Tracer Recall Disappear Effect, Team Of(Event Player), Event Player, 3);
         Wait(0.1, Ignore Condition);
-        Set Player Variable At Index(Event Player, Num_1, 0, Ray Cast Hit Position(Eye Position(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 10)), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 7))), Null, All Players(Team Of(Event Player)), True));
+        Set Player Variable At Index(Event Player, Num_1, 0, Ray Cast Hit Position(Eye Position(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 11)), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 8))), Null, All Players(Team Of(Event Player)), True));
         Teleport(Event Player, First Of((Event Player).Num_1));
         Play Effect(All Players(All Teams), Symmetra Teleporter Reappear Sound, Opposite Team Of(Team Of(Event Player)), Event Player, 200);
         If(Not(Is Moving(Event Player)));
@@ -3678,7 +3714,7 @@ rule ("Active Mods 21 - Inner Power") {
         Set Player Variable At Index(Event Player, Active_Mod_FX_Array, 1, Last Created Entity);
         Wait(0.15, Ignore Condition);
         "eventPlayer.isHoldingButton(Button.MELEE) or (eventPlayer.getCurrentHero() in [Hero.BRIGITTE, Hero.REINHARDT] and eventPlayer.isHoldingButton(Button.RELOAD))"
-        Add Health Pool To Player(Event Player, Shields, Max(100, Multiply(Ultimate Charge Percent(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 4, 3))), False, False);
+        Add Health Pool To Player(Event Player, Shields, Max(150, Multiply(Ultimate Charge Percent(Event Player), If-Then-Else(Compare((Event Player).Optimize, >, 0), 6, 5))), False, False);
         Set Player Variable(Event Player, Health_Temp, Last Created Health Pool);
         Set Ultimate Charge(Event Player, If-Then-Else(Compare((Event Player).Optimize, >, 0), 33.33, 0));
         Wait(3, Ignore Condition);
@@ -4780,7 +4816,7 @@ rule ("Active Mods 40 - Armor Field") {
         Set Player Variable(Event Player, Cd_Color, Custom Color(180, 180, 180, 255));
         Set Player Variable(Event Player, Cooldown_String_1, Custom String("Cooldown:", Null, Null, Null));
         Chase Player Variable At Rate(Event Player, Cooldown_Chase, 0, 1, Destination and Rate);
-        Wait(9, Ignore Condition);
+        Wait(9.75, Ignore Condition);
         For Player Variable(Event Player, Active_Index_1, 0, Count Of((Event Player).Other_Players), 1);
             Remove Health Pool From Player((Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1)).Armor_Pool);
             Set Player Variable(Value In Array((Event Player).Other_Players, (Event Player).Active_Index_1), Armor_Pool, Null);
@@ -7129,16 +7165,7 @@ rule ("Passive Mods - Fury (Active)") {
         FuryDamaged;
     }
     actions {
-        Set Player Variable(Victim, Passive_Time, Total Time Elapsed);
-        Set Player Variable(Victim, Passive_Index, Health(Victim));
-        While(Compare(Add((Victim).Passive_Time, 1.25), >, Total Time Elapsed));
-            If(Compare(Subtract(Health(Victim), Multiply((Victim).Passive_Index, 0.2)), <=, Multiply(Health(Victim), 0.8)));
-                Set Player Variable(Victim, Passive_Index_1, True);
-                Break;
-            End;
-            Wait(0.032, Ignore Condition);
-        End;
-        If(And(Compare((Victim).Passive_Index, ==, True), Not(Has Status(Victim, Unkillable))));
+        If(And(Compare((Victim).Passive_Index_2, ==, True), Not(Has Status(Victim, Unkillable))));
             Create Effect(All Players(All Teams), Bad Aura, Color(Rose), Victim, 1, Visible To Position and Radius);
             Set Player Variable At Index(Victim, Passive_Mod_FX_Array, 0, Last Created Entity);
             Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), Victim, 1, Position and Radius);
@@ -7151,7 +7178,7 @@ rule ("Passive Mods - Fury (Active)") {
             Modify Player Variable(Victim, Damage_Dealt, Subtract, 50);
             Modify Player Variable(Victim, Move_Speed, Subtract, 50);
             Destroy Effect((Victim).Passive_Mod_FX_Array);
-            Set Player Variable(Victim, Passive_Index_1, False);
+            Set Player Variable(Victim, Passive_Index_2, False);
         End;
         Wait(6, Ignore Condition);
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 50);
