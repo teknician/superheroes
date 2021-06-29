@@ -2173,12 +2173,7 @@ rule ("Passive Mods 33 - Fury (Health check)") {
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 34));
             Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
-            For Player Variable(Event Player, Passive_Index, 0, 10, 1);
-                Set Player Variable At Index(Event Player, Num_2, (Event Player).Passive_Index, Health(Event Player));
-                Abort If(Compare((Event Player).Passive_Mod, !=, 34));
-                Wait(0.2, Ignore Condition);
-            End;
-            Wait(0.5, Ignore Condition);
+            Wait(1.25, Ignore Condition);
         End;
     }
 }
