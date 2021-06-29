@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.7.8, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.7.9, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -864,7 +864,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 45, Custom String("Punisher: 2x damage to enemies below 50% HP. Take 2x damage when below 50% hp.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 46, Custom String("Mastery: Your default hero abilities deal double damage.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 47, Custom String("Self Sacrifice: Take 5% of your max HP as damage/sec. Heal teammates within 15m for 12% their max HP/sec.", Null, Null, Null));
-        Set Global Variable At Index(Passive_Mod_Strings, 48, Custom String("Leech: Drain 35 HP and 5% ult charge /sec. from enemies within 10 meters.", Null, Null, Null));
+        Set Global Variable At Index(Passive_Mod_Strings, 48, Custom String("Leech: Drain 40 HP and 5% ult charge /sec. from enemies within 10 meters.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 49, Custom String("Defile: Eliminations deal 40% of the victim's Max HP to nearby enemies after they die.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 50, Custom String("Speed Limiter: 2x Knockback dealt. Deal extra damage based on enemy speed.", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 51, Custom String("Clipless: Infinite ammo.", Null, Null, Null));
@@ -872,7 +872,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.8", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.7.9", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("GET POWERS....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -2176,7 +2176,7 @@ rule ("Passive Mods 32 - Frost Armor FX") {
     }
 }
 
-rule ("Passive Mods 32 - Frost Armor FX") {
+rule ("Passive Mods 33 - Fury (Health check)") {
     event {
         Subroutine;
         Fury;
@@ -2184,23 +2184,13 @@ rule ("Passive Mods 32 - Frost Armor FX") {
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 34));
             Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
-            For Player Variable(Event Player, Passive_Index, 0, 5, 1);
+            For Player Variable(Event Player, Passive_Index, 0, 10, 1);
                 Set Player Variable At Index(Event Player, Num_2, (Event Player).Passive_Index, Health(Event Player));
-                If(Compare(Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index)), <=, Multiply((Event Player).Passive_Index_1, 0.8)));
-                    Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
-                    Set Player Variable(Event Player, Passive_Index_2, True);
-                    Wait Until(Compare((Event Player).Passive_Index_2, ==, False), 5);
-                    Set Player Variable(Event Player, Passive_Index_2, False);
-                    Skip(8);
+                If(Compare((Event Player).Mod_Menu_Select, !=, 3));
+                    Break;
                 End;
-                Wait(0.5, Ignore Condition);
+                Wait(0.2, Ignore Condition);
             End;
-            If(Compare(Subtract(First Of((Event Player).Num_2), Value In Array((Event Player).Num_2, 4)), >=, Multiply(0.2, First Of((Event Player).Num_2))));
-                Set Player Variable(Event Player, Passive_Index_2, True);
-            Else;
-                Set Player Variable(Event Player, Passive_Index_2, False);
-            End;
-            //lbl_0:
             Wait(0.5, Ignore Condition);
         End;
     }
@@ -2319,12 +2309,10 @@ rule ("Passive Mods 44 - Punisher") {
     }
     actions {
         While(Compare((Event Player).Passive_Mod, ==, 45));
-            Start Damage Modification(Event Player, All Players(Opposite Team Of(Team Of(Event Player))), 0.001, Receivers Damagers and Damage Percent);
+            Start Damage Modification(Event Player, All Players(Opposite Team Of(Team Of(Event Player))), 0.1, Receivers Damagers and Damage Percent);
             Set Player Variable(Event Player, Passive_Index, Last Damage Modification ID);
-            Create HUD Text(Event Player, Custom String("{0}, 0.001 dmg taken", (Event Player).Passive_Index, Null, Null), Null, Null, Right, 5, Color(White), Null, Null, Visible To Sort Order String and Color, Visible Always);
-            Start Damage Modification(All Players(Opposite Team Of(Team Of(Event Player))), Event Player, 0.001, Receivers Damagers and Damage Percent);
+            Start Damage Modification(All Players(Opposite Team Of(Team Of(Event Player))), Event Player, 0.1, Receivers Damagers and Damage Percent);
             Set Player Variable(Event Player, Passive_Index_1, Last Damage Modification ID);
-            Create HUD Text(Event Player, Custom String("{0}, 0.001 dmg taken", (Event Player).Passive_Index_1, Null, Null), Null, Null, Right, 6, Color(White), Null, Null, Visible To Sort Order String and Color, Visible Always);
             Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
             Stop Damage Modification((Event Player).Passive_Index);
             Stop Damage Modification((Event Player).Passive_Index_1);
@@ -2382,9 +2370,9 @@ rule ("Passive Mods 47 - Leech") {
             While(And(And(Is True For Any(All Players(All Teams), Compare(Distance Between(Event Player, Current Array Element), <=, 10)), Compare((Event Player).Passive_Mod, ==, 48)), Is Alive(Event Player)));
                 Set Player Variable(Event Player, Affected_Players, Remove From Array(Players Within Radius(Eye Position(Event Player), 10, Opposite Team Of(Team Of(Event Player)), Surfaces And Enemy Barriers), Event Player));
                 For Player Variable(Event Player, Passive_Index, 0, Count Of((Event Player).Affected_Players), 1);
-                    If(And(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >=, 6), Compare(Health(Event Player), <, Max Health(Event Player))));
-                        Heal(Event Player, Null, 7);
-                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 7));
+                    If(And(Compare(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 15), Compare(Health(Event Player), <, Max Health(Event Player))));
+                        Heal(Event Player, Null, 8);
+                        Set Player Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index), Subtract(Health(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), 8));
                     End;
                     If(And(Compare(Ultimate Charge Percent(Value In Array((Event Player).Affected_Players, (Event Player).Passive_Index)), >, 1), Compare(Ultimate Charge Percent(Event Player), <, 100)));
                         Set Ultimate Charge(Event Player, Round To Integer(Add(Ultimate Charge Percent(Event Player), 1), Up));
@@ -7030,14 +7018,12 @@ rule ("Mods PlayerDealtDamage Events") {
                 Start Rule(Mastery, Do Nothing);
             Else If(Compare((Event Player).Passive_Mod, ==, 45));
                 "Punisher"
-                If(And(And(Compare(Normalized Health(Victim), <=, 0.5), Compare(Event Ability, !=, Null)), Compare(Team Of(Attacker), !=, Team Of(Victim))));
-                    Damage(Victim, Attacker, Multiply(Event Damage, 2000));
-                    Wait(0.016, Ignore Condition);
+                If(And(Compare(Normalized Health(Victim), <=, 0.5), Compare(Event Ability, !=, Null)));
+                    Damage(Victim, Attacker, Subtract(Multiply(Event Damage, 200000), Event Damage));
                 End;
                 "Punisher"
-                If(And(And(Compare(Normalized Health(Victim), >, 0.5), Compare(Event Ability, !=, Null)), Compare(Team Of(Attacker), !=, Team Of(Victim))));
-                    Damage(Victim, Attacker, Multiply(Event Damage, 1000));
-                    Wait(0.016, Ignore Condition);
+                If(And(Compare(Normalized Health(Victim), >, 0.5), Compare(Event Ability, !=, Null)));
+                    Damage(Victim, Attacker, Subtract(Multiply(Event Damage, 100000), Event Damage));
                 End;
             Else If(Compare((Attacker).Passive_Mod, ==, 48));
                 Start Rule(Bleed, Do Nothing);
@@ -7165,7 +7151,18 @@ rule ("Passive Mods - Fury (Active)") {
         FuryDamaged;
     }
     actions {
-        If(And(Compare((Victim).Passive_Index_2, ==, True), Not(Has Status(Victim, Unkillable))));
+        If(And(Compare(Health(Event Player), <=, Multiply((Event Player).Passive_Index_1, 0.8)), Not(Has Status(Victim, Unkillable))));
+            Set Player Variable(Event Player, Num_3, True);
+        Else If(Not(Has Status(Victim, Unkillable)));
+            For Player Variable(Event Player, Passive_Index_2, 0, 10, 1);
+                If(Compare(Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index_2)), <=, Multiply((Event Player).Passive_Index_1, 0.8)));
+                    Set Player Variable(Event Player, Num_3, True);
+                    Break;
+                End;
+                Wait(0.016, Ignore Condition);
+            End;
+        End;
+        If(Compare((Event Player).Num_3, ==, True));
             Create Effect(All Players(All Teams), Bad Aura, Color(Rose), Victim, 1, Visible To Position and Radius);
             Set Player Variable At Index(Victim, Passive_Mod_FX_Array, 0, Last Created Entity);
             Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), Victim, 1, Position and Radius);
@@ -7178,7 +7175,7 @@ rule ("Passive Mods - Fury (Active)") {
             Modify Player Variable(Victim, Damage_Dealt, Subtract, 50);
             Modify Player Variable(Victim, Move_Speed, Subtract, 50);
             Destroy Effect((Victim).Passive_Mod_FX_Array);
-            Set Player Variable(Victim, Passive_Index_2, False);
+            Set Player Variable(Victim, Num_3, False);
         End;
         Wait(6, Ignore Condition);
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 50);
@@ -7268,14 +7265,12 @@ rule ("Mods PlayerTookDamage Events") {
             End;
             If(Compare((Event Player).Passive_Mod, ==, 45));
                 "Punisher"
-                If(And(And(Compare(Normalized Health(Victim), <=, 0.5), Compare(Event Ability, !=, Null)), Compare(Team Of(Attacker), !=, Team Of(Victim))));
-                    Damage(Victim, Attacker, Multiply(Event Damage, 2000));
-                    Wait(0.016, Ignore Condition);
+                If(And(Compare(Normalized Health(Victim), <=, 0.5), Compare(Event Ability, !=, Null)));
+                    Damage(Victim, Attacker, Subtract(Multiply(Event Damage, 200000), Event Damage));
                 End;
                 "Punisher"
-                If(And(And(Compare(Normalized Health(Victim), >, 0.5), Compare(Event Ability, !=, Null)), Compare(Team Of(Attacker), !=, Team Of(Victim))));
-                    Damage(Victim, Attacker, Multiply(Event Damage, 1000));
-                    Wait(0.016, Ignore Condition);
+                If(And(Compare(Normalized Health(Victim), >, 0.5), Compare(Event Ability, !=, Null)));
+                    Damage(Victim, Attacker, Subtract(Multiply(Event Damage, 100000), Event Damage));
                 End;
             End;
             If(And(Compare((Event Player).Passive_Mod, ==, 38), Compare(Hero Of(Attacker), ==, Hero Of(Victim))));
