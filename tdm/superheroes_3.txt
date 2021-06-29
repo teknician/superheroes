@@ -1199,6 +1199,8 @@ rule ("Reset Player Parameters") {
         Set Player Variable(Event Player, Radius, 0);
         Set Player Variable At Index(Event Player, Soulmates, 1, False);
         Wait(0.016, Ignore Condition);
+        Stop Damage Modification((Event Player).Passive_Index);
+        Stop Damage Modification((Event Player).Passive_Index_1);
         Set Player Variable At Index(Event Player, Num_0, 0, 0);
         Set Player Variable At Index(Event Player, Num_0, 1, Custom String("", Null, Null, Null));
         Set Player Variable At Index(Event Player, Num_0, 2, 0);
@@ -1788,7 +1790,7 @@ rule ("Passive Mods 19 - Forcefield FX") {
         If(Not(Entity Exists((Event Player).Passive_Mod_FX_Array)));
             Create Effect(All Players(All Teams), Ring, Color(Aqua), Event Player, 7, Visible To Position and Radius);
             Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 0, Last Created Entity);
-            Create Effect(All Players(All Teams), Lúcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
+            Create Effect(All Players(All Teams), úcio Sound Barrier Protected Sound, Color(Team 1), Event Player, 22.5, Visible To Position and Radius);
             Set Player Variable At Index(Event Player, Passive_Mod_FX_Array, 1, Last Created Entity);
     }
 }
@@ -2173,9 +2175,7 @@ rule ("Passive Mods 33 - Fury (Health check)") {
             Set Player Variable(Event Player, Passive_Index_1, Health(Event Player));
             For Player Variable(Event Player, Passive_Index, 0, 10, 1);
                 Set Player Variable At Index(Event Player, Num_2, (Event Player).Passive_Index, Health(Event Player));
-                If(Compare((Event Player).Mod_Menu_Select, !=, 3));
-                    Break;
-                End;
+                Abort If(Compare((Event Player).Passive_Mod, !=, 34));
                 Wait(0.2, Ignore Condition);
             End;
             Wait(0.5, Ignore Condition);
@@ -2300,9 +2300,8 @@ rule ("Passive Mods 44 - Punisher") {
             Set Player Variable(Event Player, Passive_Index, Last Damage Modification ID);
             Start Damage Modification(All Players(Opposite Team Of(Team Of(Event Player))), Event Player, 1, Receivers Damagers and Damage Percent);
             Set Player Variable(Event Player, Passive_Index_1, Last Damage Modification ID);
-            Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
-            Stop Damage Modification((Event Player).Passive_Index);
-            Stop Damage Modification((Event Player).Passive_Index_1);
+            Wait Until(Compare((Event Player).Passive_Mod, !=, 45), 99999);
+            Abort;
         End;
     }
 }
@@ -6345,7 +6344,7 @@ rule ("Close out of Mod Menu") {
             If(Compare((Event Player).Passive_Mod, !=, 29));
                 Set Player Variable(Event Player, Omega_Charge, 0);
             End;
-            Wait(1, Ignore Condition);
+            Wait(0.5, Ignore Condition);
         "Close active menu, fully exit"
         Else If(Compare((Event Player).Mod_Menu_Select, ==, 2));
             "Get a random mod"
@@ -7143,13 +7142,14 @@ rule ("Passive Mods - Fury (Active)") {
             Set Player Variable(Event Player, Num_3, True);
         Else If(Not(Has Status(Victim, Unkillable)));
             For Player Variable(Event Player, Passive_Index_2, 0, 10, 1);
-                If(Compare(Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index_2)), <=, Multiply((Event Player).Passive_Index_1, 0.8)));
+                If(Compare(Compare(0, <, Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index_2))), <=, Multiply((Event Player).Passive_Index_1, 0.2)));
                     Set Player Variable(Event Player, Num_3, True);
                     Break;
                 End;
                 Wait(0.016, Ignore Condition);
             End;
         End;
+        Wait(0.016, Ignore Condition);
         If(Compare((Event Player).Num_3, ==, True));
             Create Effect(All Players(All Teams), Bad Aura, Color(Rose), Victim, 1, Visible To Position and Radius);
             Set Player Variable At Index(Victim, Passive_Mod_FX_Array, 0, Last Created Entity);
@@ -7164,6 +7164,8 @@ rule ("Passive Mods - Fury (Active)") {
             Modify Player Variable(Victim, Move_Speed, Subtract, 50);
             Destroy Effect((Victim).Passive_Mod_FX_Array);
             Set Player Variable(Victim, Num_3, False);
+        Else;
+            Abort;
         End;
         Wait(6, Ignore Condition);
         Play Effect(Event Player, Buff Impact Sound, Null, Event Player, 50);
