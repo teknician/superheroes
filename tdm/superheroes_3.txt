@@ -2,7 +2,7 @@ settings
 {
 	main
 	{
-		Description: "Code: 33CCY. Superpowers TDM - V2.8.0, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
+		Description: "Code: 33CCY. Superpowers TDM - V2.8.1, by ĿUCKYNUMBER. Players choose 1 Passive and 1 Active ability (50 choices each). 80,000+ ability/hero combinations! Original Author: PainRelievers. Thanks to the ELO Hell Workshop Discord for all their help."
 	}
 	lobby
 	{
@@ -872,7 +872,7 @@ rule ("Initialization - Passive/Active Mod Strings, HUD Instructions") {
         Set Global Variable At Index(Passive_Mod_Strings, 53, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 54, Custom String("", Null, Null, Null));
         Set Global Variable At Index(Passive_Mod_Strings, 55, Custom String("", Null, Null, Null));
-        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.8.0", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("SUPERPOWERS 2.8.1", Null, Null, Null), Left, 1, Null, Null, Color(Sky Blue), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("GET POWERS....................Hold Reload + Interact", Null, Null, Null), Left, 2, Null, Null, Color(Lime Green), Visible To, Default Visibility);
         Create HUD Text(All Players(All Teams), Null, Custom String("{0} Must be out of combat to open menu\n{1} Change Camera...............Hold Crouch + Interact\n{2}", Icon String(Warning), Icon String(Eye), Custom String("{0} Stuck?..................................Hold down Reload\nCODE: 33CCY", Icon String(Sad), Null, Null)), Null, Left, 3, Null, Color(White), Null, Visible To, Default Visibility);
         "hudSubheader(getAllPlayers(), \"CODE: 33CCY\", HudPosition.LEFT, 6, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)"
@@ -7133,19 +7133,7 @@ rule ("Passive Mods - Fury (Active)") {
         FuryDamaged;
     }
     actions {
-        If(And(Compare(Health(Event Player), <=, Multiply((Event Player).Passive_Index_1, 0.8)), Not(Has Status(Victim, Unkillable))));
-            Set Player Variable(Event Player, Num_3, True);
-        Else If(Not(Has Status(Victim, Unkillable)));
-            For Player Variable(Event Player, Passive_Index_2, 0, 10, 1);
-                If(Compare(Compare(0, <, Subtract((Event Player).Passive_Index_1, Value In Array((Event Player).Num_2, (Event Player).Passive_Index_2))), <=, Multiply((Event Player).Passive_Index_1, 0.2)));
-                    Set Player Variable(Event Player, Num_3, True);
-                    Break;
-                End;
-                Wait(0.016, Ignore Condition);
-            End;
-        End;
-        Wait(0.016, Ignore Condition);
-        If(Compare((Event Player).Num_3, ==, True));
+        If(And(Compare(Subtract((Event Player).Passive_Index_1, Health(Event Player)), >=, Multiply(Max Health(Event Player), 0.2)), Not(Has Status(Victim, Unkillable))));
             Create Effect(All Players(All Teams), Bad Aura, Color(Rose), Victim, 1, Visible To Position and Radius);
             Set Player Variable At Index(Victim, Passive_Mod_FX_Array, 0, Last Created Entity);
             Create Effect(All Players(All Teams), Winston Primal Rage Effect, Color(Team 2), Victim, 1, Position and Radius);
@@ -7158,7 +7146,6 @@ rule ("Passive Mods - Fury (Active)") {
             Modify Player Variable(Victim, Damage_Dealt, Subtract, 50);
             Modify Player Variable(Victim, Move_Speed, Subtract, 50);
             Destroy Effect((Victim).Passive_Mod_FX_Array);
-            Set Player Variable(Victim, Num_3, False);
         Else;
             Abort;
         End;
