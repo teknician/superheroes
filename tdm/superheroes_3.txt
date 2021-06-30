@@ -1182,7 +1182,7 @@ rule ("Reset Player Parameters") {
         PlayerReset;
     }
     actions {
-        Wait(0.016, Ignore Condition);
+        Wait(0.1, Ignore Condition);
         Set Player Variable(Event Player, Passive_Mod, 0);
         Set Player Variable(Event Player, Active_Mod, 0);
         Allow Button(Event Player, Button(Reload));
@@ -1285,12 +1285,14 @@ rule ("Reset Player Parameters") {
         Destroy Effect((Event Player).Passive_Mod_FX);
         Destroy In-World Text((Event Player).Passive_Mod_FX);
         Destroy Icon((Event Player).Passive_Mod_FX);
+        Destroy Effect((Event Player).Passive_Mod_FX_Array);
         Wait(0.016, Ignore Condition);
         Destroy Effect((Event Player).Active_Mod_FX);
         Destroy In-World Text((Event Player).Active_Mod_FX);
         Destroy Icon((Event Player).Active_Mod_FX);
+        Destroy Effect((Event Player).Active_Mod_FX_Array);
         Wait(0.016, Ignore Condition);
-        If(Entity Exists((Event Player).Passive_Mod_FX_Array));
+        If(Compare((Event Player).Passive_Mod_FX_Array, !=, Null));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Passive_Mod_FX_Array), 1);
                 Destroy Effect(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
                 Destroy In-World Text(Value In Array((Event Player).Passive_Mod_FX_Array, (Event Player).Index));
@@ -1298,7 +1300,7 @@ rule ("Reset Player Parameters") {
                 Wait(0.032, Ignore Condition);
             End;
         End;
-        If(Entity Exists((Event Player).Active_Mod_FX_Array));
+        If(Compare((Event Player).Active_Mod_FX_Array, !=, Null));
             For Player Variable(Event Player, Index, 0, Count Of((Event Player).Active_Mod_FX_Array), 1);
                 Destroy Effect(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
                 Destroy In-World Text(Value In Array((Event Player).Active_Mod_FX_Array, (Event Player).Index));
@@ -1311,9 +1313,9 @@ rule ("Reset Player Parameters") {
         Clear Status(Event Player, Burning);
         Clear Status(Event Player, Hacked);
         Clear Status(Event Player, Invincible);
+        Clear Status(Event Player, Rooted);
         Wait(0.016, Ignore Condition);
         Clear Status(Event Player, Knocked Down);
-        Clear Status(Event Player, Rooted);
         Clear Status(Event Player, Stunned);
         Clear Status(Event Player, Unkillable);
         Wait(0.016, Ignore Condition);
@@ -2403,7 +2405,7 @@ rule ("Choose/Check Passive Mod") {
         If(Array Contains(Array(0, 1, 2), (Event Player).Mod_Menu_Select));
             Abort;
         Else;
-            Wait(0.032, Ignore Condition);
+            Wait(0.5, Ignore Condition);
             If(True);
             Skip(Value In Array(Array(96, 0, 1, 2, 4, 6, 9, 11, 13, 18, 20, 23, 26, 29, 37, 45, 48, 50, 53, 55, 58, 60, 62, 64, 66, 68, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 39, 40, 41, 43, 45, 47, 48, 50, 51), (Event Player).Passive_Mod))));
             //__label_switch_2_0__:
@@ -2543,9 +2545,6 @@ rule ("Choose/Check Passive Mod") {
             Start Rule(Clipless, Do Nothing);
             //__label_switch_2_default__:
             End;
-        End;
-        Wait Until(Compare((Event Player).Mod_Menu_Select, !=, 3), 99999);
-        Abort;
     }
 }
 
@@ -6125,7 +6124,7 @@ rule ("Open mod menu") {
         Else;
         //__label_switch_4_default__:
         End;
-        Wait(0.016, Ignore Condition);
+        Wait(0.032, Ignore Condition);
         If(True);
         Skip(Value In Array(Array(22, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), Value In Array((Event Player).Page_Number, 1)))));
         //__label_switch_5_0__:
@@ -6396,6 +6395,7 @@ rule ("Close out of Mod Menu") {
                 Allow Button(Event Player, Button(Secondary Fire));
                 Allow Button(Event Player, Button(Interact));
                 Allow Button(Event Player, Button(Reload));
+                Wait(0.016, Ignore Condition);
                 If(Global.Intermission_In_Progress);
                     Small Message(Event Player, Custom String("{0} {1}", Value In Array(Global.Intermission_Array, 10), Value In Array(Global.Intermission_Array, 1), Null));
                 Else;
